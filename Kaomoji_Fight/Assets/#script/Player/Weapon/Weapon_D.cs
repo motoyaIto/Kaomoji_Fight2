@@ -202,7 +202,7 @@ public class Weapon_D : WeaponBlocController {
         }
 
 
-        owner_cs.ChangeWeapon_Data = false;
+        //owner_cs.ChangeWeapon_Data = false;
 
         //針だけを飛ばす
         DE_needle.transform.parent = null;

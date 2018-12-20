@@ -134,7 +134,7 @@ abstract public class WeaponBlocController : MonoBehaviour
         Rigidbody2D　rig2d = Weapon.AddComponent<Rigidbody2D>();
         rig2d.gravityScale = .01f;
 
-        owner_cs.ChangeWeapon_Data = false;
+        //owner_cs.ChangeWeapon_Data = false;
 
         // 親から離れる
         this.transform.parent = null;

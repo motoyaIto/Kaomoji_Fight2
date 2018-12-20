@@ -77,7 +77,7 @@ public class Weapon_M : WeaponBlocController
                     {
                         //眠り状態を解除する
                         owner_cs.Sleep_Data = false;
-                        owner_cs.ChangeWeapon_Data = false;
+                        //owner_cs.ChangeWeapon_Data = false;
 
                         Destroy(this.gameObject);
                     }

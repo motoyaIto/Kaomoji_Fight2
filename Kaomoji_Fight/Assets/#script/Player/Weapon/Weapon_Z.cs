@@ -149,7 +149,7 @@ public class Weapon_Z : WeaponBlocController
 
         //PSManager_cs.Effect_myself(this.transform.parent.gameObject, this.gameObject, this.transform.parent.GetComponent<Player>().PlayerNumber_data);
 
-        this.transform.parent.GetComponent<Player>().ChangeWeapon_Data = false;
+       // this.transform.parent.GetComponent<Player>().ChangeWeapon_Data = false;
 
         Destroy(this.gameObject);
     }
