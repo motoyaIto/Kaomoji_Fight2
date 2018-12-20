@@ -164,7 +164,7 @@ public class Weapon_T : WeaponBlocController {
         }
 
         //親から離れる
-        owner_cs.ChangeWeapon_Data = false;
+        //owner_cs.ChangeWeapon_Data = false;
         this.transform.parent = null;
 
         //トラップを設置

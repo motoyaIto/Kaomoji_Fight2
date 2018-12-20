@@ -133,7 +133,7 @@ public class Weapon_K : WeaponBlocController {
 
         //エフェクト発生を待って破棄する
         StartCoroutine(base.DelayMethod(KA_EffectWait, () => { Destroy(this.gameObject); }));
-        this.transform.parent.GetComponent<Player>().ChangeWeapon_Data = false;
+        //this.transform.parent.GetComponent<Player>().ChangeWeapon_Data = false;
         //仮//////////////////////////////////////////////////////////////////
         //base.SpecifiedOperation_NoneWeapon(shot);
         //仮//////////////////////////////////////////////////////////////////

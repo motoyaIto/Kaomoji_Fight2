@@ -102,7 +102,7 @@ public class Weapon_A : WeaponBlocController {
                     {
                         owner_cs.ControllerLock_Data = false;
 
-                        owner_cs.ChangeWeapon_Data = false;
+                        //owner_cs.ChangeWeapon_Data = false;
 
                         // 親から離れる
                         this.transform.parent = null;
@@ -150,7 +150,7 @@ public class Weapon_A : WeaponBlocController {
                     {
                         owner_cs.ControllerLock_Data = false;
 
-                        owner_cs.ChangeWeapon_Data = false;
+                        //owner_cs.ChangeWeapon_Data = false;
 
                         Destroy(this.gameObject);
                     }

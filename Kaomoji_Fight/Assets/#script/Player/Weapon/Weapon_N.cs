@@ -268,7 +268,7 @@ public class Weapon_N : WeaponBlocController {
         this.transform.GetChild(0).gameObject.SetActive(false);
 
         //他の武器を持てるようにする
-        owner_cs.ChangeWeapon_Data = false;
+        //owner_cs.ChangeWeapon_Data = false;
 
         //身代わりをオンにする
         owner_cs.Substitution_Data = true;
