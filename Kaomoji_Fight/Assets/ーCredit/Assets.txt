@@ -1,0 +1,30 @@
+-- TextMesh Pro -- 
+https://assetstore.unity.com/packages/essentials/beta-projects/textmesh-pro-84126
+
+
+-- KY Magic Effects Free--
+https://assetstore.unity.com/packages/vfx/particles/spells/ky-magic-effects-free-21927
+
+
+-- XboxCtrlrInput for Unity --
+https://github.com/JISyed/Unity-XboxCtrlrInput/releases
+
+
+-- Photon Bolt FREE --
+https://assetstore.unity.com/packages/tools/network/photon-bolt-free-127156
+
+
+-- PopcornFX Discovery Pack --
+https://assetstore.unity.com/packages/vfx/particles/popcornfx-discovery-pack-26440
+
+
+-- DL Fantasy RPG Effects --
+https://assetstore.unity.com/packages/vfx/particles/dl-fantasy-rpg-effects-68246
+
+
+-- Particle Ribbon --
+https://assetstore.unity.com/packages/vfx/particles/spells/particle-ribbon-42866
+
+
+-- Photon --
+https://assetstore.unity.com/packages/tools/network/photon-unity-networking-classic-free-1786
