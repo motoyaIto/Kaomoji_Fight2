@@ -16,10 +16,6 @@ public class Weapon_K : WeaponBlocController {
         {
             case "か":
             case "カ":
-                //回復テキスト
-                sprite = Resources.Load<Sprite>("textures/use/Weapon/portion");
-                Weapon_spriteFlag = true;
-                Weapon_SRenderer.sprite = sprite;
                 return;
 
             case "き":
@@ -51,11 +47,6 @@ public class Weapon_K : WeaponBlocController {
         {
             case "か":
             case "カ":
-                //回復テキスト
-                sprite = Resources.Load<Sprite>("textures/use/Weapon/portion");
-                Weapon_spriteFlag = true;
-                Weapon_SRenderer.sprite = sprite;
-
                 base.Update();
                 return;
 
