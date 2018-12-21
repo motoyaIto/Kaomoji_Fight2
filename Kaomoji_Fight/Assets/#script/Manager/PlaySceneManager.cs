@@ -337,7 +337,7 @@ public class PlaySceneManager : MonoBehaviour
         HPgage.name = player_data.Name_Data + "_HPgage";
 
         //名前の設定
-        TextMeshProUGUI name = HPgage.transform.Find("Text").GetComponent<TextMeshProUGUI>();
+        TextMeshProUGUI name = HPgage.transform.Find("PlayerName").GetComponent<TextMeshProUGUI>();
         name.text = player_data.Name_Data;
         name.color = player_data.Color_Data;
 
@@ -366,7 +366,7 @@ public class PlaySceneManager : MonoBehaviour
         }
 
         //ダメージを与える
-        HP_Slider[num].value -= weapon.GetComponent<WeaponBlocController>().DamageValue_Data;
+        HP_Slider[num].value -= weapon.GetComponent<MoziBlocController>().DamageValue_Data;
 
         //HPが0以下になったらplayerを殺す
         if (HP_Slider[num].value <= 0)
@@ -399,7 +399,7 @@ public class PlaySceneManager : MonoBehaviour
         }
 
         // ダメージを与えたプレイヤーの名前
-        string giveDamagePlayer = weapon.GetComponent<WeaponBlocController>().Owner_Data;
+        string giveDamagePlayer = weapon.GetComponent<MoziBlocController>().Owner_Data;
 
         // 武器の所有者の名前とダメージを受けたプレイヤーの名前が同じならばダメージを受けない
         if (damagePlayer.name == giveDamagePlayer)
@@ -408,7 +408,7 @@ public class PlaySceneManager : MonoBehaviour
         }
         else
         {
-            float DamageValue = weapon.GetComponent<WeaponBlocController>().DamageValue_Data;
+            float DamageValue = weapon.GetComponent<MoziBlocController>().DamageValue_Data;
 
             //即死の時
             if(InstantDeath == true)
@@ -558,7 +558,7 @@ public class PlaySceneManager : MonoBehaviour
         }
 
         // ダメージを与えたプレイヤーの名前
-        string giveDamagePlayer = weapon.GetComponent<WeaponBlocController>().Owner_Data;
+        string giveDamagePlayer = weapon.GetComponent<MoziBlocController>().Owner_Data;
 
         {
             //effectControll.HitEffect();
@@ -571,7 +571,7 @@ public class PlaySceneManager : MonoBehaviour
             {
                 if (PlayData.Instance.PlayersData[i].Name_Data == giveDamagePlayer)
                 {
-                    PlayData.Instance.PlayersData[i].DamageCount = (int)weapon.GetComponent<WeaponBlocController>().DamageValue_Data;
+                    PlayData.Instance.PlayersData[i].DamageCount = (int)weapon.GetComponent<MoziBlocController>().DamageValue_Data;
                 }
             }
 
@@ -585,7 +585,7 @@ public class PlaySceneManager : MonoBehaviour
             }
 
             //ダメージを与える
-            HP_Slider[num].value -= weapon.GetComponent<WeaponBlocController>().DamageValue_Data;
+            HP_Slider[num].value -= weapon.GetComponent<MoziBlocController>().DamageValue_Data;
 
             //HPが0以下になったらplayerを殺す
             if (HP_Slider[num].value <= 0)

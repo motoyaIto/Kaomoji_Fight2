@@ -43,9 +43,9 @@ public class Player : RaycastController
     private float direction = 0;            // 方向
 
 
-    private GameObject weapon;
+    private GameObject MoziObj;
 
-    private bool HaveWeapon = false;        //武器を持っている(true)いない(false)
+    private bool HaveMozi = false;        //文字を持っている(true)いない(false)
     private bool Avoidance = false;         // 回避フラグ
     private bool jump = false;              // ジャンプ中か？
     private bool EnteFlag = false;          //あったたオブジェクトがあるか
@@ -144,17 +144,17 @@ public class Player : RaycastController
             direction = 0f;
         }
 
-        if (HaveWeapon && controller_lock == false)
+        if (HaveMozi && controller_lock == false)
         {
-            //武器の位置を持ち変える
-            WeaponPositionControll(input);
+            //文字の持ち位置を持ち変える
+            ItemPositionControll(MoziObj, input);
         }
 
         //キャラのy軸のdirection方向にscrollの力をかける
         rig.velocity = new Vector2(scroll * direction, rig.velocity.y);
 
 
-        if (XCI.GetButtonDown(XboxButton.Y, ControlerNamber) && !jump && controller_lock == false)
+        if (XCI.GetButtonDown(XboxButton.A, ControlerNamber) && !jump && controller_lock == false)
         {
             // 大ジャンプ
             audio.volume = .2f;
@@ -200,11 +200,11 @@ public class Player : RaycastController
             Avoidance_time = .0f;
         }
 
-        //武器を持っている
-        if (HaveWeapon == true)
+        //文字を持っている
+        if (HaveMozi == true)
         {
-            //武器の位置を調整
-            WeaponBlocController WBController = weapon.gameObject.GetComponent<WeaponBlocController>();
+            //文字の位置を調整
+            MoziBlocController WBController = MoziObj.gameObject.GetComponent<MoziBlocController>();
             Vector3 direction = Vector3.zero;
 
             if (velocity.x < 0.0f)
@@ -218,19 +218,19 @@ public class Player : RaycastController
                 WBController.SetPosition = new Vector3(this.transform.position.x + this.transform.localScale.x + 0.5f, this.transform.position.y + this.transform.localScale.y * 2.5f, 0.0f);
             }
 
-            //武器を使用する
+            //文字を投げる
             if (XCI.GetButtonDown(XboxButton.B, ControlerNamber))
             {
-                WeaponBlocController WB = weapon.GetComponent<WeaponBlocController>();
+                MoziBlocController WB = MoziObj.GetComponent<MoziBlocController>();
 
                 WB.Attack(input);
             }
 
-            // 武器を捨てる
+            // 文字を捨てる
             if (XCI.GetButton(XboxButton.X, ControlerNamber))
             {
-                this.ChangeWeapon_Data = false;
-                Destroy(weapon);
+                this.ChangeMozi_Data = false;
+                Destroy(MoziObj);
             }
         }
 
@@ -258,7 +258,7 @@ public class Player : RaycastController
     /// </summary>
     private void RayController()
     {
-        // 武器をゲットするかも
+        // 文字をゲットするかも
         if (XCI.GetButtonDown(XboxButton.B, ControlerNamber))
         {
             //rayの開始地点
@@ -272,51 +272,51 @@ public class Player : RaycastController
             //rayに当たったものを取得する
             RaycastHit2D hitFoot = Physics2D.Raycast(ray.origin, Vector2.down, ray.direction.y * 0.5f);
 
-            //ステージから武器に変換
+            //ステージから文字を取得する
             if (hitFoot.transform.tag == "Stage")
             {
-                this.GetWeapon(hitFoot, this.transform.position);
+                this.GetMozi(hitFoot, this.transform.position);
             }
         }
     }
 
     /// <summary>
-    ///  武器を獲得する
+    ///  文字を獲得する
     /// </summary>
-    /// <param name="hitFoot">足元にあった武器</param>
+    /// <param name="hitFoot">足元にあった文字</param>
     /// <param name="directionX">右か左か</param>
-    private void GetWeapon(RaycastHit2D hitFoot, Vector2 pos)
+    private void GetMozi(RaycastHit2D hitFoot, Vector2 pos)
     {
         GameObject block = hitFoot.collider.gameObject;
         BlockController block_cs = block.GetComponent<BlockController>();
 
-        //武器を持っていなかったら
-        if (HaveWeapon == false && block_cs.Weapon == true && controller_lock == false)
+        //文字を持っていなかったら
+        if (HaveMozi == false && block_cs.Mozi == true && controller_lock == false)
         {
             //拾う音
             this.PlaySound(audio, pickUp_ac, .2f);
 
-            //床を武器として取得
-            weapon = Object.Instantiate(block) as GameObject;
-            weapon.transform.parent = this.transform;
-            weapon.name = "WeaponBlock" + block.name.Substring(block.name.IndexOf("("));
-            weapon.tag = tag.Trim();
+            //床を文字として取得
+            MoziObj = Object.Instantiate(block) as GameObject;
+            MoziObj.transform.SetParent(this.transform);
+            MoziObj.name = "MoziBlock" + block.name.Substring(block.name.IndexOf("("));
+            MoziObj.tag = tag.Trim();
 
-            //武器のスクリプトに張り替える
-            Destroy(weapon.GetComponent<BlockController>());
-            weapon.GetComponent<WeaponBlocController>().enabled = true;
+            //文字のスクリプトに張り替える
+            Destroy(MoziObj.GetComponent<BlockController>());
+            MoziObj.GetComponent<MoziBlocController>().enabled = true;
 
             //オーナー登録
-            weapon.GetComponent<WeaponBlocController>().Owner_Data = this.name;
+            MoziObj.GetComponent<MoziBlocController>().Owner_Data = this.name;
             //床から切り抜く
-            block.GetComponent<BlockController>().ChangeWeapon();
+            block.GetComponent<BlockController>().ChangeMozi();
 
-            weapon.GetComponent<BoxCollider2D>().enabled = false;
+            MoziObj.GetComponent<BoxCollider2D>().enabled = false;
 
-            HaveWeapon = true;
+            HaveMozi = true;
 
             //プレイヤーの移動する向きに合わせて位置を調整
-            this.WeaponPositionControll(pos);
+            this.ItemPositionControll(MoziObj, pos);
         }
     }
 
@@ -370,11 +370,11 @@ public class Player : RaycastController
         return 4;
     }
 
-    public bool ChangeWeapon_Data
+    public bool ChangeMozi_Data
     {
         set
         {
-            HaveWeapon = value;
+            HaveMozi = value;
         }
     }
 
@@ -402,36 +402,36 @@ public class Player : RaycastController
         }
     }
 
-    public void WeaponPositionControll(Vector2 vec2)
+    public void ItemPositionControll(GameObject Item, Vector2 vec2)
     {
-        if (HaveWeapon)
+        if (HaveMozi)
         {
             foreach (Transform child in this.transform)
             {
                 if (vec2.x > .0f && vec2.y > .0f && child.name == "TopRight")       //右上
                 {
-                    weapon.transform.position = child.transform.position;
+                    Item.transform.position = child.transform.position;
                 }
 
                 else if (vec2.x < .0f && vec2.y > .0f && child.name == "TopLeft")   //左下
                 {
-                    weapon.transform.position = child.transform.position;
+                    Item.transform.position = child.transform.position;
                 }
                 else if (vec2.x == .0f && vec2.y == .0f && child.name == "Top")     //移動していない
                 {
-                    weapon.transform.position = child.transform.position;
+                    Item.transform.position = child.transform.position;
                 }
                 else if (vec2.x > .0f && vec2.y < .0f && child.name == "DownRight") //右下
                 {
-                    weapon.transform.position = child.transform.position;
+                    Item.transform.position = child.transform.position;
                 }
                 else if (vec2.x < .0f && vec2.y < .0f && child.name == "DownLeft")  //左下
                 {
-                    weapon.transform.position = child.transform.position;
+                    Item.transform.position = child.transform.position;
                 }
                 else if (vec2.x == .0f && vec2.y < .0f && child.name == "Down")     //下
                 {
-                    weapon.transform.position = child.transform.position;
+                    Item.transform.position = child.transform.position;
                 }
             }
         }

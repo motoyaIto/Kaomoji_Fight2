@@ -10,7 +10,7 @@ public class BlockController : MonoBehaviour {
     bool setPass;
     BoxCollider2D colliderOfPass;
 
-    private bool WeaponBlock = false;//武器(true)ではない(false)
+    private bool MoziBlock = false;//文字(true)ではない(false)
 
     // Use this for initialization
 
@@ -39,7 +39,7 @@ public class BlockController : MonoBehaviour {
     /// <summary>
     /// 床を抜く
     /// </summary>
-    public void ChangeWeapon()
+    public void ChangeMozi()
     {
         this.gameObject.SetActive(false);
     }
@@ -63,18 +63,18 @@ public class BlockController : MonoBehaviour {
     }
 
     /// <summary>
-    /// 武器(true)ではない(false)
+    /// 文字(true)ではない(false)
     /// </summary>
-    public bool Weapon
+    public bool Mozi
     {
         get
         {
-            return WeaponBlock;
+            return MoziBlock;
         }
 
         set
         {
-            WeaponBlock = value;
+            MoziBlock = value;
         }
     }
 }
