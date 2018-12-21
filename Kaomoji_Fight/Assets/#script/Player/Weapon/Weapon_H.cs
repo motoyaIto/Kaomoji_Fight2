@@ -41,11 +41,6 @@ public class Weapon_H : WeaponBlocController {
 
     private void Initializ_HA()
     {
-        //ハンマーテキスト
-        sprite = Resources.Load<Sprite>("textures/use/Weapon/hammer");
-        Weapon_spriteFlag = true;
-        Weapon_SRenderer.sprite = sprite;
-
         //画像のサイズを調整
         HA_SpriteTransform = this.transform.GetChild(1);
         HA_SpriteTransform.localPosition = new Vector3(0f, 0.77f, 1);

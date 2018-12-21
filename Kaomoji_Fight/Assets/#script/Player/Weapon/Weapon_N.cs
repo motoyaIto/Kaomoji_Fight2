@@ -64,11 +64,6 @@ public class Weapon_N : WeaponBlocController {
         DamageValue = 4;
         this.transform.GetComponent<BoxCollider2D>().isTrigger = true;
 
-        //ナイフテキスト
-        sprite = Resources.Load<Sprite>("textures/use/Weapon/knife");
-        Weapon_spriteFlag = true;
-        Weapon_SRenderer.sprite = sprite;
-
         //即死を与える値を取得
         NA_InstantDeathNamber = new int[Mathf.FloorToInt(100 * NA_InstantDeathProbability)];
         for(int i = 0; i < NA_InstantDeathNamber.Length; i++)
@@ -99,11 +94,6 @@ public class Weapon_N : WeaponBlocController {
     private void Initialize_NI()
     {
         Effect1 = Resources.Load<GameObject>("prefab/Effect/True_Substitution");
-
-        //藁人形テキスト
-        sprite = Resources.Load<Sprite>("textures/use/Weapon/waraningyou");
-        Weapon_spriteFlag = true;
-        Weapon_SRenderer.sprite = sprite;
     }
 
 

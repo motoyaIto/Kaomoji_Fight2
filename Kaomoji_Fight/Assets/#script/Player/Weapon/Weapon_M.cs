@@ -22,10 +22,6 @@ public class Weapon_M : WeaponBlocController
         {
             case "ま":
             case "マ":
-                //枕テキスト
-                sprite = Resources.Load<Sprite>("textures/use/Weapon/makura");
-                Weapon_spriteFlag = true;
-                Weapon_SRenderer.sprite = sprite;
                 return;
 
             case "み":
@@ -153,12 +149,6 @@ public class Weapon_M : WeaponBlocController
         MA_count = 0.0f;
 
         this.transform.position = this.transform.parent.position;
-        //枕の調整
-        Weapon_spriteFlag = false;
-        Weapon_SRenderer.color = new Vector4(Weapon_SRenderer.color.r, Weapon_SRenderer.color.g, Weapon_SRenderer.color.b, 1f);
-        Weapon_SRenderer.transform.position = new Vector3(Weapon_SRenderer.transform.position.x - 2.0f, Weapon_SRenderer.transform.position.y - 1.2f, Weapon_SRenderer.transform.position.z);
-        Weapon_SRenderer.transform.rotation = Quaternion.Euler(this.transform.rotation.x, this.transform.rotation.y, 90.0f);
-        Weapon_SRenderer.flipX = true;
 
         //移動を止める
         this.transform.parent.GetComponent<Player>().Directtion_Data = 0.0f;
@@ -169,8 +159,6 @@ public class Weapon_M : WeaponBlocController
         Sprite FutonSprite = Resources.Load<Sprite>("textures/use/Weapon/huton");
         MA_Futon = new GameObject("Sprite").AddComponent<SpriteRenderer>();
         MA_Futon.sprite = FutonSprite;
-        //布団枕と一緒
-        MA_Futon.transform.parent = Weapon_Sprites.transform;
         //布団の調整
         MA_Futon.gameObject.transform.position = new Vector3(this.transform.position.x + 1, this.transform.position.y - 1.2f, this.transform.position.z);
         MA_Futon.sortingOrder = 1;
