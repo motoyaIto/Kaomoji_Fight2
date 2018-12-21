@@ -5,15 +5,15 @@ using TMPro;
 using UnityEngine.Audio;
 using System;
 
-public class WeaponBlocController : MonoBehaviour
+public class MoziBlocController : MonoBehaviour
 {
     protected PlaySceneManager PSManager_cs;//プレイシーンマネージャー
-    protected string mozi;    //自分の文字
+    protected string mozi;                  //自分の文字
 
-    protected GameObject Weapon;//自分のゲームオブジェクト
+    protected GameObject MoziObj;           //自分のゲームオブジェクト
 
     [SerializeField]
-    protected float DamageValue = 5.0f;     //ダメージ量
+    protected float DamageValue = 1.0f;     //ダメージ量
     private float thrust = 1000f;           // 投擲物の推進力
 
 
@@ -27,7 +27,7 @@ public class WeaponBlocController : MonoBehaviour
 
     public string owner;                   //所有者の名前
     protected Player owner_cs;              //所有者のplayerスクリプト
-    protected bool weapon_use = false;      //武器を投げた(true)投げてない(false)
+    protected bool Mozi_use = false;      //文字を投げた(true)投げてない(false)
 
     private GameObject hitEffect;           // ヒットエフェクト
 
@@ -52,7 +52,7 @@ public class WeaponBlocController : MonoBehaviour
         PSManager_cs = GameObject.Find("PlaySceneManager").GetComponent<PlaySceneManager>();
         hitEffect = Resources.Load<GameObject>("prefab/Effect/Wave_01");
 
-        Weapon = this.transform.gameObject;
+        MoziObj = this.transform.gameObject;
        
         // 持たれているプレイヤーを取得
         //parent = this.transform.parent.GetComponent<Player>();
@@ -78,18 +78,18 @@ public class WeaponBlocController : MonoBehaviour
     /// <param name="shot">使用した座標</param>
     public void Attack(Vector3 shot)
     {
-        Rigidbody2D rig2d = Weapon.AddComponent<Rigidbody2D>();
+        Rigidbody2D rig2d = MoziObj.AddComponent<Rigidbody2D>();
         rig2d.gravityScale = .01f;
 
-        owner_cs.ChangeWeapon_Data = false;
+        owner_cs.ChangeMozi_Data = false;
 
         // 親から離れる
-        this.transform.parent = null;
+        this.transform.SetParent(null);
 
         //ウェポンにボックスコライダーをオンにする
-        Weapon.GetComponent<BoxCollider2D>().enabled = true;
-        Weapon.GetComponent<BoxCollider2D>().isTrigger = true;
-        weapon_use = true;
+        MoziObj.GetComponent<BoxCollider2D>().enabled = true;
+        MoziObj.GetComponent<BoxCollider2D>().isTrigger = true;
+        Mozi_use = true;
 
         // 動かずに投げたら
         if (shot == Vector3.zero)
@@ -111,17 +111,6 @@ public class WeaponBlocController : MonoBehaviour
         return false;
     }
 
-    /// <summary>
-    /// 動作指定のない武器
-    /// </summary>
-    /// <param name="shot">使用した座標</param>
-    protected void SpecifiedOperation_NoneWeapon(Vector3 shot)
-    {
-        
-
-        
-    }
-
     protected virtual void OnTriggerEnter2D(Collider2D collision)
     {
         if (CheckHit_Rival(collision) == true)
@@ -132,13 +121,13 @@ public class WeaponBlocController : MonoBehaviour
             //エフェクト
             var hitobj = Instantiate(hitEffect, this.transform.position + transform.forward, Quaternion.identity) as GameObject;
             Destroy(this.gameObject);
-            weapon_use = false;
+            Mozi_use = false;
         }
     }
 
     protected bool CheckHit_Rival(Collider2D collider)
     {
-        if (parentName != collider.gameObject.name && weapon_use && collider.transform.tag != "Stage")
+        if (parentName != collider.gameObject.name && Mozi_use && collider.transform.tag == "Player")
         {
             return true;
         }

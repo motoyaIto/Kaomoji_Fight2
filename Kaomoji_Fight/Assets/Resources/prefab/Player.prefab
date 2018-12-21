@@ -20,11 +20,11 @@ GameObject:
   m_Component:
   - component: {fileID: 4718931800437274}
   - component: {fileID: 212827996856301432}
-  - component: {fileID: 61923992547869140}
   - component: {fileID: 50197333586214694}
   - component: {fileID: 114829612007268248}
   - component: {fileID: 114303809425252302}
   - component: {fileID: 82608880900562656}
+  - component: {fileID: 70965094927395786}
   m_Layer: 9
   m_Name: Player
   m_TagString: Player
@@ -297,8 +297,8 @@ Rigidbody2D:
   m_SleepingMode: 1
   m_CollisionDetection: 0
   m_Constraints: 4
---- !u!61 &61923992547869140
-BoxCollider2D:
+--- !u!70 &70965094927395786
+CapsuleCollider2D:
   m_ObjectHideFlags: 1
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
@@ -309,19 +309,9 @@ BoxCollider2D:
   m_IsTrigger: 0
   m_UsedByEffector: 0
   m_UsedByComposite: 0
-  m_Offset: {x: 0, y: 0.1}
-  m_SpriteTilingProperty:
-    border: {x: 0, y: 0, z: 0, w: 0}
-    pivot: {x: 0.5, y: 0.5}
-    oldSize: {x: 5.84, y: 2.11}
-    newSize: {x: 5.84, y: 3.85}
-    adaptiveTilingThreshold: 0.5
-    drawMode: 0
-    adaptiveTiling: 0
-  m_AutoTiling: 0
-  serializedVersion: 2
-  m_Size: {x: 5.84, y: 1.7}
-  m_EdgeRadius: 0
+  m_Offset: {x: 0, y: 0.25}
+  m_Size: {x: 6.13, y: 2.25}
+  m_Direction: 1
 --- !u!82 &82608880900562656
 AudioSource:
   m_ObjectHideFlags: 1
