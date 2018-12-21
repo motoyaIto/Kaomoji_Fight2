@@ -37,11 +37,6 @@ public class Weapon_Y : WeaponBlocController {
     /// </summary>
     private void Initializ_YA()
     {
-        //槍テキスト
-        sprite = Resources.Load<Sprite>("textures/use/Weapon/buki_yari");
-        Weapon_spriteFlag = true;
-        Weapon_SRenderer.sprite = sprite;
-
         //画像の角度サイズを調整
         YA_SpriteTransform = this.transform.GetChild(1);
         YA_SpriteTransform.rotation = Quaternion.Euler(YA_SpriteTransform.localRotation.x, YA_SpriteTransform.localRotation.y, -55);
@@ -165,10 +160,6 @@ public class Weapon_Y : WeaponBlocController {
                 if (child.name == "Right")
                 {
                     this.transform.position = new Vector3(child.transform.position.x + 1.5f, child.transform.position.y, child.transform.position.z);
-
-                    //画像の向きを合わせる
-                    Weapon_SRenderer.flipX = false;
-                    Weapon_SRenderer.flipY = false;
                 }
             }
         }
@@ -179,10 +170,6 @@ public class Weapon_Y : WeaponBlocController {
                 if (child.name == "Left")
                 {
                     this.transform.position = new Vector3(child.transform.position.x - 1.5f, child.transform.position.y, child.transform.position.z);
-
-                    //画像の向きを合わせる
-                    Weapon_SRenderer.flipX = true;
-                    Weapon_SRenderer.flipY = true;
                 }
             }
         }

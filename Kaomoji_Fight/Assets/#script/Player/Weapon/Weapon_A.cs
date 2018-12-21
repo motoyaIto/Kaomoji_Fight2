@@ -23,19 +23,10 @@ public class Weapon_A : WeaponBlocController {
         {
             case "あ":
             case "ア":
-                //爆弾テキスト
-                sprite = Resources.Load<Sprite>("textures/use/Weapon/bomb");
-                Weapon_spriteFlag = true;
-                Weapon_SRenderer.sprite = sprite;
-
                 break;
 
             case "い":
             case "イ":
-                //角テキスト
-                sprite = Resources.Load<Sprite>("textures/use/Weapon/horn");
-                Weapon_spriteFlag = true;
-                Weapon_SRenderer.sprite = sprite;
                 break;
 
             case "う":

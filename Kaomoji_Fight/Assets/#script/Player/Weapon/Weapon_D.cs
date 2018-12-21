@@ -35,11 +35,6 @@ public class Weapon_D : WeaponBlocController {
 
                 BoxCollider2D NeedleCollider = DE_needle.GetComponent<BoxCollider2D>();
                 NeedleCollider.isTrigger = true;
-
-                //テーザー銃テキスト
-                sprite = Resources.Load<Sprite>("textures/use/Weapon/Taser_needle");
-                Weapon_spriteFlag = true;
-                Weapon_SRenderer.sprite = sprite;
                 return;
 
             case "ど":

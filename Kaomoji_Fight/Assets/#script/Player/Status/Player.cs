@@ -7,7 +7,8 @@ using Constant;
 
 //[RequireComponent(typeof(Contoroller2d))]
 [RequireComponent(typeof(Rigidbody2D))]
-public class Player : RaycastController {
+public class Player : RaycastController
+{
 
     //状態異常
     public struct StatesAbnormality
@@ -16,7 +17,6 @@ public class Player : RaycastController {
         public bool Sleep;  //眠る
     }
 
-    //ステータスアップ
     public struct UpStates
     {
         public bool Substitution;   //身代わり
@@ -45,6 +45,7 @@ public class Player : RaycastController {
 
     private GameObject weapon;
 
+    private bool HaveWeapon = false;        //武器を持っている(true)いない(false)
     private bool Avoidance = false;         // 回避フラグ
     private bool jump = false;              // ジャンプ中か？
     private bool EnteFlag = false;          //あったたオブジェクトがあるか
@@ -143,6 +144,12 @@ public class Player : RaycastController {
             direction = 0f;
         }
 
+        if (HaveWeapon && controller_lock == false)
+        {
+            //武器の位置を持ち変える
+            WeaponPositionControll(input);
+        }
+
         //キャラのy軸のdirection方向にscrollの力をかける
         rig.velocity = new Vector2(scroll * direction, rig.velocity.y);
 
@@ -193,6 +200,40 @@ public class Player : RaycastController {
             Avoidance_time = .0f;
         }
 
+        //武器を持っている
+        if (HaveWeapon == true)
+        {
+            //武器の位置を調整
+            WeaponBlocController WBController = weapon.gameObject.GetComponent<WeaponBlocController>();
+            Vector3 direction = Vector3.zero;
+
+            if (velocity.x < 0.0f)
+            {
+                direction = Vector3.left;
+                WBController.SetPosition = new Vector3(this.transform.position.x - this.transform.localScale.x, this.transform.position.y + this.transform.localScale.y * 2.5f, 0.0f);
+            }
+            else if (velocity.x > 0.0f)
+            {
+                direction = Vector3.right;
+                WBController.SetPosition = new Vector3(this.transform.position.x + this.transform.localScale.x + 0.5f, this.transform.position.y + this.transform.localScale.y * 2.5f, 0.0f);
+            }
+
+            //武器を使用する
+            if (XCI.GetButtonDown(XboxButton.B, ControlerNamber))
+            {
+                WeaponBlocController WB = weapon.GetComponent<WeaponBlocController>();
+
+                WB.Attack(input);
+            }
+
+            // 武器を捨てる
+            if (XCI.GetButton(XboxButton.X, ControlerNamber))
+            {
+                this.ChangeWeapon_Data = false;
+                Destroy(weapon);
+            }
+        }
+
         // Ｒａｙ
         this.RayController();
     }
@@ -234,7 +275,7 @@ public class Player : RaycastController {
             //ステージから武器に変換
             if (hitFoot.transform.tag == "Stage")
             {
-                //this.GetWeapon(hitFoot, this.transform.position);
+                this.GetWeapon(hitFoot, this.transform.position);
             }
         }
     }
@@ -246,41 +287,37 @@ public class Player : RaycastController {
     /// <param name="directionX">右か左か</param>
     private void GetWeapon(RaycastHit2D hitFoot, Vector2 pos)
     {
-        //GameObject block = hitFoot.collider.gameObject;
-        //BlockController block_cs = block.GetComponent<BlockController>();
+        GameObject block = hitFoot.collider.gameObject;
+        BlockController block_cs = block.GetComponent<BlockController>();
 
-        ////武器を持っていなかったら
-        //if (HaveWeapon == false && block_cs.Weapon == true && controller_lock == false)
-        //{
-        //    //拾う音
-        //    this.PlaySound(audio, pickUp_ac, .2f);
+        //武器を持っていなかったら
+        if (HaveWeapon == false && block_cs.Weapon == true && controller_lock == false)
+        {
+            //拾う音
+            this.PlaySound(audio, pickUp_ac, .2f);
 
-        //    //床を武器として取得
-        //    weapon = Object.Instantiate(block) as GameObject;
-        //    weapon.transform.parent = this.transform;
-        //    weapon.name = "WeaponBlock" + block.name.Substring(block.name.IndexOf("("));
-        //    weapon.tag = tag.Trim();
+            //床を武器として取得
+            weapon = Object.Instantiate(block) as GameObject;
+            weapon.transform.parent = this.transform;
+            weapon.name = "WeaponBlock" + block.name.Substring(block.name.IndexOf("("));
+            weapon.tag = tag.Trim();
 
-        //    //武器画像を表示
-        //    SpriteRenderer weapon_sprite = weapon.transform.GetChild(1).GetChild(0).GetComponent<SpriteRenderer>();
-        //    weapon_sprite.enabled = true;
+            //武器のスクリプトに張り替える
+            Destroy(weapon.GetComponent<BlockController>());
+            weapon.GetComponent<WeaponBlocController>().enabled = true;
 
-        //    //武器のスクリプトに張り替える
-        //    Destroy(weapon.GetComponent<BlockController>());
-        //    weapon.GetComponent<WeaponBlocController>().enabled = true;
+            //オーナー登録
+            weapon.GetComponent<WeaponBlocController>().Owner_Data = this.name;
+            //床から切り抜く
+            block.GetComponent<BlockController>().ChangeWeapon();
 
-        //    //オーナー登録
-        //    weapon.GetComponent<WeaponBlocController>().Owner_Data = this.name;
-        //    //床から切り抜く
-        //    block.GetComponent<BlockController>().ChangeWeapon();
+            weapon.GetComponent<BoxCollider2D>().enabled = false;
 
-        //    weapon.GetComponent<BoxCollider2D>().enabled = false;
+            HaveWeapon = true;
 
-        //    HaveWeapon = true;
-
-        //    //プレイヤーの移動する向きに合わせて位置を調整
-        //    this.WeaponPositionControll(pos);
-        //}
+            //プレイヤーの移動する向きに合わせて位置を調整
+            this.WeaponPositionControll(pos);
+        }
     }
 
     private void OnCollisionEnter2D(Collision2D collision)
@@ -333,6 +370,14 @@ public class Player : RaycastController {
         return 4;
     }
 
+    public bool ChangeWeapon_Data
+    {
+        set
+        {
+            HaveWeapon = value;
+        }
+    }
+
 
     /// <summary>
     /// XBXcontrollerの番号を取得
@@ -359,37 +404,37 @@ public class Player : RaycastController {
 
     public void WeaponPositionControll(Vector2 vec2)
     {
-        //if (HaveWeapon)
-        //{
-        //    foreach (Transform child in this.transform)
-        //    {
-        //        if (vec2.x > .0f && vec2.y > .0f && child.name == "TopRight")       //右上
-        //        {
-        //            weapon.transform.position = child.transform.position;
-        //        }
+        if (HaveWeapon)
+        {
+            foreach (Transform child in this.transform)
+            {
+                if (vec2.x > .0f && vec2.y > .0f && child.name == "TopRight")       //右上
+                {
+                    weapon.transform.position = child.transform.position;
+                }
 
-        //        else if (vec2.x < .0f && vec2.y > .0f && child.name == "TopLeft")   //左下
-        //        {
-        //            weapon.transform.position = child.transform.position;
-        //        }
-        //        else if (vec2.x == .0f && vec2.y == .0f && child.name == "Top")     //移動していない
-        //        {
-        //            weapon.transform.position = child.transform.position;
-        //        }
-        //        else if (vec2.x > .0f && vec2.y < .0f && child.name == "DownRight") //右下
-        //        {
-        //            weapon.transform.position = child.transform.position;
-        //        }
-        //        else if (vec2.x < .0f && vec2.y < .0f && child.name == "DownLeft")  //左下
-        //        {
-        //            weapon.transform.position = child.transform.position;
-        //        }
-        //        else if (vec2.x == .0f && vec2.y < .0f && child.name == "Down")     //下
-        //        {
-        //            weapon.transform.position = child.transform.position;
-        //        }
-        //    }
-        //}
+                else if (vec2.x < .0f && vec2.y > .0f && child.name == "TopLeft")   //左下
+                {
+                    weapon.transform.position = child.transform.position;
+                }
+                else if (vec2.x == .0f && vec2.y == .0f && child.name == "Top")     //移動していない
+                {
+                    weapon.transform.position = child.transform.position;
+                }
+                else if (vec2.x > .0f && vec2.y < .0f && child.name == "DownRight") //右下
+                {
+                    weapon.transform.position = child.transform.position;
+                }
+                else if (vec2.x < .0f && vec2.y < .0f && child.name == "DownLeft")  //左下
+                {
+                    weapon.transform.position = child.transform.position;
+                }
+                else if (vec2.x == .0f && vec2.y < .0f && child.name == "Down")     //下
+                {
+                    weapon.transform.position = child.transform.position;
+                }
+            }
+        }
     }
 
     /// <summary>
@@ -466,5 +511,5 @@ public class Player : RaycastController {
         {
             statesUp.Invincible = value;
         }
-    }  
+    }
 }

@@ -5,18 +5,12 @@ using TMPro;
 using UnityEngine.Audio;
 using System;
 
-abstract public class WeaponBlocController : MonoBehaviour
+public class WeaponBlocController : MonoBehaviour
 {
     protected PlaySceneManager PSManager_cs;//プレイシーンマネージャー
     protected string mozi;    //自分の文字
 
     protected GameObject Weapon;//自分のゲームオブジェクト
-
-    protected Sprite sprite;                        //テクスチャー
-    protected Transform Weapon_Sprites;             //スプライト群
-    protected SpriteRenderer Weapon_SRenderer;      //武器画像を描画するレンダー
-    protected bool Weapon_SRFlag = false;          //テクスチャーのα値プラス(turue)マイナス(false)
-    protected bool Weapon_spriteFlag = false;       //武器の画像がある(true)ない(false)
 
     [SerializeField]
     protected float DamageValue = 5.0f;     //ダメージ量
@@ -47,9 +41,6 @@ abstract public class WeaponBlocController : MonoBehaviour
         //自分の文字
         mozi = this.transform.GetChild(0).GetComponent<TextMeshPro>().text;
 
-        Weapon_Sprites = this.transform.GetChild(1);
-        Weapon_SRenderer = Weapon_Sprites.GetChild(0).GetComponent<SpriteRenderer>();
-
         this.enabled = false;
     }
 
@@ -69,9 +60,6 @@ abstract public class WeaponBlocController : MonoBehaviour
 
         // タグの設定
         this.tag = "Weapon";
-
-        // レイヤーの変更
-        Weapon.layer = LayerName.Weapon;       
     }
 
     public virtual void Update()
@@ -82,29 +70,6 @@ abstract public class WeaponBlocController : MonoBehaviour
             Destroy(this.transform.gameObject);
         }
 
-        //テクスチャーの画像点滅
-        if(Weapon_SRenderer.enabled == true && Weapon_spriteFlag == true)
-        {
-            //α値の加算
-            if(Weapon_SRFlag == true)
-            {
-                Weapon_SRenderer.color = new Vector4(Weapon_SRenderer.color.r, Weapon_SRenderer.color.g, Weapon_SRenderer.color.b, Weapon_SRenderer.color.a + 0.01f);
-
-                if(Weapon_SRenderer.color.a >=  0.9f)
-                {
-                    Weapon_SRFlag = false;
-                }
-            }
-            else//α値のマイナス
-            {
-                Weapon_SRenderer.color = new Vector4(Weapon_SRenderer.color.r, Weapon_SRenderer.color.g, Weapon_SRenderer.color.b, Weapon_SRenderer.color.a - 0.01f);
-
-                if (Weapon_SRenderer.color.a <= 0.01f)
-                {
-                    Weapon_SRFlag = true;
-                }
-            }
-        }
     }
 
     /// <summary>
@@ -113,28 +78,10 @@ abstract public class WeaponBlocController : MonoBehaviour
     /// <param name="shot">使用した座標</param>
     public void Attack(Vector3 shot)
     {
-        if(AttackMozi(shot) == true) { return; }
-
-        this.SpecifiedOperation_NoneWeapon(shot);
-    }
-
-    /// <summary>
-    /// 攻撃文字
-    /// </summary>
-    /// <param name="shot">使用した座標</param>
-    /// <returns>文字攻撃をしたら(true)していなかったら(fasle)</returns>
-    protected abstract bool AttackMozi(Vector3 shot);
-
-    /// <summary>
-    /// 動作指定のない武器
-    /// </summary>
-    /// <param name="shot">使用した座標</param>
-    protected void SpecifiedOperation_NoneWeapon(Vector3 shot)
-    {
-        Rigidbody2D　rig2d = Weapon.AddComponent<Rigidbody2D>();
+        Rigidbody2D rig2d = Weapon.AddComponent<Rigidbody2D>();
         rig2d.gravityScale = .01f;
 
-        //owner_cs.ChangeWeapon_Data = false;
+        owner_cs.ChangeWeapon_Data = false;
 
         // 親から離れる
         this.transform.parent = null;
@@ -152,6 +99,25 @@ abstract public class WeaponBlocController : MonoBehaviour
         }
         // ⊂二二二（ ＾ω＾）二⊃ ﾌﾞｰﾝ
         rig2d.AddForce(shot * thrust);
+    }
+
+    /// <summary>
+    /// 攻撃文字
+    /// </summary>
+    /// <param name="shot">使用した座標</param>
+    /// <returns>文字攻撃をしたら(true)していなかったら(fasle)</returns>
+    protected virtual bool AttackMozi(Vector3 shot)
+    {
+        return false;
+    }
+
+    /// <summary>
+    /// 動作指定のない武器
+    /// </summary>
+    /// <param name="shot">使用した座標</param>
+    protected void SpecifiedOperation_NoneWeapon(Vector3 shot)
+    {
+        
 
         
     }

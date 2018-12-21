@@ -21,10 +21,6 @@ public class Weapon_Z : WeaponBlocController
 
             case "じ":
             case "ジ":
-                //爆弾テキスト
-                sprite = Resources.Load<Sprite>("textures/use/Weapon/bomb");
-                Weapon_spriteFlag = true;
-                Weapon_SRenderer.sprite = sprite;
                 break;
 
             case "ず":
