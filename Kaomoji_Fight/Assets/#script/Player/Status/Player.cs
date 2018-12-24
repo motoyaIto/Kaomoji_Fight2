@@ -4,6 +4,7 @@ using UnityEngine;
 using XboxCtrlrInput;
 using TMPro;
 using Constant;
+using UnityEngine.UI;
 
 //[RequireComponent(typeof(Contoroller2d))]
 [RequireComponent(typeof(Rigidbody2D))]
@@ -31,6 +32,8 @@ public class Player : RaycastController
 
     private StatesAbnormality ButState;     //バットステータス
     private UpStates statesUp;              //上昇ステータス
+
+    private GameObject HPgageObj;    //HPゲージオブジェクト
 
     private float moveSpeed = 10f;          // 移動速度
     float Avoidance_time = .0f;             // 回避時間
@@ -100,6 +103,8 @@ public class Player : RaycastController
         int P_layer = LayerMask.NameToLayer("Player");
         Physics2D.IgnoreLayerCollision(P_layer, P_layer);
 
+        //HPゲージを取得する
+        HPgageObj = PSM.SetHPgage(CNConvert(ControlerNamber) + 1);
     }
 
     private void Reset()
@@ -314,6 +319,8 @@ public class Player : RaycastController
             MoziObj.GetComponent<BoxCollider2D>().enabled = false;
 
             HaveMozi = true;
+
+            HPgageObj.transform.GetChild(4).GetComponent<GetMoziController>().SetTextMozi(block.transform.GetChild(0).GetComponent<TextMeshPro>().text);
 
             //プレイヤーの移動する向きに合わせて位置を調整
             this.ItemPositionControll(MoziObj, pos);

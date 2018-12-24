@@ -51,7 +51,7 @@ public class PlaySceneManager : MonoBehaviour
     public GameObject dedEffect;        // 死亡エフェクト
 
     private ResultData resultdata;//resultデータ
-                                  //private EffectControll effectControll;  //エフェクト
+
     private IEnumerator changescene = null;
     private RankingData[] ranking = null;
 
@@ -150,7 +150,7 @@ public class PlaySceneManager : MonoBehaviour
 
                     P1.Player_obj = this.CreatePlayer(P1, i);
                     P1.HPgage_obj = this.CreateHPgage(P1, new Vector3(HPgagesize_in_UICanvas.x / 2 + remainder, HPgagesize_in_UICanvas.y / 2, 0));
-                    
+
                     //カメラのターゲットに設定
                     CameraSet(P1, i);
                     break;
@@ -336,15 +336,28 @@ public class PlaySceneManager : MonoBehaviour
 
         HPgage.name = player_data.Name_Data + "_HPgage";
 
-        //名前の設定
-        TextMeshProUGUI name = HPgage.transform.Find("PlayerName").GetComponent<TextMeshProUGUI>();
-        name.text = player_data.Name_Data;
-        name.color = player_data.Color_Data;
+        //各設定
+        foreach(Transform Child in HPgage.transform)
+        {
+            //名前の設定
+            if(Child.name == "PlayerName")
+            {
+                Child.GetComponent<TextMeshProUGUI>().text = player_data.Name_Data;
+                Child.GetComponent<TextMeshProUGUI>().color = player_data.Color_Data;
+            }
+
+            //文字用テキストを初期化
+            if(Child.name == "Word" || Child.name == "GetMozi")
+            {
+                Child.GetComponent<TextMeshProUGUI>().text = "";
+            }
+        }
 
         //HPゲージの最大値を与える
         Slider hp_slider = HPgage.GetComponent<Slider>();
         hp_slider.maxValue = player_data.HP_Date;
         hp_slider.value = player_data.HP_Date;
+
         return HPgage;
     }
 
@@ -963,5 +976,22 @@ public class PlaySceneManager : MonoBehaviour
         SceneManagerController.LoadScene();
         yield return new WaitForSeconds(3.0f);
         SceneManagerController.ChangeScene();
+    }
+
+    public GameObject SetHPgage(int num)
+    {
+        switch(num)
+        {
+            case 1:
+                return P1.HPgage_obj;
+            case 2:
+                return P2.HPgage_obj;
+            case 3:
+                return P3.HPgage_obj;
+            case 4:
+                return P4.HPgage_obj;
+        }
+
+        return null;
     }
 }
