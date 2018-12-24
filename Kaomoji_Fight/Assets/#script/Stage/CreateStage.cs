@@ -8,8 +8,8 @@ using UnityEngine.Audio;
 
 public class CreateStage : MonoBehaviour
 {
-    //武器になる文字群
-    private string[] WEAPO_MOZI =
+    //文字になる文字群
+    private string[] MOZI =
     {
         "あ", "い", "う", "え", "お",
         "か", "き", "く", "け", "こ",
@@ -49,10 +49,7 @@ public class CreateStage : MonoBehaviour
     };
 
     private GameObject StageBlock;  //ステージ
-    private Material Weapon_mate;   //武器material
-
-    private Weapon_Z weapon_z_cs;   //ざ行のcs 
-
+    private Material Mozi_mate;   //文字material
 
     void Start()
     {
@@ -76,7 +73,7 @@ public class CreateStage : MonoBehaviour
         StageBlocks = new GameObject[textnam];
         //文字を表示するボックスをResourcesから読み込む
         StageBlock = (GameObject)Resources.Load("prefab/Stage/StageBlock");
-        Weapon_mate = Resources.Load<Material>("Material/StageBlock_Weapon");
+        Mozi_mate = Resources.Load<Material>("Material/StageBlock_Mozi");
 
 
 
@@ -116,20 +113,20 @@ public class CreateStage : MonoBehaviour
                 // RectTransformを追加
                 StageBlock.AddComponent<RectTransform>();
                  //weaponだったら
-                if (Array.IndexOf(WEAPO_MOZI, mozi) >= 0)
+                if (Array.IndexOf(MOZI, mozi) >= 0)
                 {
-                    //指定の武器用スクリプトをセットする
+                    //文字用スクリプトをセットする
                     GameObject weapon = StageBlock;
-                    SetWeapon_sc(mozi, weapon);
+                    weapon.AddComponent<MoziBlocController>().enabled = false;
 
-                    //武器の文字用マテリアルに変更
-                    Material StageBlock_WeaponMateral = Weapon_mate;
-                   StageBlock.GetComponent<Renderer>().material = StageBlock_WeaponMateral;
+                    //文字用マテリアルに変更
+                    Material StageBlock_MoziMateral = Mozi_mate;
+                   StageBlock.GetComponent<Renderer>().material = StageBlock_MoziMateral;
                     
 
-                    //武器フラグを立てる
+                    //文字フラグを立てる
                     BlockController Block_cs = StageBlock.transform.GetComponent<BlockController>();
-                    Block_cs.Weapon = true;
+                    Block_cs.Mozi = true;
                 }
                 
             }
@@ -142,94 +139,6 @@ public class CreateStage : MonoBehaviour
             y--;
             //文字位置をスタートに戻す
             x = 0;
-        }
-    }
-
-    private void SetWeapon_sc(string mozi, GameObject weapon)
-    {
-        switch(mozi)
-        {
-            case "あ": case "い": case "う": case "え": case "お":
-            case "ア": case "イ": case "ウ": case "エ": case "オ":
-                weapon.AddComponent<Weapon_A>().enabled = false;
-
-                break;
-
-            case "か": case "き": case "く": case "け": case "こ":
-            case "カ": case "キ": case "ク": case "ケ": case "コ":
-                weapon.AddComponent<Weapon_K>().enabled = false;
-                break;
-
-            case "さ": case "し": case "す": case "せ": case "そ":
-            case "サ": case "シ": case "ス": case "セ": case "ソ":
-                weapon.AddComponent<Weapon_S>().enabled = false;
-                break;
-
-            case "た": case "ち": case "つ": case "て": case "と":
-            case "タ": case "チ": case "ツ": case "テ": case "ト":
-                weapon.AddComponent<Weapon_T>().enabled = false;
-                break;
-
-            case "な": case "に": case "ぬ": case "ね": case "の":
-            case "ナ": case "ニ": case "ヌ": case "ネ": case "ノ":
-                weapon.AddComponent<Weapon_N>().enabled = false;
-                break;
-
-            case "は": case "ひ": case "ふ": case "へ": case "ほ":
-            case "ハ": case "ヒ": case "フ": case "ヘ": case "ホ":
-                weapon.AddComponent<Weapon_H>().enabled = false;
-                break;
-
-            case "ま": case "み": case "む": case "め": case "も":
-            case "マ": case "ミ": case "ム": case "メ": case "モ":
-                weapon.AddComponent<Weapon_M>().enabled = false;
-                break;
-
-            case "や": case "ゆ": case "よ":
-            case "ヤ": case "ユ": case "ヨ":
-                weapon.AddComponent<Weapon_Y>().enabled = false;
-                break;
-
-            case "ら": case "り": case "る": case "れ": case "ろ":
-            case "ラ": case "リ": case "ル": case "レ": case "ロ":
-                weapon.AddComponent<Weapon_R>().enabled = false;
-                break;
-
-            case "わ": case "を": case "ん":
-            case "ワ": case "ヲ": case "ン":
-                weapon.AddComponent<Weapon_W>().enabled = false;
-                break;
-
-
-            case "が": case "ぎ": case "ぐ": case "げ": case "ご":
-            case "ガ": case "ギ": case "グ": case "ゲ": case "ゴ":
-                weapon.AddComponent<Weapon_G>().enabled = false;
-                break;
-
-            case "ざ": case "じ": case "ず": case "ぜ": case "ぞ":
-            case "ザ": case "ジ": case "ズ": case "ゼ": case "ゾ":
-                weapon.AddComponent<Weapon_Z>().enabled = false;
-                break;
-
-            case "だ": case "ぢ": case "づ": case "で": case "ど":
-            case "ダ": case "ヂ": case "ヅ": case "デ": case "ド":
-                weapon.AddComponent<Weapon_D>().enabled = false;
-                break;
-
-            case "ば": case "び": case "ぶ": case "べ": case "ぼ":
-            case "バ": case "ビ": case "ブ": case "ベ": case "ボ":
-                weapon.AddComponent<Weapon_B>().enabled = false;
-                break;
-
-            case "ぱ": case "ぴ": case "ぷ": case "ぺ": case "ぽ":
-            case "パ": case "ピ": case "プ": case "ペ": case "ポ":
-                weapon.AddComponent<Weapon_P>().enabled = false;
-
-                break;
-            default:
-                weapon.AddComponent<WeaponBlocController>().enabled = false;
-                break;
-
         }
     }
 }

@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-[RequireComponent(typeof(BoxCollider2D))]
+[RequireComponent(typeof(CapsuleCollider2D))]
 public class RaycastController : MonoBehaviour
 {
 
@@ -17,12 +17,12 @@ public class RaycastController : MonoBehaviour
     public float verticalRaySpacing;        //縦のrayを表示する間隔
 
     [HideInInspector]
-    public BoxCollider2D collider;          //衝突したオブジェクトのあたり判定
+    public CapsuleCollider2D collider;          //衝突したオブジェクトのあたり判定
     public RaycastOrigins raycastOrigins;   //rayの原点
 
     public virtual void Start()
     {
-        collider = GetComponent<BoxCollider2D>();
+        collider = GetComponent<CapsuleCollider2D>();
         CalculateRaySpacing();
     }
 
