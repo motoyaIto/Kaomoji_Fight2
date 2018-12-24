@@ -48,10 +48,11 @@ public class Player : RaycastController
 
     private GameObject MoziObj;
 
-    private bool HaveMozi = false;        //文字を持っている(true)いない(false)
-    private bool Avoidance = false;         // 回避フラグ
-    private bool jump = false;              // ジャンプ中か？
-    private bool EnteFlag = false;          //あったたオブジェクトがあるか
+    private bool HaveMozi = false;      //文字を持っている(true)いない(false)
+    private bool BackSpace = false;     //バックスペースを押している(true)いない(false)
+    private bool Avoidance = false;     // 回避フラグ
+    private bool jump = false;          // ジャンプ中か？
+    private bool EnteFlag = false;      //あったたオブジェクトがあるか
 
     private bool isQuitting = false;        // エディタ実行終了時か？
 
@@ -237,6 +238,27 @@ public class Player : RaycastController
                 this.ChangeMozi_Data = false;
                 Destroy(MoziObj);
             }
+        }
+        else
+        {
+            //所持している文字をすべて消去する
+            if (XCI.GetButtonDown(XboxButton.X, ControlerNamber))
+            {
+                HPgageObj.transform.GetChild(4).GetComponent<GetMoziController>().AllDestroy();
+            }
+        }
+
+        //一文字ずつ消す
+        if (XCI.GetAxis(XboxAxis.LeftTrigger, ControlerNamber) > 0.8f && BackSpace == false)
+        {
+            HPgageObj.transform.GetChild(4).GetComponent<GetMoziController>().BackSpace();
+
+            BackSpace = true;
+        }
+        
+        if(XCI.GetAxis(XboxAxis.LeftTrigger, ControlerNamber) < 0.2f)
+        {
+            BackSpace = false;
         }
 
         // Ｒａｙ
