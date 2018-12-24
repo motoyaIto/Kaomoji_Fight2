@@ -54,4 +54,33 @@ public class GetMoziController : MonoBehaviour {
         MyText.text = mozi;
 
     }
+
+    /// <summary>
+    /// 文字をすべて消す
+    /// </summary>
+    public void AllDestroy()
+    {
+        MyText.text = "";
+        Texts.text = "";
+    }
+
+    /// <summary>
+    /// 後ろから一文字消す
+    /// </summary>
+    public void BackSpace()
+    {
+        if(MyText.text != "")
+        {
+            MyText.text = "";
+            return;
+        }
+
+        string token = Texts.text;
+        Texts.text = "";
+
+        for (int i = 0; i < token.Length - 1; i++)
+        {
+            Texts.text += token[i];
+        }
+    }
 }
