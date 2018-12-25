@@ -261,6 +261,12 @@ public class Player : RaycastController
             BackSpace = false;
         }
 
+        if(XCI.GetButtonDown(XboxButton.RightBumper, ControlerNamber))
+        {
+            //取得文字として登録
+            HPgageObj.transform.GetChild(4).GetComponent<GetMoziController>().Semi_voicedPoint();
+        }
+
         // Ｒａｙ
         this.RayController();
     }
@@ -342,6 +348,7 @@ public class Player : RaycastController
 
             HaveMozi = true;
 
+            //取得文字として登録
             HPgageObj.transform.GetChild(4).GetComponent<GetMoziController>().SetTextMozi(block.transform.GetChild(0).GetComponent<TextMeshPro>().text);
 
             //プレイヤーの移動する向きに合わせて位置を調整
