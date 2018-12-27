@@ -267,6 +267,10 @@ public class Player : RaycastController
             HPgageObj.transform.GetChild(4).GetComponent<GetMoziController>().Semi_voicedPoint();
         }
 
+        if(XCI.GetButtonDown(XboxButton.Y, ControlerNamber))
+        {
+            Debug.Log(HPgageObj.transform.GetChild(3).GetComponent<TextMeshProUGUI>().text + HPgageObj.transform.GetChild(4).GetComponent<TextMeshProUGUI>().text);
+        }
         // Ｒａｙ
         this.RayController();
     }
