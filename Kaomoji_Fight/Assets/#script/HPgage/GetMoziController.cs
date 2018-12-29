@@ -31,8 +31,6 @@ public class GetMoziController : MonoBehaviour {
 	
 	// Update is called once per frame
 	void Update () {
-
-        Debug.Log(Screen.width);
         //座標をずらす
         this.transform.position = new Vector3(pos_x + Texts.text.Length * (15.0f * (Screen.width / 441)), this.transform.position.y, this.transform.position.z);
     }
