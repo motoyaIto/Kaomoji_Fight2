@@ -48,6 +48,9 @@ public class Player : RaycastController
 
     private GameObject MoziObj;
 
+    private GameObject weapon;          //武器
+    private bool weapon_use = false;    //武器を持っている(true)いない(false)
+
     private bool HaveMozi = false;      //文字を持っている(true)いない(false)
     private bool BackSpace = false;     //バックスペースを押している(true)いない(false)
     private bool Avoidance = false;     // 回避フラグ
@@ -261,7 +264,7 @@ public class Player : RaycastController
             BackSpace = false;
         }
 
-        if(XCI.GetButtonDown(XboxButton.RightBumper, ControlerNamber))
+        if(XCI.GetButtonDown(XboxButton.LeftBumper, ControlerNamber))
         {
             //取得文字として登録
             HPgageObj.transform.GetChild(4).GetComponent<GetMoziController>().Semi_voicedPoint();
@@ -270,8 +273,47 @@ public class Player : RaycastController
         //武器に変換
         if(XCI.GetButtonDown(XboxButton.Y, ControlerNamber))
         {
-            SelectWeapon.CreateSelectWeapon(HPgageObj.transform.GetChild(3).GetComponent<TextMeshProUGUI>().text + HPgageObj.transform.GetChild(4).GetComponent<TextMeshProUGUI>().text);
+            if (weapon_use == false)
+            {
+                weapon = SelectWeapon.CreateSelectWeapon(HPgageObj.transform.GetChild(3).GetComponent<TextMeshProUGUI>().text + HPgageObj.transform.GetChild(4).GetComponent<TextMeshProUGUI>().text);
+
+                //武器化出来たら
+                if (weapon != null)
+                {
+                    //武器を生成
+                    weapon = Object.Instantiate(weapon, this.transform.position, Quaternion.identity);
+
+                    weapon.transform.parent = this.transform;
+
+                    weapon_use = true;
+
+                    //持っている文字を破棄
+                    if (HaveMozi == true)
+                    {
+                        this.ChangeMozi_Data = false;
+                        Destroy(MoziObj);
+                        HaveMozi = false;
+                    }
+                    HPgageObj.transform.GetChild(4).GetComponent<GetMoziController>().AllDestroy();
+                }
+            }
         }
+
+        //武器を持っているとき
+        if(weapon_use == true)
+        {
+            //座標の調整
+            ItemPositionControll(weapon, input);
+
+            // 武器を捨てる
+            if (XCI.GetButton(XboxButton.X, ControlerNamber))
+            {
+                weapon_use = false;
+                Destroy(weapon);
+                weapon = null;
+            }
+        }
+
         // Ｒａｙ
         this.RayController();
     }
@@ -297,7 +339,7 @@ public class Player : RaycastController
     private void RayController()
     {
         // 文字をゲットするかも
-        if (XCI.GetButtonDown(XboxButton.B, ControlerNamber))
+        if (XCI.GetButtonDown(XboxButton.B, ControlerNamber) && weapon_use == false)
         {
             //rayの開始地点
             Vector3 ray_initial = new Vector3(this.transform.position.x, this.transform.position.y - this.transform.localScale.y, this.transform.position.x);
@@ -445,7 +487,7 @@ public class Player : RaycastController
 
     public void ItemPositionControll(GameObject Item, Vector2 vec2)
     {
-        if (HaveMozi)
+        if (HaveMozi  == true|| weapon_use == true)
         {
             foreach (Transform child in this.transform)
             {
@@ -453,7 +495,6 @@ public class Player : RaycastController
                 {
                     Item.transform.position = child.transform.position;
                 }
-
                 else if (vec2.x < .0f && vec2.y > .0f && child.name == "TopLeft")   //左下
                 {
                     Item.transform.position = child.transform.position;
