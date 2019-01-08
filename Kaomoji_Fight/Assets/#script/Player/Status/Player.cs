@@ -50,6 +50,7 @@ public class Player : RaycastController
 
     private GameObject weapon;          //武器
     private bool weapon_use = false;    //武器を持っている(true)いない(false)
+    private Weapon weapon_cs;           //武器のスクリプト
 
     private bool HaveMozi = false;      //文字を持っている(true)いない(false)
     private bool BackSpace = false;     //バックスペースを押している(true)いない(false)
@@ -285,6 +286,9 @@ public class Player : RaycastController
 
                     weapon.transform.parent = this.transform;
 
+                    weapon_cs = weapon.transform.GetComponent<Weapon>();
+                    weapon_cs.Owner_csData = this.transform.GetComponent<Player>();
+
                     weapon_use = true;
 
                     //持っている文字を破棄
@@ -304,6 +308,12 @@ public class Player : RaycastController
         {
             //座標の調整
             ItemPositionControll(weapon, input);
+
+            //武器を使う
+            if (XCI.GetButtonDown(XboxButton.B, ControlerNamber))
+            {
+                weapon_cs.Attack();
+            }
 
             // 武器を捨てる
             if (XCI.GetButton(XboxButton.X, ControlerNamber))
@@ -592,6 +602,14 @@ public class Player : RaycastController
         set
         {
             statesUp.Invincible = value;
+        }
+    }
+
+    public bool Weapon_useData
+    {
+        set
+        {
+            weapon_use = value;
         }
     }
 }
