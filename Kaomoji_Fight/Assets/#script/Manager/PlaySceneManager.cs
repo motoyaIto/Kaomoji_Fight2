@@ -379,7 +379,7 @@ public class PlaySceneManager : MonoBehaviour
         }
 
         //ダメージを与える
-        HP_Slider[num].value -= weapon.GetComponent<MoziBlocController>().DamageValue_Data;
+        HP_Slider[num].value -= weapon.GetComponent<Weapon>().DamageValue_Data;
 
         //HPが0以下になったらplayerを殺す
         if (HP_Slider[num].value <= 0)
