@@ -16,7 +16,7 @@ public class SelectWeapon {
         WeaponList["やり"] = null;
         WeaponList["はんまー"] = null;
 
-        WeaponList["かいふく"] = null;
+        WeaponList["かいふく"] = Resources.Load<GameObject>("prefab/Weapon/Portion");
 
         WeaponList["まくら"] = null;
         WeaponList["にんぎょう"] = null;
@@ -24,7 +24,7 @@ public class SelectWeapon {
         WeaponList["けん"] = null;
     }
 
-    public static void CreateSelectWeapon(string name)
+    public static GameObject CreateSelectWeapon(string name)
     {
         if (start == false)
         {
@@ -39,9 +39,16 @@ public class SelectWeapon {
         }
 
         //剣
-        if(name == "ソード" || name == "つるぎ" || name == "かたな")
+        if(name == "そーど" || name == "つるぎ" || name == "かたな" || name == "しみたー")
         {
             name = "けん";
         }
+
+        if (WeaponList.ContainsKey(name) == true)
+        {
+            return WeaponList[name];
+        }
+
+        return null;
     }
 }
