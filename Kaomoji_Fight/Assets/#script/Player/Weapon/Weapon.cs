@@ -40,6 +40,31 @@ abstract public class Weapon : MonoBehaviour {
         action();
     }
 
+    protected void EffectOccurrence()
+    {
+        //エフェクトの発生
+        GameObject EffectObj = Instantiate(Effect, this.transform) as GameObject;
+        // エフェクトの発生場所をプレイヤーの中心に
+        EffectObj.transform.position = new Vector3(this.transform.parent.transform.position.x, this.transform.position.y, 0);
+
+        //エフェクト発生を待って破棄する
+        StartCoroutine(this.DelayMethod(EffectWait, () => { Destroy(EffectObj); }));
+    }
+
+    protected void EffectOccurrence(Vector3 pos, Vector3 rot)
+    {
+        //エフェクトの発生
+        GameObject EffectObj = Instantiate(Effect, this.transform) as GameObject;
+        
+        //エフェクトの発生場所を指定の座標に
+        EffectObj.transform.position = pos;
+        //エフェクトの回転
+        EffectObj.transform.rotation = new Quaternion(EffectObj.transform.rotation.x + rot.x, EffectObj.transform.rotation.y + rot.y, EffectObj.transform.rotation.z + rot.z, EffectObj.transform.rotation.w);
+
+        //エフェクト発生を待って破棄する
+        StartCoroutine(this.DelayMethod(EffectWait, () => { Destroy(EffectObj); }));
+    }
+
     public Player Owner_csData
     {
         set

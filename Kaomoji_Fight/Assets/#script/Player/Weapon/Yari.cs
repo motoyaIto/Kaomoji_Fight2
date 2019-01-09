@@ -15,6 +15,9 @@ public class Yari : Weapon {
         DamageValue = 8;
 
         collider = this.transform.GetComponent<BoxCollider2D>();
+
+        Effect = Resources.Load<GameObject>("prefab/Effect/Yari_Efect");
+        EffectWait = 0.2f;
     }
 
     private void Update()
@@ -77,6 +80,16 @@ public class Yari : Weapon {
         if(collision.tag == "Player" && collision.name != owner_cs.PlayerName_Data)
         {
             PSManager_cs.Player_Damage(collision.gameObject, this.gameObject, collision.transform.GetComponent<Player>().PlayerNumber_data);
+
+            if(SRenderer.flipX == false)
+            {
+                base.EffectOccurrence(this.transform.position + new Vector3(1, 0, 0), Vector3.zero);
+            }
+            else
+            {
+                base.EffectOccurrence(this.transform.position + new Vector3(-1, 0, 0), new Vector3(-180, 0, 0));
+            }
+            
         }
     }
 }
