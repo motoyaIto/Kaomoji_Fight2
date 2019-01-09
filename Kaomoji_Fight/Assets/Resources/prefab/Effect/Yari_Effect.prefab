@@ -22,7 +22,7 @@ GameObject:
   - component: {fileID: 198600346215666034}
   - component: {fileID: 199267625043297078}
   m_Layer: 0
-  m_Name: Yari_Efect
+  m_Name: Yari_Effect
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

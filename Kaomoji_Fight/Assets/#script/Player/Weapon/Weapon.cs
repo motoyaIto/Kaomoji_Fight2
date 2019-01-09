@@ -19,6 +19,8 @@ abstract public class Weapon : MonoBehaviour {
 
     protected float count = 0;             //カウント
 
+    protected BoxCollider2D collider;
+
     protected virtual void Start()
     {
         PSManager_cs = GameObject.Find("PlaySceneManager").GetComponent<PlaySceneManager>();
@@ -40,6 +42,9 @@ abstract public class Weapon : MonoBehaviour {
         action();
     }
 
+    /// <summary>
+    /// プレイヤーを中心にエフェクトを発生させる
+    /// </summary>
     protected void EffectOccurrence()
     {
         //エフェクトの発生
@@ -51,6 +56,11 @@ abstract public class Weapon : MonoBehaviour {
         StartCoroutine(this.DelayMethod(EffectWait, () => { Destroy(EffectObj); }));
     }
 
+    /// <summary>
+    /// 指定の座標と角度でエフェクトを発生させる
+    /// </summary>
+    /// <param name="pos">座標</param>
+    /// <param name="rot">角度</param>
     protected void EffectOccurrence(Vector3 pos, Vector3 rot)
     {
         //エフェクトの発生
