@@ -30,7 +30,7 @@ public class CreateStage : MonoBehaviour
         "ぱ", "ぴ", "ぷ", "ぺ", "ぽ",
 
         "ぁ", "ぃ", "ぅ", "ぇ", "ぉ",
-        "ゃ", "ゅ", "ょ", "っ",
+        "ゃ", "ゅ", "ょ", "っ", "ー",
     };
 
     private GameObject StageBlock;  //ステージ

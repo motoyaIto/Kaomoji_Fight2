@@ -5,8 +5,6 @@ using UnityEngine;
 
 public class Yari : Weapon {
 
-    BoxCollider2D collider;
-
     protected override void Start()
     {
         base.Start();
@@ -16,7 +14,7 @@ public class Yari : Weapon {
 
         collider = this.transform.GetComponent<BoxCollider2D>();
 
-        Effect = Resources.Load<GameObject>("prefab/Effect/Yari_Efect");
+        Effect = Resources.Load<GameObject>("prefab/Effect/Yari_Effect");
         EffectWait = 0.2f;
     }
 
