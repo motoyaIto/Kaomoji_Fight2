@@ -124,6 +124,11 @@ public class Player : RaycastController
         {
             Destroy(this.transform.gameObject);
         }
+        //コントローラーロック
+        if(controller_lock == true)
+        {
+            return;
+        }
 
         //状態異常処理
         //麻痺・眠り
@@ -133,28 +138,28 @@ public class Player : RaycastController
         }
         // Controllerの左スティックのAxisを取得            
         Vector2 input = new Vector2(XCI.GetAxis(XboxAxis.LeftStickX, ControlerNamber), XCI.GetAxis(XboxAxis.LeftStickY, ControlerNamber));
-        if (input.x > .0f && controller_lock == false)
+        if (input.x > .0f)
         {
             //歩く音
             //  if (direction == 0) { this.PlaySound(audio2, walk_ac, 0.2f); }
 
             direction = 1f;
         }
-        else if (input.x < .0f && controller_lock == false)
+        else if (input.x < .0f)
         {
             //歩く音
             // if (direction == 0) { this.PlaySound(audio2, walk_ac, 0.2f); }
 
             direction = -1f;
         }
-        else if (controller_lock == false)
+        else
         {
             //歩く音を止める
             //audio2.Stop();
             direction = 0f;
         }
 
-        if (HaveMozi && controller_lock == false)
+        if (HaveMozi)
         {
             //文字の持ち位置を持ち変える
             ItemPositionControll(MoziObj, input);
@@ -164,7 +169,7 @@ public class Player : RaycastController
         rig.velocity = new Vector2(scroll * direction, rig.velocity.y);
 
 
-        if (XCI.GetButtonDown(XboxButton.A, ControlerNamber) && !jump && controller_lock == false)
+        if (XCI.GetButtonDown(XboxButton.A, ControlerNamber) && !jump)
         {
             // 大ジャンプ
             audio.volume = .2f;
@@ -181,7 +186,7 @@ public class Player : RaycastController
         }
 
         // 回避をしたい
-        if (XCI.GetAxis(XboxAxis.RightTrigger, ControlerNamber) < 0.0f && !Avoidance && controller_lock == false)
+        if (XCI.GetAxis(XboxAxis.RightTrigger, ControlerNamber) < 0.0f && !Avoidance)
         {
             // アニメーションに差し替え予定？
             if (!Avoidance)
@@ -610,6 +615,14 @@ public class Player : RaycastController
         set
         {
             weapon_use = value;
+        }
+    }
+
+    public string PlayerName_Data
+    {
+        get
+        {
+            return this.name;
         }
     }
 }

@@ -13,7 +13,7 @@ public class SelectWeapon {
     static void Start () {
         WeaponList["ばくだん"] = null;
         WeaponList["ないふ"] = null;
-        WeaponList["やり"] = null;
+        WeaponList["やり"] = Resources.Load<GameObject>("prefab/Weapon/Yari");
         WeaponList["はんまー"] = null;
 
         WeaponList["かいふく"] = Resources.Load<GameObject>("prefab/Weapon/Portion");
