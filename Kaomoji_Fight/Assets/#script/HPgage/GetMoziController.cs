@@ -14,11 +14,11 @@ public class GetMoziController : MonoBehaviour {
         {
             new string[2]{"か", "が"}, new string[2]{"き", "ぎ"}, new string[2]{"く", "ぐ"}, new string[2]{"け", "げ"}, new string[2]{"こ", "ご"},
             new string[2]{"さ", "ざ"}, new string[2]{"し", "じ"}, new string[2]{"す", "ず"}, new string[2]{"せ", "ぜ"}, new string[2]{"そ", "ぞ"},
-            new string[2]{"た", "だ"}, new string[2]{"ち", "ぢ"}, new string[2]{"つ", "づ"}, new string[2]{"て", "で"}, new string[2]{"と", "ど"},
+            new string[2]{"た", "だ"}, new string[2]{"ち", "ぢ"}, new string[3]{"つ", "づ", "っ"}, new string[2]{"て", "で"}, new string[2]{"と", "ど"},
             new string[3]{"は", "ば", "ぱ"}, new string[3]{"ひ", "び", "ぴ"}, new string[3]{"ふ", "ぶ", "ぷ"}, new string[3]{"へ", "べ", "ぺ"}, new string[3]{"ほ", "ぼ", "ぽ"},
 
             new string[2]{"あ", "ぁ"}, new string[2]{"い", "ぃ"}, new string[2]{"う", "ぅ"}, new string[2]{"え", "ぇ"}, new string[2]{"お", "ぉ"},
-            new string[2]{"や", "ゃ"}, new string[2]{"ゆ", "ゅ"}, new string[2]{"よ", "ょ"}, new string[2]{"つ", "っ"},
+            new string[2]{"や", "ゃ"}, new string[2]{"ゆ", "ゅ"}, new string[2]{"よ", "ょ"}
         };
     
     // Use this for initialization
