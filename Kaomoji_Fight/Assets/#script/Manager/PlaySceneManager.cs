@@ -51,7 +51,7 @@ public class PlaySceneManager : MonoBehaviour
     public GameObject dedEffect;        // 死亡エフェクト
 
     private ResultData resultdata;//resultデータ
-                                  //private EffectControll effectControll;  //エフェクト
+
     private IEnumerator changescene = null;
     private RankingData[] ranking = null;
 
@@ -150,7 +150,7 @@ public class PlaySceneManager : MonoBehaviour
 
                     P1.Player_obj = this.CreatePlayer(P1, i);
                     P1.HPgage_obj = this.CreateHPgage(P1, new Vector3(HPgagesize_in_UICanvas.x / 2 + remainder, HPgagesize_in_UICanvas.y / 2, 0));
-                    
+
                     //カメラのターゲットに設定
                     CameraSet(P1, i);
                     break;
@@ -336,15 +336,28 @@ public class PlaySceneManager : MonoBehaviour
 
         HPgage.name = player_data.Name_Data + "_HPgage";
 
-        //名前の設定
-        TextMeshProUGUI name = HPgage.transform.Find("PlayerName").GetComponent<TextMeshProUGUI>();
-        name.text = player_data.Name_Data;
-        name.color = player_data.Color_Data;
+        //各設定
+        foreach(Transform Child in HPgage.transform)
+        {
+            //名前の設定
+            if(Child.name == "PlayerName")
+            {
+                Child.GetComponent<TextMeshProUGUI>().text = player_data.Name_Data;
+                Child.GetComponent<TextMeshProUGUI>().color = player_data.Color_Data;
+            }
+
+            //文字用テキストを初期化
+            if(Child.name == "Word" || Child.name == "GetMozi")
+            {
+                Child.GetComponent<TextMeshProUGUI>().text = "";
+            }
+        }
 
         //HPゲージの最大値を与える
         Slider hp_slider = HPgage.GetComponent<Slider>();
         hp_slider.maxValue = player_data.HP_Date;
         hp_slider.value = player_data.HP_Date;
+
         return HPgage;
     }
 
@@ -366,7 +379,7 @@ public class PlaySceneManager : MonoBehaviour
         }
 
         //ダメージを与える
-        HP_Slider[num].value -= weapon.GetComponent<MoziBlocController>().DamageValue_Data;
+        HP_Slider[num].value -= weapon.GetComponent<Weapon>().DamageValue_Data;
 
         //HPが0以下になったらplayerを殺す
         if (HP_Slider[num].value <= 0)
@@ -384,7 +397,7 @@ public class PlaySceneManager : MonoBehaviour
     }
 
    /// <summary>
-   /// 敵プレイヤーのみにダメージを与える
+   /// 文字を投げたときのダメージ判定
    /// </summary>
    /// <param name="damagePlayer">ダメージを受けたプレイヤー</param>
    /// <param name="weapon">武器</param>
@@ -543,12 +556,12 @@ public class PlaySceneManager : MonoBehaviour
     }
 
     /// <summary>
-    /// どのプレイヤーもダメージを受ける
+    /// プレイヤーにダメージを与える
     /// </summary>
     /// <param name="damagePlayer">ダメージを受けたプレイヤー</param>
     /// <param name="weapon">武器</param>
     /// <param name="num">ダメージを受けたプレイヤーの番号</param>
-    public void AllPlayer_Damage(GameObject damagePlayer, GameObject weapon, int num)
+    public void Player_Damage(GameObject damagePlayer, GameObject weapon, int num)
     {
         //無敵身代わり
         if (damagePlayer.transform.GetComponent<Player>().Invincible_Data || damagePlayer.transform.GetComponent<Player>().Substitution_Data)
@@ -558,104 +571,41 @@ public class PlaySceneManager : MonoBehaviour
         }
 
         // ダメージを与えたプレイヤーの名前
-        string giveDamagePlayer = weapon.GetComponent<MoziBlocController>().Owner_Data;
+        string giveDamagePlayer = weapon.GetComponent<Weapon>().OwnerName_Data;
 
+        //ダメージを与えたプレイヤーに値を加える
+        for (int i = 0; i < PlayData.Instance.playerNum; i++)
         {
-            //effectControll.HitEffect();
-            // ダメージ音
-            audio.volume = .3f;
-            audio.PlayOneShot(audioClip_hit);
-
-            //ダメージを与えたプレイヤーに値を加える
-            for (int i = 0; i < PlayData.Instance.playerNum; i++)
+            if (PlayData.Instance.PlayersData[i].Name_Data == giveDamagePlayer)
             {
-                if (PlayData.Instance.PlayersData[i].Name_Data == giveDamagePlayer)
-                {
-                    PlayData.Instance.PlayersData[i].DamageCount = (int)weapon.GetComponent<MoziBlocController>().DamageValue_Data;
-                }
-            }
-
-            // ダメージを受けたプレイヤーデータを取得する
-            PlayerData player_data = CheckDamagePlayer(damagePlayer.name);
-
-            //ダメージを受けたプレイヤーがいなかったとき
-            if (player_data == null)
-            {
-                return;
-            }
-
-            //ダメージを与える
-            HP_Slider[num].value -= weapon.GetComponent<MoziBlocController>().DamageValue_Data;
-
-            //HPが0以下になったらplayerを殺す
-            if (HP_Slider[num].value <= 0)
-            {
-                var dedobj = Instantiate(dedEffect, damagePlayer.transform.position + transform.forward, Quaternion.identity) as GameObject;
-                TrueDeath[num] = true;
-                DeathNumber[num] = damagePlayer.name;
-                audio.volume = 0.3f;
-                audio.PlayOneShot(audioClip_ded);
-                Destroy(damagePlayer);
-                Destroy(HP_Slider[num].gameObject);
-                death_count--;
+                PlayData.Instance.PlayersData[i].DamageCount = (int)weapon.GetComponent<Weapon>().DamageValue_Data;
             }
         }
-    }
 
-    /// <summary>
-    /// どのプレイヤーもダメージを受ける
-    /// </summary>
-    /// <param name="damagePlayer">ダメージを受けたプレイヤー</param>
-    /// <param name="owner_name">武器のオーナーの名前</param>
-    /// <param name="weaponDamage">武器のダメージ量</param>
-    /// <param name="num">ダメージを受けたプレイヤーの番号</param>
-    public void AllPlayer_Damage(GameObject damagePlayer, string owner_name, float weaponDamage, int num)
-    {
-        //無敵身代わり
-        if (damagePlayer.transform.GetComponent<Player>().Invincible_Data || damagePlayer.transform.GetComponent<Player>().Substitution_Data)
+        // ダメージを受けたプレイヤーデータを取得する
+        PlayerData player_data = CheckDamagePlayer(damagePlayer.name);
+
+        //ダメージを受けたプレイヤーがいなかったとき
+        if (player_data == null)
         {
-            this.invincible_Substitution(damagePlayer);
             return;
         }
-        
-            //effectControll.HitEffect();
-            // ダメージ音
-            audio.volume = .3f;
-            audio.PlayOneShot(audioClip_hit);
 
-            //ダメージを与えたプレイヤーに値を加える
-            for (int i = 0; i < PlayData.Instance.playerNum; i++)
-            {
-                if (PlayData.Instance.PlayersData[i].Name_Data == owner_name)
-                {
-                    PlayData.Instance.PlayersData[i].DamageCount = (int)weaponDamage;
-                }
-            }
+        //ダメージを与える
+        HP_Slider[num].value -= weapon.GetComponent<Weapon>().DamageValue_Data;
 
-            // ダメージを受けたプレイヤーデータを取得する
-            PlayerData player_data = CheckDamagePlayer(damagePlayer.name);
-
-            //ダメージを受けたプレイヤーがいなかったとき
-            if (player_data == null)
-            {
-                return;
-            }
-
-            //ダメージを与える
-            HP_Slider[num].value -= weaponDamage;
-
-            //HPが0以下になったらplayerを殺す
-            if (HP_Slider[num].value <= 0)
-            {
-                var dedobj = Instantiate(dedEffect, damagePlayer.transform.position + transform.forward, Quaternion.identity) as GameObject;
-                TrueDeath[num] = true;
-                DeathNumber[num] = damagePlayer.name;
-                audio.volume = 0.3f;
-                audio.PlayOneShot(audioClip_ded);
-                Destroy(damagePlayer);
-                Destroy(HP_Slider[num].gameObject);
-                death_count--;
-            }
+        //HPが0以下になったらplayerを殺す
+        if (HP_Slider[num].value <= 0)
+        {
+            var dedobj = Instantiate(dedEffect, damagePlayer.transform.position + transform.forward, Quaternion.identity) as GameObject;
+            TrueDeath[num] = true;
+            DeathNumber[num] = damagePlayer.name;
+            audio.volume = 0.3f;
+            audio.PlayOneShot(audioClip_ded);
+            Destroy(damagePlayer);
+            Destroy(HP_Slider[num].gameObject);
+            death_count--;
+        }
         
     }
 
@@ -963,5 +913,22 @@ public class PlaySceneManager : MonoBehaviour
         SceneManagerController.LoadScene();
         yield return new WaitForSeconds(3.0f);
         SceneManagerController.ChangeScene();
+    }
+
+    public GameObject SetHPgage(int num)
+    {
+        switch(num)
+        {
+            case 1:
+                return P1.HPgage_obj;
+            case 2:
+                return P2.HPgage_obj;
+            case 3:
+                return P3.HPgage_obj;
+            case 4:
+                return P4.HPgage_obj;
+        }
+
+        return null;
     }
 }
