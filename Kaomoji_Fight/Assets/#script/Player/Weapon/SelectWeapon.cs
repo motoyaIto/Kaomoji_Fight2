@@ -12,7 +12,7 @@ public class SelectWeapon {
 
     static void Start () {
         WeaponList["ばくだん"] = null;
-        WeaponList["ないふ"] = null;
+        WeaponList["ないふ"] = Resources.Load<GameObject>("prefab/Weapon/knife");
         WeaponList["やり"] = Resources.Load<GameObject>("prefab/Weapon/Yari");
         WeaponList["はんまー"] = Resources.Load<GameObject>("prefab/Weapon/Hammer");
 
@@ -39,7 +39,7 @@ public class SelectWeapon {
         }
 
         //剣
-        if(name == "そーど" || name == "つるぎ" || name == "かたな" || name == "しみたー")
+        if(name == "そーど" || name == "つるぎ" || name == "かたな" || name == "しみたー" || name == "ぶれいど")
         {
             name = "けん";
         }
@@ -54,6 +54,12 @@ public class SelectWeapon {
         if(name == "つち" || name == "ぴこはん" || name == "きね" || name == "もろとーく")
         {
             name = "はんまー";
+        }
+
+        //ナイフ
+        if(name == "こがたな" || name == "だがー")
+        {
+            name = "ないふ";
         }
 
         if (WeaponList.ContainsKey(name) == true)

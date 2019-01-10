@@ -26,9 +26,52 @@ public class Hammer : Weapon
     {
         if (weapon_use == true)
         {
-            //左に振るか右に振るか
+            //ニュートラルの時
+            if (LeftRight == "")
+            {
+                if (RotationalDistanc < 90.0f && RotationalDistanc > -90.0f)
+                {
+                    //時間毎に加速する
+                    RotationalDistanc -= Time.deltaTime;
+                    RotationalDistanc *= Acceleration;
+
+                    foreach (Transform child in this.transform.parent)
+                    {
+                        if (child.name == "Top")
+                        {
+                            targetPos = child.position;
+
+                            break;
+                        }
+                    }
+
+                    this.transform.RotateAround(targetPos, Vector3.forward, RotationalDistanc);
+                }
+                else
+                {
+                    StartCoroutine(base.DelayMethod(0.5f, () =>
+                    {
+                        owner_cs.ControllerLock_Data = false;
+                        weapon_use = false;
+
+                        this.transform.GetComponent<BoxCollider2D>().enabled = false;
+
+                        //元の角度に戻す
+                        RotationalDistanc = 0.0f;
+                        this.transform.rotation = Quaternion.AngleAxis(RotationalDistanc, new Vector3(0, 0, 1));
+
+                        LeftRight = "";
+                    }));
+
+                    return;
+                }
+
+            }
+            
+            
             if (RotationalDistanc < 10.0f && RotationalDistanc > -10.0f)
             {
+                //左に振る
                 if (LeftRight == "Left")
                 {
                     //時間毎に加速する
@@ -45,7 +88,8 @@ public class Hammer : Weapon
                         }
                     }
                 }
-                else
+                //右に振る
+                if (LeftRight == "Right")
                 {
                     //時間毎に加速する
                     RotationalDistanc -= Time.deltaTime;
@@ -142,7 +186,8 @@ public class Hammer : Weapon
         {
             if (child.name == "Top")
             {
-                targetPos = child.position + new Vector3(0, 1.5f, 0);
+                targetPos = child.position;
+                this.transform.position = child.position + new Vector3(0, 1.5f, 0);
 
                 return;
             }
