@@ -12,7 +12,7 @@ public class Effect_Explosion : MonoBehaviour {
     {
         if(collision.transform.tag == "Player")
         {
-            PSManager.AllPlayer_Damage(collision.gameObject, owner_name, DamageValue, collision.GetComponent<Player>().PlayerNumber_data);
+            //PSManager.Player_Damage(collision.gameObject, owner_name, DamageValue, collision.GetComponent<Player>().PlayerNumber_data);
         }
     }
 
