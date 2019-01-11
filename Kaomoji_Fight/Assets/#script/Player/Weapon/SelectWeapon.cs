@@ -11,17 +11,19 @@ public class SelectWeapon {
 
 
     static void Start () {
-        WeaponList["ばくだん"] = null;
-        WeaponList["ないふ"] = Resources.Load<GameObject>("prefab/Weapon/knife");
-        WeaponList["やり"] = Resources.Load<GameObject>("prefab/Weapon/Yari");
-        WeaponList["はんまー"] = Resources.Load<GameObject>("prefab/Weapon/Hammer");
 
         WeaponList["かいふく"] = Resources.Load<GameObject>("prefab/Weapon/Portion");
+        WeaponList["けん"] = Resources.Load<GameObject>("prefab/Weapon/Sword");
 
-        WeaponList["まくら"] = null;
+        WeaponList["ないふ"] = Resources.Load<GameObject>("prefab/Weapon/knife");
         WeaponList["にんぎょう"] = null;
 
-        WeaponList["けん"] = null;
+        WeaponList["はんまー"] = Resources.Load<GameObject>("prefab/Weapon/Hammer");
+        WeaponList["ばくだん"] = null;
+
+        WeaponList["まくら"] = null;
+
+        WeaponList["やり"] = Resources.Load<GameObject>("prefab/Weapon/Yari");
     }
 
     public static GameObject CreateSelectWeapon(string name)
@@ -33,7 +35,7 @@ public class SelectWeapon {
         }
 
         //回復
-        if (name == "きゅあ" || name == "ひーる")
+        if (name == "きゅあ" || name == "ひーる" || name == "やくそう")
         {
             name = "かいふく";
         }
@@ -51,7 +53,7 @@ public class SelectWeapon {
         }
 
         //ハンマー
-        if(name == "つち" || name == "ぴこはん" || name == "きね" || name == "もろとーく")
+        if(name == "つち" || name == "ぴこはん" || name == "もろとーく")
         {
             name = "はんまー";
         }

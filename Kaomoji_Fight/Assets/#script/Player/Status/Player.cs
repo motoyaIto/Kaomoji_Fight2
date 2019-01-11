@@ -48,9 +48,12 @@ public class Player : RaycastController
 
     private GameObject MoziObj;
 
+    private GameObject CreateWeapon_Effect;//武器を作るときのエフェクト
+    private bool EffectCorutine = false;    //生成中(true)生成前||後(fasle)
     private GameObject weapon;          //武器
     private bool weapon_use = false;    //武器を持っている(true)いない(false)
     private Weapon weapon_cs;           //武器のスクリプト
+    private bool weaponMoveLock = false;
 
     private bool HaveMozi = false;      //文字を持っている(true)いない(false)
     private bool BackSpace = false;     //バックスペースを押している(true)いない(false)
@@ -82,6 +85,8 @@ public class Player : RaycastController
 
     private void Awake()
     {
+        CreateWeapon_Effect = Resources.Load<GameObject>("prefab/Effect/CreateWeapon_effect");
+
         audio = this.GetComponent<AudioSource>();
         audio2 = this.GetComponent<AudioSource>();
         pickUp_ac = (AudioClip)Resources.Load("Sound/SE/Move/pickUp");      //拾う音
@@ -279,31 +284,24 @@ public class Player : RaycastController
         //武器に変換
         if(XCI.GetButtonDown(XboxButton.Y, ControlerNamber))
         {
-            if (weapon_use == false)
+            if (weapon_use == false && EffectCorutine == false)
             {
                 weapon = SelectWeapon.CreateSelectWeapon(HPgageObj.transform.GetChild(3).GetComponent<TextMeshProUGUI>().text + HPgageObj.transform.GetChild(4).GetComponent<TextMeshProUGUI>().text);
+
 
                 //武器化出来たら
                 if (weapon != null)
                 {
-                    //武器を生成
-                    weapon = Object.Instantiate(weapon, this.transform.position, Quaternion.identity);
-
-                    weapon.transform.parent = this.transform;
-
-                    weapon_cs = weapon.transform.GetComponent<Weapon>();
-                    weapon_cs.Owner_csData = this.transform.GetComponent<Player>();
-
-                    weapon_use = true;
-
-                    //持っている文字を破棄
-                    if (HaveMozi == true)
+                    GameObject EffectObj = null;
+                    foreach (Transform Child in this.transform)
                     {
-                        this.ChangeMozi_Data = false;
-                        Destroy(MoziObj);
-                        HaveMozi = false;
+                        if(Child.name == "Top")
+                        {
+                            //エフェクトの発生
+                            EffectObj = Instantiate(CreateWeapon_Effect, Child.transform) as GameObject;
+                        }
                     }
-                    HPgageObj.transform.GetChild(4).GetComponent<GetMoziController>().AllDestroy();
+                    StartCoroutine(this.CreateWeapn(EffectObj));
                 }
             }
         }
@@ -313,6 +311,7 @@ public class Player : RaycastController
         {
             //座標の調整
             ItemPositionControll(weapon, input);
+            
 
             //武器を使う
             if (XCI.GetButtonDown(XboxButton.B, ControlerNamber))
@@ -333,6 +332,31 @@ public class Player : RaycastController
         this.RayController();
     }
 
+    private IEnumerator CreateWeapn(GameObject effect)
+    {
+        EffectCorutine = true;
+        yield return new WaitForSeconds(1.0f);
+        EffectCorutine = false;
+        Destroy(effect);
+        //武器を生成
+        weapon = Object.Instantiate(weapon, this.transform.position, Quaternion.identity);
+
+        weapon.transform.parent = this.transform;
+
+        weapon_cs = weapon.transform.GetComponent<Weapon>();
+        weapon_cs.Owner_csData = this.transform.GetComponent<Player>();
+
+        weapon_use = true;
+
+        //持っている文字を破棄
+        if (HaveMozi == true)
+        {
+            this.ChangeMozi_Data = false;
+            Destroy(MoziObj);
+            HaveMozi = false;
+        }
+        HPgageObj.transform.GetChild(4).GetComponent<GetMoziController>().AllDestroy();
+    }
 
     public struct CollisionInfo
     {
@@ -502,7 +526,7 @@ public class Player : RaycastController
 
     public void ItemPositionControll(GameObject Item, Vector2 vec2)
     {
-        if (HaveMozi  == true|| weapon_use == true)
+        if ((HaveMozi  == true|| weapon_use == true) && weaponMoveLock == false)
         {
             foreach (Transform child in this.transform)
             {
@@ -623,6 +647,14 @@ public class Player : RaycastController
         get
         {
             return this.name;
+        }
+    }
+
+    public bool WeaponMoveLockData
+    {
+        set
+        {
+            weaponMoveLock = false;
         }
     }
 }

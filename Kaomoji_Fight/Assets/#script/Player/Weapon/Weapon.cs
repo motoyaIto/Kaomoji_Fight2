@@ -75,6 +75,20 @@ abstract public class Weapon : MonoBehaviour {
         StartCoroutine(this.DelayMethod(EffectWait, () => { Destroy(EffectObj); }));
     }
 
+    protected void EffectOccurrence_World(Vector3 pos, Vector3 rot)
+    {
+        //エフェクトの発生
+        GameObject EffectObj = Instantiate(Effect) as GameObject;
+
+        //エフェクトの発生場所を指定の座標に
+        EffectObj.transform.position = pos;
+        //エフェクトの回転
+        EffectObj.transform.rotation = new Quaternion(EffectObj.transform.rotation.x + rot.x, EffectObj.transform.rotation.y + rot.y, EffectObj.transform.rotation.z + rot.z, EffectObj.transform.rotation.w);
+
+        //エフェクト発生を待って破棄する
+        StartCoroutine(this.DelayMethod(EffectWait, () => { Destroy(EffectObj); }));
+    }
+
     public Player Owner_csData
     {
         set
