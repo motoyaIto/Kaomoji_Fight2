@@ -29,6 +29,7 @@ public class Hammer : Weapon
             //ニュートラルの時
             if (LeftRight == "")
             {
+                DamageValue = 8;
                 if (RotationalDistanc < 90.0f && RotationalDistanc > -90.0f)
                 {
                     //時間毎に加速する
@@ -51,6 +52,7 @@ public class Hammer : Weapon
                 {
                     StartCoroutine(base.DelayMethod(0.5f, () =>
                     {
+                        DamageValue = 15;
                         owner_cs.ControllerLock_Data = false;
                         weapon_use = false;
 
