@@ -24,6 +24,15 @@ public class Yari : Weapon {
         {
             count += Time.deltaTime;
 
+            if (SRenderer.flipX == false)
+            {
+                owner_cs.Directtion_Data = 3.5f;
+            }
+            else
+            {
+                owner_cs.Directtion_Data = -3.5f;
+            }
+
             //硬直時間を過ぎたら
             if (count > StiffnessTime)
             {
@@ -31,6 +40,8 @@ public class Yari : Weapon {
                 weapon_use = false;
 
                 collider.enabled = false;
+
+                owner_cs.Directtion_Data = 0f;
             }
         }
     }
@@ -82,12 +93,13 @@ public class Yari : Weapon {
             if(SRenderer.flipX == false)
             {
                 base.EffectOccurrence(this.transform.position + new Vector3(1, 0, 0), Vector3.zero);
+                owner_cs.Directtion_Data = 5.5f;
             }
             else
             {
                 base.EffectOccurrence(this.transform.position + new Vector3(-1, 0, 0), new Vector3(-180, 0, 0));
+                owner_cs.Directtion_Data = -5.5f;
             }
-            
         }
     }
 }
