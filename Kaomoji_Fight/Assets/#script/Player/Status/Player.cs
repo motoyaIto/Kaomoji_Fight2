@@ -124,6 +124,9 @@ public class Player : RaycastController
 
     void Update()
     {
+        //キャラのy軸のdirection方向にscrollの力をかける
+        rig.velocity = new Vector2(scroll * direction, rig.velocity.y);
+
         // 落ちた時の対処
         if (this.transform.position.y <= -50)
         {
@@ -170,8 +173,7 @@ public class Player : RaycastController
             ItemPositionControll(MoziObj, input);
         }
 
-        //キャラのy軸のdirection方向にscrollの力をかける
-        rig.velocity = new Vector2(scroll * direction, rig.velocity.y);
+        
 
 
         if (XCI.GetButtonDown(XboxButton.A, ControlerNamber) && !jump)
