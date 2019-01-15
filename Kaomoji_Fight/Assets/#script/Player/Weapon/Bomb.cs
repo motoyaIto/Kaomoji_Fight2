@@ -66,7 +66,7 @@ public class Bomb : Weapon {
                 weapon_use = false;
             }
 
-            if(this.transform.position.y > 40 || this.transform.position.y < -40 || this.transform.position.x < -20 || this.transform.position.x > 40)
+            if(this.transform.position.y > 40 || this.transform.position.y < -40 || this.transform.position.x < -20 || this.transform.position.x > 80)
             {
                 Destroy(this.gameObject);
             }
