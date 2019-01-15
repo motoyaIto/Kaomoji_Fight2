@@ -19,7 +19,7 @@ abstract public class Weapon : MonoBehaviour {
 
     protected float count = 0;             //カウント
 
-    protected BoxCollider2D collider;
+    protected Collider2D collider;
 
     protected virtual void Start()
     {
