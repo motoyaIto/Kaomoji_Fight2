@@ -14,12 +14,17 @@ public class NetworkTest : MonoBehaviour {
     // Test-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
     private bool m_fg = false;
     GameObject obj;
+    GameObject test;
+
+    private string e_path = "prefab/Effect/Knife_InstantDeath_Effect";
     // -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
 
     void Start()
     {
         // Photonに接続（引数にバージョンを入れる）
         PhotonNetwork.ConnectUsingSettings(null);
+
+        test = GameObject.Find("NetworkTestObject");
     }
 
     void OnJoinedLobby()
@@ -83,7 +88,33 @@ public class NetworkTest : MonoBehaviour {
         {
             Move(obj);
         }
-        
+
+        // RPC（リモートプロシージャコール）を使ってみよう！！
+        if (Input.GetKey(KeyCode.Mouse3) && !m_fg)
+        {
+            m_fg = true;
+
+            // RPCのテストなり（対象を選択して実行命令を飛ばすことができる）
+            PhotonView pv = test.GetComponent<PhotonView>();
+            int myNum = 777;
+            if (pv.isMine)
+            {
+                // 実行するメソッド名, ターゲット,    引数
+                pv.RPC("DebugNum", PhotonTargets.All, myNum);
+                //pv.RPC("ShowEffect", PhotonTargets.All);
+                // viewIDをセット
+                pv.viewID = PhotonNetwork.AllocateViewID();
+                // PhotonView の ObservedComponents リストを初期化
+                pv.ObservedComponents = new List<Component>();
+                // 位置の同期を有効にする
+                //test.GetComponent<PhotonTransformView>().m_PositionModel.SynchronizeEnabled = true;
+                // 回転の同期を有効にする
+                //test.GetComponent<PhotonTransformView>().m_RotationModel.SynchronizeEnabled = true;
+
+                // リストに追加して同期対象に加える
+                //pv.ObservedComponents.Add(obj.GetComponent<PhotonTransformView>());
+            }        
+        }
     }
 
     // 上下左右に動かすぜぃ( ･´ｰ･｀)ドヤァ
@@ -108,4 +139,20 @@ public class NetworkTest : MonoBehaviour {
             rig.AddForce(new Vector3(.02f, 0, 0) * 5f, ForceMode.Impulse);
         }
     }
+
+    [PunRPC]
+    private void DebugNum(int num)
+    {
+        Debug.Log(num);
+    }
+
+    [PunRPC]
+    private void ShowEffect()
+    {
+        // エフェクトを生成.
+        // 適当な時間が経過したら消すように設定.
+        GameObject effect = GameObject.Instantiate(Resources.Load(e_path), transform.position, Quaternion.identity) as GameObject;
+        GameObject.Destroy(effect, 3.0f);
+    }
+
 }
