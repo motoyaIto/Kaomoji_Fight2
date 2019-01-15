@@ -21,16 +21,21 @@ GameObject:
   - component: {fileID: 4350753473558260}
   - component: {fileID: 198518807968322140}
   - component: {fileID: 82655002853454992}
+<<<<<<< HEAD
   - component: {fileID: 58685608658500202}
   - component: {fileID: 114774301614588668}
   - component: {fileID: 114977606219008472}
+=======
+  - component: {fileID: 58635874551234246}
+  - component: {fileID: 114543829262873194}
+>>>>>>> Sub
   m_Layer: 0
   m_Name: Explosion
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!1 &1420317494353408
 GameObject:
   m_ObjectHideFlags: 0
@@ -132,7 +137,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1141519528554596}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 2, z: 0}
+  m_LocalPosition: {x: 0, y: 0.36, z: 0}
   m_LocalScale: {x: 0.8, y: 0.8, z: 0.8}
   m_Children:
   - {fileID: 4246613433463172}
@@ -168,21 +173,21 @@ Transform:
   m_Father: {fileID: 4350753473558260}
   m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!58 &58685608658500202
+--- !u!58 &58635874551234246
 CircleCollider2D:
   m_ObjectHideFlags: 1
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1141519528554596}
-  m_Enabled: 0
+  m_Enabled: 1
   m_Density: 1
   m_Material: {fileID: 0}
-  m_IsTrigger: 0
+  m_IsTrigger: 1
   m_UsedByEffector: 0
   m_UsedByComposite: 0
   m_Offset: {x: 0, y: 0}
   serializedVersion: 2
-  m_Radius: 0.5
+  m_Radius: 0.9
 --- !u!82 &82655002853454992
 AudioSource:
   m_ObjectHideFlags: 1
@@ -202,7 +207,7 @@ AudioSource:
   SpatializePostEffects: 0
   Priority: 128
   DopplerLevel: 1
-  MinDistance: 1
+  MinDistance: 0.41969585
   MaxDistance: 500
   Pan2D: 0
   rolloffMode: 0
@@ -263,15 +268,15 @@ AudioSource:
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 0
---- !u!114 &114774301614588668
+--- !u!114 &114543829262873194
 MonoBehaviour:
   m_ObjectHideFlags: 1
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1141519528554596}
-  m_Enabled: 0
+  m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 8e8ec7e7b829e7c4a8b2078928cfc357, type: 3}
+  m_Script: {fileID: 11500000, guid: 70f19c6083faa0c4aa1f536d1e0e7816, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
 --- !u!114 &114977606219008472
@@ -360,7 +365,7 @@ ParticleSystem:
   moveWithTransform: 0
   moveWithCustomTransform: {fileID: 0}
   scalingMode: 0
-  randomSeed: -1944303078
+  randomSeed: 218226826
   InitialModule:
     serializedVersion: 3
     enabled: 1
@@ -10242,7 +10247,7 @@ ParticleSystem:
   moveWithTransform: 0
   moveWithCustomTransform: {fileID: 0}
   scalingMode: 0
-  randomSeed: 664113560
+  randomSeed: 778999060
   InitialModule:
     serializedVersion: 3
     enabled: 1
@@ -13547,7 +13552,7 @@ ParticleSystem:
   moveWithTransform: 0
   moveWithCustomTransform: {fileID: 0}
   scalingMode: 0
-  randomSeed: -1524844254
+  randomSeed: -144946724
   InitialModule:
     serializedVersion: 3
     enabled: 1
