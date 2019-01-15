@@ -7,7 +7,7 @@ using XboxCtrlrInput;
 public class Bomb : Weapon {
 
     private Vector2 speed = Vector2.zero; //飛ばしてる弾の速度
-    private float thrust = 20.8f;          // 爆弾の推進力
+    private float thrust = 30.8f;          // 爆弾の推進力
     protected override void Start()
     {
         base.Start();
