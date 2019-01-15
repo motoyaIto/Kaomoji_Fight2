@@ -1,6 +1,8 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
+using TMPro;
 
 public class BlockController : MonoBehaviour {
 
@@ -8,32 +10,42 @@ public class BlockController : MonoBehaviour {
     private float ResetTime = 10.0f;
 
     bool setPass;
-    BoxCollider2D colliderOfPass;
 
     private bool MoziBlock = false;//文字(true)ではない(false)
 
-    // Use this for initialization
+    private bool Stage = true;
+    private TextMeshPro TMPro;  //テキストメッシュプロ
+    private float count;        //時間を数える
 
-    void Start () {
-        colliderOfPass = GetComponent<BoxCollider2D>();
-    }
-	
-	// Update is called once per frame
-	void Update () {
-    }
-
-    private void OnDisable()
+    private void Start()
     {
-        //ResetTime後、床を復帰する
-        Invoke("ReStageBlock", ResetTime);
+        TMPro = this.transform.GetChild(0).GetComponent<TextMeshPro>();
     }
 
+    private void Update()
+    {
+        if(Stage == false)
+        {
+            count += Time.deltaTime;
+
+            TMPro.color = new Color(TMPro.color.r, TMPro.color.g, TMPro.color.b, (50 * (count / ResetTime)) * 0.01f);
+            Debug.Log(200 * (count / ResetTime));
+
+            if(count > ResetTime)
+            {
+                TMPro.color = new Color(TMPro.color.r, TMPro.color.g, TMPro.color.b, (50 * (count / ResetTime)) * 1);
+
+                Stage = true;
+                count = 0.0f;
+            }
+        }
+    }
     /// <summary>
     /// 床の復帰処理
     /// </summary>
     public void ReStageBlock()
     {
-        this.gameObject.SetActive(true);
+        this.transform.GetComponent<BoxCollider2D>().enabled = true;
     }
 
     /// <summary>
@@ -41,25 +53,14 @@ public class BlockController : MonoBehaviour {
     /// </summary>
     public void ChangeMozi()
     {
-        this.gameObject.SetActive(false);
-    }
+        this.transform.GetComponent<BoxCollider2D>().enabled = false;
 
+        Stage = false;
 
-    //プレイヤーのIsTriggerがOnの側のコリジョンが床のIsTriggerがOnの側のコリジョンと接触している時
-    void OnTriggerStay2D(Collider2D col)
-    {
-        if (col.gameObject.tag == "Player")
-        {
-            setPass = true;
-        }
-    }
+        TMPro.color = new Color(TMPro.color.r, TMPro.color.g, TMPro.color.b, 0.0f);
 
-    void OnTriggerExit2D(Collider2D col)
-    {
-        if (col.gameObject.tag == "Player")
-        {
-            setPass = false;
-        }
+        //ResetTime後、床を復帰する
+        Invoke("ReStageBlock", ResetTime);
     }
 
     /// <summary>
