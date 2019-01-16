@@ -29,7 +29,6 @@ public class BlockController : MonoBehaviour {
             count += Time.deltaTime;
 
             TMPro.color = new Color(TMPro.color.r, TMPro.color.g, TMPro.color.b, (50 * (count / ResetTime)) * 0.01f);
-            Debug.Log(200 * (count / ResetTime));
 
             if(count > ResetTime)
             {
