@@ -15,6 +15,8 @@ public class SelectWeapon {
         WeaponList["かいふく"] = Resources.Load<GameObject>("prefab/Weapon/Portion");
         WeaponList["けん"] = Resources.Load<GameObject>("prefab/Weapon/Sword");
 
+        WeaponList["じゅう"] = Resources.Load<GameObject>("prefab/Weapon/Gan");
+
         WeaponList["ないふ"] = Resources.Load<GameObject>("prefab/Weapon/knife");
         WeaponList["にんぎょう"] = null;
 
@@ -35,7 +37,7 @@ public class SelectWeapon {
         }
 
         //回復
-        if (name == "きゅあ" || name == "ひーる" || name == "やくそう")
+        if (name == "きゅあ" || name == "ひーる" || name == "やくそう" || name == "ぽーしょん" || name == "けある")
         {
             name = "かいふく";
         }
@@ -44,6 +46,12 @@ public class SelectWeapon {
         if(name == "そーど" || name == "つるぎ" || name == "かたな" || name == "しみたー" || name == "ぶれいど")
         {
             name = "けん";
+        }
+
+        //銃
+        if(name == "がん" || name == "ぴすとる" || name == "ちゃか" || name == "こると" || name == "てっぽう")
+        {
+            name = "じゅう";
         }
 
         //ナイフ
@@ -59,7 +67,7 @@ public class SelectWeapon {
         }
 
         //爆弾
-        if(name == "ぼむ")
+        if(name == "ぼむ" || name == "なぱーむ" || name == "ばくやく" || name == "グレネード")
         {
             name = "ばくだん";
         }

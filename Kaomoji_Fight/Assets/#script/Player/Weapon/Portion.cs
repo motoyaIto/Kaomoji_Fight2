@@ -11,7 +11,7 @@ public class Portion : Weapon
 
         Effect = Resources.Load<GameObject>("prefab/Effect/Recovery");
         EffectWait = 0.5f;
-        DamageValue = -20;
+        DamageValue = -80;
     }
 
     public override void Attack()
