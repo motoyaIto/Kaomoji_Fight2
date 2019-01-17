@@ -322,7 +322,7 @@ public class Player : RaycastController
             }
 
             // 武器を捨てる
-            if (XCI.GetButton(XboxButton.X, ControlerNamber))
+            else if (XCI.GetButtonDown(XboxButton.X, ControlerNamber))
             {
                 weapon_use = false;
                 Destroy(weapon);
