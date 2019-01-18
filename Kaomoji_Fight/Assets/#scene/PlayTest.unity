@@ -393,12 +393,12 @@ Prefab:
     - target: {fileID: 114896293155825972, guid: c9529d12034635d4e9fedc91c9d6163e,
         type: 2}
       propertyPath: Players.Array.data[1].m_nameColor.r
-      value: 0.029411793
+      value: 0.051470578
       objectReference: {fileID: 0}
     - target: {fileID: 114896293155825972, guid: c9529d12034635d4e9fedc91c9d6163e,
         type: 2}
       propertyPath: Players.Array.data[1].m_nameColor.g
-      value: 0.9571799
+      value: 0.37229678
       objectReference: {fileID: 0}
     - target: {fileID: 114896293155825972, guid: c9529d12034635d4e9fedc91c9d6163e,
         type: 2}
@@ -414,7 +414,7 @@ Prefab:
         type: 2}
       propertyPath: Players.Array.data[1].m_playerFace
       value: 
-      objectReference: {fileID: 21300000, guid: 4559c69e20bb0ab4a999437e4662080e,
+      objectReference: {fileID: 21300000, guid: 4fd5b78ff80a2584683f7c02e385ecae,
         type: 3}
     - target: {fileID: 114896293155825972, guid: c9529d12034635d4e9fedc91c9d6163e,
         type: 2}
@@ -444,7 +444,7 @@ Prefab:
     - target: {fileID: 114896293155825972, guid: c9529d12034635d4e9fedc91c9d6163e,
         type: 2}
       propertyPath: Players.Array.data[2].m_nameColor.g
-      value: 0.5896552
+      value: 0.61764705
       objectReference: {fileID: 0}
     - target: {fileID: 114896293155825972, guid: c9529d12034635d4e9fedc91c9d6163e,
         type: 2}
@@ -454,7 +454,7 @@ Prefab:
     - target: {fileID: 114896293155825972, guid: c9529d12034635d4e9fedc91c9d6163e,
         type: 2}
       propertyPath: Players.Array.data[2].m_nameColor.r
-      value: 0.26881337
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 114896293155825972, guid: c9529d12034635d4e9fedc91c9d6163e,
         type: 2}
@@ -489,29 +489,29 @@ Prefab:
     - target: {fileID: 114896293155825972, guid: c9529d12034635d4e9fedc91c9d6163e,
         type: 2}
       propertyPath: Players.Array.data[3].m_nameColor.r
-      value: 0.69310343
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 114896293155825972, guid: c9529d12034635d4e9fedc91c9d6163e,
         type: 2}
       propertyPath: Players.Array.data[3].m_nameColor.b
-      value: 0.5363907
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 114896293155825972, guid: c9529d12034635d4e9fedc91c9d6163e,
         type: 2}
       propertyPath: Players.Array.data[3].m_nameColor.g
-      value: 0.066252515
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 114896293155825972, guid: c9529d12034635d4e9fedc91c9d6163e,
         type: 2}
       propertyPath: Players.Array.data[2].m_playerFace
       value: 
-      objectReference: {fileID: 21300000, guid: a6fbb5d0db9d2ab45befa05e71a7b9ca,
+      objectReference: {fileID: 21300000, guid: 1ad6ed2cae63dc44b986424a19991098,
         type: 3}
     - target: {fileID: 114896293155825972, guid: c9529d12034635d4e9fedc91c9d6163e,
         type: 2}
       propertyPath: Players.Array.data[3].m_playerFace
       value: 
-      objectReference: {fileID: 21300000, guid: caf8b7f28c3cb764d88e3daacd6d6440,
+      objectReference: {fileID: 21300000, guid: bc55280b8c38592438b534081c1d06be,
         type: 3}
     - target: {fileID: 114896293155825972, guid: c9529d12034635d4e9fedc91c9d6163e,
         type: 2}
@@ -541,7 +541,7 @@ Prefab:
     - target: {fileID: 114896293155825972, guid: c9529d12034635d4e9fedc91c9d6163e,
         type: 2}
       propertyPath: Stage_name
-      value: stage3
+      value: Stage6
       objectReference: {fileID: 0}
     - target: {fileID: 114896293155825972, guid: c9529d12034635d4e9fedc91c9d6163e,
         type: 2}

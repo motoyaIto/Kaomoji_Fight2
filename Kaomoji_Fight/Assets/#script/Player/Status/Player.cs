@@ -28,6 +28,8 @@ public class Player : RaycastController
     [SerializeField, Header("コントローラー番号")]
     private XboxController ControlerNamber = XboxController.First;//何番目のコントローラーを適用するか
 
+    private Collider2D oldRayStage;     //rayが当たってたオブジェクト
+
     private Vector3 velocity;
 
     private StatesAbnormality ButState;     //バットステータス
@@ -379,25 +381,51 @@ public class Player : RaycastController
     /// </summary>
     private void RayController()
     {
-        // 文字をゲットするかも
-        if (XCI.GetButtonDown(XboxButton.B, ControlerNamber) && weapon_use == false)
+        //rayの開始地点
+        Vector3 ray_initial = new Vector3(this.transform.position.x, this.transform.position.y - this.transform.localScale.y, this.transform.position.x);
+
+        //rayを生成
+        Ray2D ray = new Ray2D(ray_initial, Vector2.down);
+        //rayを可視化する
+        Debug.DrawRay(ray.origin, ray.direction * 0.5f, Color.green, 0.01f);
+        //rayに当たったものを取得する
+        RaycastHit2D hitFoot = Physics2D.Raycast(ray.origin, Vector2.down, ray.direction.y * 0.5f);
+
+        //ステージから離れたときに
+        if (hitFoot.collider != null && hitFoot.collider.tag != "Stage" && oldRayStage != null)
         {
-            //rayの開始地点
-            Vector3 ray_initial = new Vector3(this.transform.position.x, this.transform.position.y - this.transform.localScale.y, this.transform.position.x);
+            //取得できる文字の色を元に戻す
+            oldRayStage.transform.GetChild(0).GetComponent<TextMeshPro>().color = new Color(0, 0, 0);
+        }
 
-            //rayを生成
-            Ray2D ray = new Ray2D(ray_initial, Vector2.down);
-            //rayを可視化する
-            Debug.DrawRay(ray.origin, ray.direction * 0.5f, Color.green, 1.0f);
-
-            //rayに当たったものを取得する
-            RaycastHit2D hitFoot = Physics2D.Raycast(ray.origin, Vector2.down, ray.direction.y * 0.5f);
-
-            //ステージから文字を取得する
-            if (hitFoot.transform.tag == "Stage")
+        //ゲットできるオブジェクトだったら
+        if (hitFoot.collider != null && hitFoot.collider.tag == "Stage")
+        {
+            //前のオブジェクトが登録されていなかったら
+            if(oldRayStage == null)
             {
-                this.GetMozi(hitFoot, this.transform.position);
+                oldRayStage = hitFoot.collider;
             }
+            //今の足元にある床と前足元にあった床が違う時
+            if (hitFoot.collider.transform.position != oldRayStage.transform.position)
+            {
+                //取得できる文字の色を元に戻す
+                oldRayStage.transform.GetChild(0).GetComponent<TextMeshPro>().color = new Color(0, 0, 0);
+
+                oldRayStage = hitFoot.collider;
+            }
+            
+            //取得できるオブジェクトを自分と同じ色に変更
+            if (hitFoot.collider.transform.GetComponent<BlockController>().Mozi == true)
+            {
+                hitFoot.collider.transform.GetChild(0).GetComponent<TextMeshPro>().color = this.transform.GetComponent<Renderer>().material.GetColor("_EmissionColor");
+            }
+        }
+
+        // 文字をゲットするかも
+        if (XCI.GetButtonDown(XboxButton.B, ControlerNamber) && weapon_use == false && hitFoot.transform.tag == "Stage")
+        {
+            this.GetMozi(hitFoot, this.transform.position);   
         }
     }
 
@@ -570,6 +598,16 @@ public class Player : RaycastController
         audiosource.volume = volume;
         audiosource.PlayOneShot(clip);
         //audiosource.volume = 1.0f;
+    }
+
+    private void OnDestroy()
+    {
+        //死ぬ直前にステージに接していたら
+        if (oldRayStage != null)
+        {
+            //取得できる文字の色を元に戻す
+            oldRayStage.transform.GetChild(0).GetComponent<TextMeshPro>().color = new Color(0, 0, 0);
+        }
     }
 
     public int PlayerNumber_data
