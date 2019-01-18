@@ -15,6 +15,9 @@ public class SelectWeapon {
         WeaponList["かいふく"] = Resources.Load<GameObject>("prefab/Weapon/Portion");
         WeaponList["けん"] = Resources.Load<GameObject>("prefab/Weapon/Sword");
 
+        WeaponList["じゅう"] = Resources.Load<GameObject>("prefab/Weapon/Gan");
+        WeaponList["すないぱー"] = Resources.Load<GameObject>("prefab/Weapon/Doragunohu");
+
         WeaponList["ないふ"] = Resources.Load<GameObject>("prefab/Weapon/knife");
         WeaponList["にんぎょう"] = null;
 
@@ -35,37 +38,48 @@ public class SelectWeapon {
         }
 
         //回復
-        if (name == "きゅあ" || name == "ひーる" || name == "やくそう")
+        if (name == "きゅあ" || name == "ひーる" || name == "やくそう" || name == "ぽーしょん" || name == "けある" || name == "あすな")
         {
             name = "かいふく";
         }
 
         //剣
-        if(name == "そーど" || name == "つるぎ" || name == "かたな" || name == "しみたー" || name == "ぶれいど")
+        if(name == "そーど" || name == "つるぎ" || name == "かたな" || name == "しみたー" || name == "ぶれいど" || name == "きりと" || name == "りんく" || name == "えくしあ" || name == "さやか")
         {
             name = "けん";
         }
 
+        //銃
+        if(name == "がん" || name == "ぴすとる" || name == "ちゃか" || name == "こると" || name == "てっぽう" || name == "まみ")
+        {
+            name = "じゅう";
+        }
+        //スナイパー
+        if(name == "そげき" || name == "どらぐのふ" || name == "あさると" || name == "えんきょり" || name == "けるでぃむ" || name == "でゅなめす" || name == "すぽったー" || name == "ろっくおん" || name == "すないぷ" || name == "へかーと" || name == "しのん")
+        {
+            name = "すないぱー";
+        }
+
         //ナイフ
-        if (name == "こがたな" || name == "だがー")
+        if (name == "こがたな" || name == "だがー" || name == "しりか")
         {
             name = "ないふ";
         }
 
         //ハンマー
-        if (name == "つち" || name == "ぴこはん" || name == "もろとーく")
+        if (name == "つち" || name == "ぴこはん" || name == "もろとーく" || name == "りず")
         {
             name = "はんまー";
         }
 
         //爆弾
-        if(name == "ぼむ")
+        if(name == "ぼむ" || name == "なぱーむ" || name == "ばくやく" || name == "ぐれねーど" || name == "ほむら")
         {
             name = "ばくだん";
         }
 
         //槍
-        if (name == "すぴあ" || name == "らんす")
+        if (name == "すぴあ" || name == "らんす" || name == "さち" || name == "きょうこ　　　")
         {
             name = "やり";
         }

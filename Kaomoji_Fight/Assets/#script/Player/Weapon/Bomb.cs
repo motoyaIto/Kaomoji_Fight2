@@ -12,6 +12,7 @@ public class Bomb : Weapon {
     {
         base.Start();
 
+        owner_cs = this.transform.parent.GetComponent<Player>();
         DamageValue = 20;
 
         collider = this.transform.GetComponent<CircleCollider2D>();
@@ -66,7 +67,7 @@ public class Bomb : Weapon {
                 weapon_use = false;
             }
 
-            if(this.transform.position.y > 40 || this.transform.position.y < -40 || this.transform.position.x < -20 || this.transform.position.x > 80)
+            if(this.transform.position.y > 80 || this.transform.position.y < -40 || this.transform.position.x < -20 || this.transform.position.x > 80)
             {
                 Destroy(this.gameObject);
             }
@@ -91,7 +92,7 @@ public class Bomb : Weapon {
 
     private void OnTriggerEnter2D(Collider2D collision)
     {
-        if (collision.tag == "Player" && collision.name != owner_cs.PlayerName_Data)
+        if (collision.tag == "Player" && collision.name != ownerName)
         {
             this.transform.GetComponent<Rigidbody2D>().velocity = Vector3.zero;
             this.gameObject.SetActive(false);

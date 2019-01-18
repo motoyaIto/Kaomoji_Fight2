@@ -380,6 +380,10 @@ public class PlaySceneManager : MonoBehaviour
 
         //ダメージを与える
         HP_Slider[num].value -= weapon.GetComponent<Weapon>().DamageValue_Data;
+        if(HP_Slider[num].value > 100)
+        {
+            HP_Slider[num].value = 100;
+        }
 
         //HPが0以下になったらplayerを殺す
         if (HP_Slider[num].value <= 0)

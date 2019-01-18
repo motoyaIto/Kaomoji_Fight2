@@ -36,18 +36,19 @@ public class Yari : Weapon {
             //硬直時間を過ぎたら
             if (count > StiffnessTime)
             {
-                owner_cs.ControllerLock_Data = false;
-                weapon_use = false;
-
-                collider.enabled = false;
-
+                StartCoroutine(base.DelayMethod(0.4f,()=> { owner_cs.ControllerLock_Data = false; weapon_use = false; collider.enabled = false;  }));
                 owner_cs.Directtion_Data = 0f;
+
+
+
+
             }
         }
     }
 
     public override void Attack()
     {
+        if (weapon_use == true) return;
         weapon_use = true;
         owner_cs.ControllerLock_Data = true;
         owner_cs.Directtion_Data = 0.0f;

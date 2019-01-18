@@ -6,6 +6,8 @@ using System;
 abstract public class Weapon : MonoBehaviour {
 
     protected Player owner_cs;              //オーナースクリプト
+    protected string ownerName;             //オーナーの名前
+
     protected PlaySceneManager PSManager_cs;//プレイシーンマネージャースクリプト
 
     protected SpriteRenderer SRenderer;      //武器画像を描画するレンダー
@@ -94,6 +96,8 @@ abstract public class Weapon : MonoBehaviour {
         set
         {
             owner_cs = value;
+
+            ownerName = owner_cs.PlayerName_Data;
         }
     }
 
@@ -103,13 +107,17 @@ abstract public class Weapon : MonoBehaviour {
         {
             return DamageValue;
         }
+        set
+        {
+            DamageValue = value;
+        }
     }
 
     public string OwnerName_Data
     {
         get
         {
-            return owner_cs.PlayerName_Data;
+            return ownerName;
         }
     }
 }
