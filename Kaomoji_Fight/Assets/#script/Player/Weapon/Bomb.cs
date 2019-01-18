@@ -12,6 +12,7 @@ public class Bomb : Weapon {
     {
         base.Start();
 
+        owner_cs = this.transform.parent.GetComponent<Player>();
         DamageValue = 20;
 
         collider = this.transform.GetComponent<CircleCollider2D>();
