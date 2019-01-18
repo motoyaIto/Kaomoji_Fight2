@@ -6,6 +6,7 @@ public class NetworkTest : MonoBehaviour {
 
     // 生成するPrefabの場所
     private string m_resourcePath = "prefab/Test/Cube";
+    private string m_stagePath = "prefab/Stage/StageBlock";
     [SerializeField]
     private float m_randomCircle = 4.0f;
 
@@ -13,10 +14,8 @@ public class NetworkTest : MonoBehaviour {
 
     // Test-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
     private bool m_fg = false;
-    GameObject obj;
+    GameObject stage;
     GameObject test;
-
-    private string e_path = "prefab/Effect/Knife_InstantDeath_Effect";
     // -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
 
     void Start()
@@ -55,10 +54,29 @@ public class NetworkTest : MonoBehaviour {
     }
 
 
-    // オブジェクトの生成
+    // OnJoinedLobbyが呼ばれると同時に呼ばれる
+    private void OnReceivedRoomListUpdate()
+    {
+
+    }
+
+    private void OnPhotonPlayerPropertiesChanged(object[] playerAndUpdatedProps)
+    {
+
+    }
+
+
+    // オブジェクトの生成（プレイヤーごとに所持する）
     public void SpawnObject()
     {
         PhotonNetwork.Instantiate(m_resourcePath, GetRandomPosition(), Quaternion.identity, 0);
+    }
+
+    // ルームに引っ付けるオブジェクトの生成（所持者がルームになるので誰が抜けても消えない）
+    public void SpawnSceneObject()
+    {
+        //PhotonNetwork.InstantiateSceneObject(m_stagePath, Vector3.zero, Quaternion.identity, 0, null);
+        PhotonNetwork.InstantiateSceneObject(m_stagePath, Vector3.zero, Quaternion.identity, 0, null);
     }
 
     // Vector3でランダムにポジションを取得
@@ -70,89 +88,24 @@ public class NetworkTest : MonoBehaviour {
 
     private void Update()
     {
-        // テストオブジェクトの生成
+        // テストオブジェクトの生成(各プレイヤー)
         if (Input.GetKey(KeyCode.Space) && !m_fg)
         {
             SpawnObject();
             m_fg = true;
-
-            obj = GameObject.Find("Cube(Clone)");            
         }
+
+        // オブジェクトの生成(ルーム)
+        if (Input.GetKey(KeyCode.V) && !m_fg)
+        {
+            SpawnSceneObject();
+            m_fg = true;
+        }
+
         // もう一個生成したいときに使う
         if (Input.GetKey(KeyCode.M))
         {
             m_fg = false;
         }
-        // 生成したオブジェクトを動かす
-        if (m_fg)
-        {
-            Move(obj);
-        }
-
-        // RPC（リモートプロシージャコール）を使ってみよう！！
-        if (Input.GetKey(KeyCode.Mouse3) && !m_fg)
-        {
-            m_fg = true;
-
-            // RPCのテストなり（対象を選択して実行命令を飛ばすことができる）
-            PhotonView pv = test.GetComponent<PhotonView>();
-            int myNum = 777;
-            if (pv.isMine)
-            {
-                // 実行するメソッド名, ターゲット,    引数
-                pv.RPC("DebugNum", PhotonTargets.All, myNum);
-                //pv.RPC("ShowEffect", PhotonTargets.All);
-                // viewIDをセット
-                pv.viewID = PhotonNetwork.AllocateViewID();
-                // PhotonView の ObservedComponents リストを初期化
-                pv.ObservedComponents = new List<Component>();
-                // 位置の同期を有効にする
-                //test.GetComponent<PhotonTransformView>().m_PositionModel.SynchronizeEnabled = true;
-                // 回転の同期を有効にする
-                //test.GetComponent<PhotonTransformView>().m_RotationModel.SynchronizeEnabled = true;
-
-                // リストに追加して同期対象に加える
-                //pv.ObservedComponents.Add(obj.GetComponent<PhotonTransformView>());
-            }        
-        }
     }
-
-    // 上下左右に動かすぜぃ( ･´ｰ･｀)ドヤァ
-    private void Move(GameObject obj)
-    {
-        Rigidbody rig = obj.GetComponent<Rigidbody>();
-
-        if (Input.GetKey(KeyCode.UpArrow))
-        {
-            rig.AddForce(new Vector3(0, .02f, 0) * 5f, ForceMode.Impulse);
-        }
-        if (Input.GetKey(KeyCode.DownArrow))
-        {
-            rig.AddForce(new Vector3(0, -.02f, 0) * 5f, ForceMode.Impulse);
-        }
-        if (Input.GetKey(KeyCode.LeftArrow))
-        {
-            rig.AddForce(new Vector3(-.02f, 0, 0) * 5f, ForceMode.Impulse);
-        }
-        if (Input.GetKey(KeyCode.RightArrow))
-        {
-            rig.AddForce(new Vector3(.02f, 0, 0) * 5f, ForceMode.Impulse);
-        }
-    }
-
-    [PunRPC]
-    private void DebugNum(int num)
-    {
-        Debug.Log(num);
-    }
-
-    [PunRPC]
-    private void ShowEffect()
-    {
-        // エフェクトを生成.
-        // 適当な時間が経過したら消すように設定.
-        GameObject effect = GameObject.Instantiate(Resources.Load(e_path), transform.position, Quaternion.identity) as GameObject;
-        GameObject.Destroy(effect, 3.0f);
-    }
-
 }
