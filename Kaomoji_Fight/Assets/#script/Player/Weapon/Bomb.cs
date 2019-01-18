@@ -7,7 +7,7 @@ using XboxCtrlrInput;
 public class Bomb : Weapon {
 
     private Vector2 speed = Vector2.zero; //飛ばしてる弾の速度
-    private float thrust = 20.8f;          // 爆弾の推進力
+    private float thrust = 30.8f;          // 爆弾の推進力
     protected override void Start()
     {
         base.Start();
@@ -66,7 +66,7 @@ public class Bomb : Weapon {
                 weapon_use = false;
             }
 
-            if(this.transform.position.y > 40 || this.transform.position.y < -40 || this.transform.position.x < -20 || this.transform.position.x > 40)
+            if(this.transform.position.y > 40 || this.transform.position.y < -40 || this.transform.position.x < -20 || this.transform.position.x > 80)
             {
                 Destroy(this.gameObject);
             }

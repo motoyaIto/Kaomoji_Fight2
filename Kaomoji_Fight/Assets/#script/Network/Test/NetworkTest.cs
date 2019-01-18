@@ -6,6 +6,7 @@ public class NetworkTest : MonoBehaviour {
 
     // 生成するPrefabの場所
     private string m_resourcePath = "prefab/Test/Cube";
+    private string m_stagePath = "prefab/Stage/StageBlock";
     [SerializeField]
     private float m_randomCircle = 4.0f;
 
@@ -13,13 +14,16 @@ public class NetworkTest : MonoBehaviour {
 
     // Test-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
     private bool m_fg = false;
-    GameObject obj;
+    GameObject stage;
+    GameObject test;
     // -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
 
     void Start()
     {
         // Photonに接続（引数にバージョンを入れる）
         PhotonNetwork.ConnectUsingSettings(null);
+
+        test = GameObject.Find("NetworkTestObject");
     }
 
     void OnJoinedLobby()
@@ -50,10 +54,29 @@ public class NetworkTest : MonoBehaviour {
     }
 
 
-    // オブジェクトの生成
+    // OnJoinedLobbyが呼ばれると同時に呼ばれる
+    private void OnReceivedRoomListUpdate()
+    {
+
+    }
+
+    private void OnPhotonPlayerPropertiesChanged(object[] playerAndUpdatedProps)
+    {
+
+    }
+
+
+    // オブジェクトの生成（プレイヤーごとに所持する）
     public void SpawnObject()
     {
         PhotonNetwork.Instantiate(m_resourcePath, GetRandomPosition(), Quaternion.identity, 0);
+    }
+
+    // ルームに引っ付けるオブジェクトの生成（所持者がルームになるので誰が抜けても消えない）
+    public void SpawnSceneObject()
+    {
+        //PhotonNetwork.InstantiateSceneObject(m_stagePath, Vector3.zero, Quaternion.identity, 0, null);
+        PhotonNetwork.InstantiateSceneObject(m_stagePath, Vector3.zero, Quaternion.identity, 0, null);
     }
 
     // Vector3でランダムにポジションを取得
@@ -65,47 +88,24 @@ public class NetworkTest : MonoBehaviour {
 
     private void Update()
     {
-        // テストオブジェクトの生成
+        // テストオブジェクトの生成(各プレイヤー)
         if (Input.GetKey(KeyCode.Space) && !m_fg)
         {
             SpawnObject();
             m_fg = true;
-
-            obj = GameObject.Find("Cube(Clone)");            
         }
+
+        // オブジェクトの生成(ルーム)
+        if (Input.GetKey(KeyCode.V) && !m_fg)
+        {
+            SpawnSceneObject();
+            m_fg = true;
+        }
+
         // もう一個生成したいときに使う
         if (Input.GetKey(KeyCode.M))
         {
             m_fg = false;
-        }
-        // 生成したオブジェクトを動かす
-        if (m_fg)
-        {
-            Move(obj);
-        }
-        
-    }
-
-    // 上下左右に動かすぜぃ( ･´ｰ･｀)ドヤァ
-    private void Move(GameObject obj)
-    {
-        Rigidbody rig = obj.GetComponent<Rigidbody>();
-
-        if (Input.GetKey(KeyCode.UpArrow))
-        {
-            rig.AddForce(new Vector3(0, .02f, 0) * 5f, ForceMode.Impulse);
-        }
-        if (Input.GetKey(KeyCode.DownArrow))
-        {
-            rig.AddForce(new Vector3(0, -.02f, 0) * 5f, ForceMode.Impulse);
-        }
-        if (Input.GetKey(KeyCode.LeftArrow))
-        {
-            rig.AddForce(new Vector3(-.02f, 0, 0) * 5f, ForceMode.Impulse);
-        }
-        if (Input.GetKey(KeyCode.RightArrow))
-        {
-            rig.AddForce(new Vector3(.02f, 0, 0) * 5f, ForceMode.Impulse);
         }
     }
 }
