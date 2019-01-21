@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 public enum EEventType : byte
 {
@@ -21,7 +22,7 @@ public class DemoObject : MonoBehaviour {
         Color.white, Color.red, Color.green, Color.blue, Color.green,
     };
 
-    private string m_eventLog = null;
+    private Text m_eventLog = null;
 
     private bool onemore_flag = false;
     // Prefabのパスの用意 ☆-=☆-=☆-=☆-=☆-=☆-=☆-=☆-=☆-=☆-=☆-=☆-=☆-=☆-=
@@ -34,6 +35,16 @@ public class DemoObject : MonoBehaviour {
         m_render = GetComponent<Renderer>();
 
         PhotonNetwork.OnEventCall += OnRaiseEvent;
+    }
+
+    public void Hello()
+    {
+        var option = new RaiseEventOptions()
+        {
+            CachingOption = EventCaching.DoNotCache,
+            Receivers = ReceiverGroup.All,
+        };
+        PhotonNetwork.RaiseEvent((byte)EEventType.hello, "Hello!", true, option);
     }
 
     private void Start()
@@ -52,6 +63,7 @@ public class DemoObject : MonoBehaviour {
 
         if (Input.GetKey(KeyCode.M))
         {
+            Hello();
             onemore_flag = false;
         }
         if (Input.GetKey(KeyCode.Mouse3) && !onemore_flag)
@@ -106,13 +118,11 @@ public class DemoObject : MonoBehaviour {
     }
 
 
-    private void RaiseEventTest()
-    {
-
-    }
-
     private void OnRaiseEvent(byte i_eventcode, object i_content, int i_senderid)
     {
+        m_eventLog = GameObject.Find("Text").GetComponent<Text>();
+        m_eventLog.text = "";
+
         string eventMessage = null;
 
         var eventType = (EEventType)i_eventcode;
@@ -127,7 +137,7 @@ public class DemoObject : MonoBehaviour {
 
         if (!string.IsNullOrEmpty(eventMessage))
         {
-           // m_eventLog.text += eventMessage + System.Environment.NewLine;
+            m_eventLog.text += eventMessage + System.Environment.NewLine;
         }
     }
 }
