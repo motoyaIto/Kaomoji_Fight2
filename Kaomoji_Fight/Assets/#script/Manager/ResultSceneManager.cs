@@ -43,7 +43,7 @@ public class ResultSceneManager : MonoBehaviour
         canvas = GameObject.Find("ResultUI").transform.gameObject;
 
         // 遊んだ時間の取得
-        time = 180.0f - ResultData.Instance.Time;
+        time = 300.0f - ResultData.Instance.Time;
 
         // プレイ人数の取得
         playerNum = ResultData.Instance.Ranking.Length;

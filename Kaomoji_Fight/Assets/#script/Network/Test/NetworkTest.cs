@@ -1,16 +1,21 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class NetworkTest : MonoBehaviour {
 
     // 生成するPrefabの場所
     private string m_resourcePath = "prefab/Test/Cube";
     private string m_stagePath = "prefab/Stage/StageBlock";
+
+    private string m_player = "prefab/Player";
     [SerializeField]
     private float m_randomCircle = 4.0f;
 
     private const string ROOM_NAME = "RoomA";
+
+    private Text m_RoomLog = null;
 
     // Test-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
     private bool m_fg = false;
@@ -29,6 +34,10 @@ public class NetworkTest : MonoBehaviour {
     void OnJoinedLobby()
     {
         Debug.Log("ロビー入室");
+
+        m_RoomLog = GameObject.Find("nt_text").GetComponent<Text>();
+        m_RoomLog.text = "";
+
         // ルームを生成する
         //PhotonNetwork.JoinOrCreateRoom(ROOM_NAME, new RoomOptions(), TypedLobby.Default);
 
@@ -70,6 +79,7 @@ public class NetworkTest : MonoBehaviour {
     public void SpawnObject()
     {
         PhotonNetwork.Instantiate(m_resourcePath, GetRandomPosition(), Quaternion.identity, 0);
+        //PhotonNetwork.Instantiate(m_player, GetRandomPosition(), Quaternion.identity, 0);
     }
 
     // ルームに引っ付けるオブジェクトの生成（所持者がルームになるので誰が抜けても消えない）
@@ -107,5 +117,7 @@ public class NetworkTest : MonoBehaviour {
         {
             m_fg = false;
         }
+        
+        if(PhotonNetwork.room != null)m_RoomLog.text = "" + PhotonNetwork.room.ToStringFull();
     }
 }
