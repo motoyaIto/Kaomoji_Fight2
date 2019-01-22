@@ -85,7 +85,6 @@ public class NetworkTest : MonoBehaviour {
     // ルームに引っ付けるオブジェクトの生成（所持者がルームになるので誰が抜けても消えない）
     public void SpawnSceneObject()
     {
-        //PhotonNetwork.InstantiateSceneObject(m_stagePath, Vector3.zero, Quaternion.identity, 0, null);
         PhotonNetwork.InstantiateSceneObject(m_stagePath, Vector3.zero, Quaternion.identity, 0, null);
     }
 

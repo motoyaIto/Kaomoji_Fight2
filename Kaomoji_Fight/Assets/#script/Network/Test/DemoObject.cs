@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -29,6 +30,9 @@ public class DemoObject : MonoBehaviour {
     private string effect_path = "prefab/Effect/Knife_InstantDeath_Effect";
     //☆-=☆-=☆-=☆-=☆-=☆-=☆-=☆-=☆-=☆-=☆-=☆-=☆-=☆-=☆-=☆-=☆-=☆-=☆-=
 
+    private Color[] PLAYER_COLOR = new Color[] { Color.white, Color.red, Color.green, Color.blue, Color.yellow };
+    private int randomColor = 0;
+
     private void Awake()
     {
         m_photonView = GetComponent<PhotonView>();
@@ -51,6 +55,7 @@ public class DemoObject : MonoBehaviour {
     {
         int ownerID = m_photonView.ownerId;
         m_color = MATERIAL_COLORS[ownerID];
+        randomColor = Random.Range(0, 5);
     }
 
     private void Update()
@@ -71,6 +76,10 @@ public class DemoObject : MonoBehaviour {
             m_photonView.RPC("ShowEffect", PhotonTargets.AllBuffered);
             onemore_flag = true;
         }
+        if (Input.GetKey(KeyCode.Mouse4))
+        {
+            SetPlayerColor(randomColor);
+        }
 
 
         Vector3 pos = transform.position;
@@ -81,9 +90,9 @@ public class DemoObject : MonoBehaviour {
         transform.position = pos;
 
         // マテリアルの青の成分のみを時間経過によって変化させる.
-        m_color.b += m_colorSpeed * Time.deltaTime;
-        m_color.b = Mathf.Repeat(m_color.b, 1.0f);
-        m_render.material.color = m_color;
+        //m_color.b += m_colorSpeed * Time.deltaTime;
+        //m_color.b = Mathf.Repeat(m_color.b, 1.0f);
+        //m_render.material.color = m_color;
     }
 
     void OnPhotonSerializeView(PhotonStream i_stream, PhotonMessageInfo i_info)
@@ -138,6 +147,34 @@ public class DemoObject : MonoBehaviour {
         if (!string.IsNullOrEmpty(eventMessage))
         {
             m_eventLog.text += eventMessage + System.Environment.NewLine;
+        }
+    }
+
+    // カスタムプロパティの実験
+    public void SetPlayerColor(int i_colorIndex)
+    {
+        var properties = new ExitGames.Client.Photon.Hashtable();
+        properties.Add("Color", i_colorIndex);
+
+        PhotonNetwork.player.SetCustomProperties(properties);
+    }
+
+    public void OnPhotonPlayerPropertiesChanged(object[] i_playerAndUpdatedProps)
+    {
+        var player = i_playerAndUpdatedProps[0] as PhotonPlayer;
+        var properties = i_playerAndUpdatedProps[1] as ExitGames.Client.Photon.Hashtable;
+
+
+        object colorValue = null;
+        if (properties.TryGetValue("Color", out colorValue))
+        {
+            int colorIndex = (int)colorValue;
+
+            // ゲーム上のPlayer用のオブジェクトの中からPhotonViewのIDが変更したPlayerと同じオブジェクトの色を変更する。
+            var playerObjects = GameObject.FindGameObjectsWithTag("Player");
+            var playerObject = playerObjects.FirstOrDefault(obj => obj.GetComponent<PhotonView>().ownerId == player.ID);
+            playerObject.GetComponent<Renderer>().material.color = PLAYER_COLOR[colorIndex];
+            return;
         }
     }
 }
