@@ -1398,7 +1398,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 257500d7f36219840a14be1a76304d80, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  hue: 335
+  hue: 295
 --- !u!114 &544138478
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1524,7 +1524,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 257500d7f36219840a14be1a76304d80, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  hue: 125
+  hue: 85
 --- !u!114 &550933927
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2838,7 +2838,7 @@ Material:
         m_Offset: {x: 0, y: 0}
     m_Floats:
     - _ColorMask: 15
-    - _Hue: 125
+    - _Hue: 85
     - _Sat: 1
     - _Stencil: 0
     - _StencilComp: 8
@@ -3166,7 +3166,7 @@ VideoPlayer:
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 1184654131}
   m_Enabled: 1
-  m_VideoClip: {fileID: 32900000, guid: 1ba59e8c926e94f419e2b81b26d3af3d, type: 3}
+  m_VideoClip: {fileID: 0}
   m_TargetCameraAlpha: 1
   m_TargetCamera3DLayout: 0
   m_TargetCamera: {fileID: 0}
@@ -3179,18 +3179,16 @@ VideoPlayer:
   m_DataSource: 0
   m_PlaybackSpeed: 1
   m_AudioOutputMode: 1
-  m_TargetAudioSources:
-  - {fileID: 1184654133}
-  m_DirectAudioVolumes:
-  - 1
+  m_TargetAudioSources: []
+  m_DirectAudioVolumes: []
   m_Url: 
-  m_EnabledAudioTracks: 01
-  m_DirectAudioMutes: 00
-  m_ControlledAudioTrackCount: 1
-  m_PlayOnAwake: 1
+  m_EnabledAudioTracks: 
+  m_DirectAudioMutes: 
+  m_ControlledAudioTrackCount: 0
+  m_PlayOnAwake: 0
   m_SkipOnDrop: 1
   m_Looping: 0
-  m_WaitForFirstFrame: 1
+  m_WaitForFirstFrame: 0
   m_FrameReadyEventEnabled: 0
 --- !u!212 &1184654135
 SpriteRenderer:
@@ -3247,6 +3245,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4b6745ef45b5bf1488c5f9330652e81b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  TitleVideo: {fileID: 32900000, guid: 1ba59e8c926e94f419e2b81b26d3af3d, type: 3}
 --- !u!1 &1190797811
 GameObject:
   m_ObjectHideFlags: 0

@@ -6,12 +6,12 @@ using XboxCtrlrInput;
 using TMPro;
 using UnityEngine.Video;
 
-public class Title : MonoBehaviour
+public class NT_Title : MonoBehaviour
 {
 
     [SerializeField]
     private GameObject TManager;        //Titleマネージャー
-    private TitleManager TManager_cs;   //Titleマネージャーcs
+    private NT_TitleManager TManager_cs;   //Titleマネージャーcs
 
     [SerializeField]
     private VideoPlayer videoPlayer;//ビデオプレイヤー
@@ -30,12 +30,18 @@ public class Title : MonoBehaviour
         audio.Stop();
 
         //各csの取得
-        TManager_cs = TManager.GetComponent<TitleManager>();
+        TManager_cs = TManager.GetComponent<NT_TitleManager>();
         TMPro_cs = this.GetComponent<TextMeshPro>();
     }
 
     void Update()
     {
+        //自分が選ばれていなかったら
+        if(TManager_cs.SelectMode_Data != NT_TitleManager.SELECTMODE.TITLE)
+        {
+            return;
+        }
+
         //点滅処理
         TMPro_cs.color = GetAlphaColor(TMPro_cs.color);
                    
@@ -44,7 +50,7 @@ public class Title : MonoBehaviour
         {
             videoPlayer.Stop();
             audio.PlayOneShot(audio.clip);
-            TManager_cs.ChangePage(TitleManager.SELECTMODE.PLAYERNUM);
+            TManager_cs.ChangePage(true);
         }
     }
 

@@ -541,7 +541,7 @@ Prefab:
     - target: {fileID: 114896293155825972, guid: c9529d12034635d4e9fedc91c9d6163e,
         type: 2}
       propertyPath: Stage_name
-      value: Stage6
+      value: Stage3
       objectReference: {fileID: 0}
     - target: {fileID: 114896293155825972, guid: c9529d12034635d4e9fedc91c9d6163e,
         type: 2}
