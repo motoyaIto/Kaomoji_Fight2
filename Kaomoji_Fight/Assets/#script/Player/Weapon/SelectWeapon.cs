@@ -19,12 +19,9 @@ public class SelectWeapon {
         WeaponList["すないぱー"] = Resources.Load<GameObject>("prefab/Weapon/Doragunohu");
 
         WeaponList["ないふ"] = Resources.Load<GameObject>("prefab/Weapon/knife");
-        WeaponList["にんぎょう"] = null;
 
         WeaponList["はんまー"] = Resources.Load<GameObject>("prefab/Weapon/Hammer");
         WeaponList["ばくだん"] = Resources.Load<GameObject>("prefab/Weapon/Bomb");
-
-        WeaponList["まくら"] = null;
 
         WeaponList["やり"] = Resources.Load<GameObject>("prefab/Weapon/Yari");
     }
