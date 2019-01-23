@@ -4,11 +4,6 @@ using System.Linq;
 using UnityEngine;
 using UnityEngine.UI;
 
-public enum EEventType : byte
-{
-    hello = 1,
-}
-
 public class DemoObject : MonoBehaviour {
 
     private float m_speed = 3.0f;
@@ -48,7 +43,7 @@ public class DemoObject : MonoBehaviour {
             CachingOption = EventCaching.DoNotCache,
             Receivers = ReceiverGroup.All,
         };
-        PhotonNetwork.RaiseEvent((byte)EEventType.hello, "Hello!", true, option);
+        PhotonNetwork.RaiseEvent((byte)EEventType.hello, "Our!", true, option);
     }
 
     private void Start()
