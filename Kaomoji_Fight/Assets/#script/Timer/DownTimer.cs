@@ -7,7 +7,7 @@ using TMPro;
 public class DownTimer : MonoBehaviour {
 
     [SerializeField]
-    private float TimeLimit = 180f;
+    private float TimeLimit = 300f;
 
     private float nowTime = 0f;         //今のプレイ時間
 
@@ -25,7 +25,7 @@ public class DownTimer : MonoBehaviour {
         {
             nowTime += Time.deltaTime;      //スタートしてからの秒数を格納
 
-            Write_DownTimerText();
+            //Write_DownTimerText();
         }
     }
 
@@ -52,6 +52,20 @@ public class DownTimer : MonoBehaviour {
         //テキストに書き込み
         TM_timer.text = Minute + ":";
         if (Seconds < 10) { TM_timer.text += "0" + Seconds; } else { TM_timer.text += Seconds; }
+    }
+
+    void OnPhotonSerializeView(PhotonStream stream, PhotonMessageInfo info)
+    {
+        if (stream.isWriting)
+        {
+            // データの送信
+            stream.SendNext(nowTime);
+        }
+        else
+        {
+            // データの受信
+            this.nowTime = (float)stream.ReceiveNext();
+        }
     }
 
     public bool DownTimer_State_data

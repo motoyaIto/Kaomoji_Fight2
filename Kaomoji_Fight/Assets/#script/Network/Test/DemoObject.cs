@@ -71,10 +71,9 @@ public class DemoObject : MonoBehaviour {
             Hello();
             onemore_flag = false;
         }
-        if (Input.GetKey(KeyCode.Mouse3) && !onemore_flag)
+        if (Input.GetKey(KeyCode.Mouse3))
         {
             m_photonView.RPC("ShowEffect", PhotonTargets.AllBuffered);
-            onemore_flag = true;
         }
         if (Input.GetKey(KeyCode.Mouse4))
         {
