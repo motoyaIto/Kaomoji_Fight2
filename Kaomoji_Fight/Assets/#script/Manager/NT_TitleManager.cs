@@ -38,6 +38,7 @@ public class NT_TitleManager : MonoBehaviour{
     //プレイヤーデータ
     private string PlayerName = "";
     private Sprite Face;
+    private Color PlayerColor;
 
     // Use this for initialization
     void Start() {
@@ -59,6 +60,15 @@ public class NT_TitleManager : MonoBehaviour{
             else//前のページ
             {
                 this.PreviousPage();
+            }
+        }
+        else
+        {
+            //色選択時に顔と名前を渡す
+            if(mode == SELECTMODE.COLORSELECT)
+            {
+                Page[(int)mode].transform.GetChild(1).GetComponent<ColorSelectController>().Name_Data = PlayerName;
+                Page[(int)mode].transform.GetChild(1).GetComponent<ColorSelectController>().Fice_Data = Face;
             }
         }
 	}
@@ -131,6 +141,14 @@ public class NT_TitleManager : MonoBehaviour{
         set
         {
             Face = value;
+        }
+    }
+
+    public Color Color_Data
+    {
+        set
+        {
+            PlayerColor = value;
         }
     }
 }
