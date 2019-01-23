@@ -25,7 +25,7 @@ public class DownTimer : MonoBehaviour {
         {
             nowTime += Time.deltaTime;      //スタートしてからの秒数を格納
 
-            //Write_DownTimerText();
+            Write_DownTimerText();
         }
     }
 
@@ -58,13 +58,11 @@ public class DownTimer : MonoBehaviour {
     {
         if (stream.isWriting)
         {
-            // データの送信
             stream.SendNext(nowTime);
         }
         else
         {
-            // データの受信
-            this.nowTime = (float)stream.ReceiveNext();
+            nowTime = (float)stream.ReceiveNext();
         }
     }
 

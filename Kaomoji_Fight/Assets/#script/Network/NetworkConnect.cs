@@ -2,6 +2,12 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+public enum EEventType : byte
+{
+    hello = 1,
+    Timer = 2
+};
+
 public class NetworkConnect : MonoBehaviour {
 
     // ルームの名前

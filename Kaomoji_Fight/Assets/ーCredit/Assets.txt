@@ -28,3 +28,7 @@ https://assetstore.unity.com/packages/tools/utilities/runtimeviewer-67350?aid=10
 
 -- HSV-Color-Picker-Unity --
 https://github.com/judah4/HSV-Color-Picker-Unity
+
+
+-- Unity-UIGradient --
+https://github.com/azixMcAze/Unity-UIGradient
