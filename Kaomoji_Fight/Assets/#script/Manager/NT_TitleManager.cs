@@ -13,7 +13,6 @@ public class NT_TitleManager : MonoBehaviour{
         FICESELECT,
         COLORSELECT,
         STAGESELECT,
-        CHANGESCENE,
 
         MAX
     }
@@ -39,6 +38,7 @@ public class NT_TitleManager : MonoBehaviour{
     private string PlayerName = "";
     private Sprite Face;
     private Color PlayerColor;
+    private string SelectStage = "";
 
     // Use this for initialization
     void Start() {
@@ -50,7 +50,7 @@ public class NT_TitleManager : MonoBehaviour{
 	void Update () {        
 		
         //ページ切り替え中
-        if(ChangePageFlag == true)
+        if(ChangePageFlag == true && mode != SELECTMODE.MAX)
         {
             //次のページ
             if(OpenPageFlag == true)
@@ -64,11 +64,31 @@ public class NT_TitleManager : MonoBehaviour{
         }
         else
         {
-            //色選択時に顔と名前を渡す
+            //名前選択
+            if(mode == SELECTMODE.NAME)
+            {
+                Page[(int)mode].transform.GetChild(6).GetComponent<CursorController2>().PageUpdate();
+                return;
+            }
+            //キャラクター選択
+            if(mode == SELECTMODE.FICESELECT)
+            {
+                Page[(int)mode].transform.GetChild(1).GetComponent<FiceController>().PageUpdate();
+                return;
+            }
+            //色選択
             if(mode == SELECTMODE.COLORSELECT)
             {
                 Page[(int)mode].transform.GetChild(1).GetComponent<ColorSelectController>().Name_Data = PlayerName;
                 Page[(int)mode].transform.GetChild(1).GetComponent<ColorSelectController>().Fice_Data = Face;
+                Page[(int)mode].transform.GetChild(1).GetComponent<ColorSelectController>().PageUpdate();
+                return;
+            }
+            //ステージ選択
+            if (mode == SELECTMODE.STAGESELECT)
+            {
+                Page[(int)mode].transform.GetChild(2).GetComponent<NT_StageSelect>().PageUpdate();
+                return;
             }
         }
 	}
@@ -83,8 +103,13 @@ public class NT_TitleManager : MonoBehaviour{
         OpenPageFlag = Open;
         ChangePageFlag = true;
 
+        if(OpenPageFlag == true && mode + 1 == SELECTMODE.MAX)
+        {
+            mode++;
+            return;
+        }
         //ページをめくるのをやめてモードを切り替える
-        StartCoroutine(DelayMethod(1.45f, 
+        StartCoroutine(DelayMethod(1.20f, 
             () => 
             {
                 ChangePageFlag = false;
@@ -129,6 +154,14 @@ public class NT_TitleManager : MonoBehaviour{
         }
     }
 
+    public bool ChangePageFlag_Data
+    {
+        get
+        {
+            return ChangePageFlag;
+        }
+    }
+
     public string PlayerName_Data
     {
         set
@@ -149,6 +182,14 @@ public class NT_TitleManager : MonoBehaviour{
         set
         {
             PlayerColor = value;
+        }
+    }
+
+    public  string SelectStage_Data
+    {
+        set
+        {
+            SelectStage = value;
         }
     }
 }

@@ -56,15 +56,10 @@ public class ColorSelectController : MonoBehaviour {
         text = this.transform.parent.GetChild(2).gameObject;
     }
 
-    private void Update()
+    public void PageUpdate()
     {
         if (TManager_cs.SelectMode_Data != NT_TitleManager.SELECTMODE.COLORSELECT || Fice == null || Name == "")
         {
-            text.SetActive(false);
-
-            Player_obj.SetActive(false);
-            NameText_obj.SetActive(false);
-            Cursor.SetActive(false);
             return;
         }
         else
@@ -148,6 +143,13 @@ public class ColorSelectController : MonoBehaviour {
         if ((XCI.GetButtonDown(XboxButton.A, XboxController.First) || Input.GetKeyDown(KeyCode.Backspace)))
         {
             TManager_cs.ChangePage(false);
+
+            //非表示設定
+            text.SetActive(false);
+
+            Player_obj.SetActive(false);
+            NameText_obj.SetActive(false);
+            Cursor.SetActive(false);
         }
 
         //決定する
@@ -160,7 +162,13 @@ public class ColorSelectController : MonoBehaviour {
             TManager_cs.Color_Data = new Color(R_Slider.value / 255, G_Slider.value / 255, B_Slider.value / 255);
             TManager_cs.ChangePage(true);
 
-           
+            //非表示設定
+            text.SetActive(false);
+
+            Player_obj.SetActive(false);
+            NameText_obj.SetActive(false);
+            Cursor.SetActive(false);
+
         }
     }
 

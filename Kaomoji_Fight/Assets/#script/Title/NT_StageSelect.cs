@@ -1,49 +1,48 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using TMPro;
 using XboxCtrlrInput;
 
-public class FiceController : MonoBehaviour {
+public class NT_StageSelect : MonoBehaviour {
 
     [SerializeField]
     private GameObject TManager;            //Titleマネージャー
     private NT_TitleManager TManager_cs;   //Titleマネージャーcs
 
     private GameObject text;
-
     [SerializeField]
     private GameObject[] Target;
-
-    private int TargetNamber = 0;
-
-    private int Vertical = 4;       //縦の数
-    private int Horizontal = 5;    //横の数
-    private int VerticalCount = 0;          //縦の今の番号
-    private int HorizontalCount = 0;        //横の今の番号
 
     private bool LeftStickflag = false;             //スティックが入力されていない(false)された(true)
     private Vector2 LeftStickInput = Vector2.zero;  //Controllerの左スティックのAxisを取得
 
-    void Start () {
+    private int Vertical = 4;       //縦の数
+    private int Horizontal = 2;    //横の数
+    private int VerticalCount = 0;          //縦の今の番号
+    private int HorizontalCount = 0;        //横の今の番号
+
+    void Start()
+    {
         //各csの取得
         TManager_cs = TManager.GetComponent<NT_TitleManager>();
         text = this.transform.parent.GetChild(3).gameObject;
 
         //初期座標
         this.transform.position = Target[0].transform.position;
+    }
 
-       
-	}
-	
-	public void PageUpdate () {
+    public void PageUpdate()
+    {
         //自分が選ばれていなかったら
-        if (TManager_cs.SelectMode_Data != NT_TitleManager.SELECTMODE.FICESELECT)
+        if (TManager_cs.SelectMode_Data != NT_TitleManager.SELECTMODE.STAGESELECT)
         {
             return;
         }
         else
         {
             this.transform.GetComponent<SpriteRenderer>().enabled = true;
+            Target[0].transform.parent.gameObject.SetActive(true);
             text.SetActive(true);
         }
 
@@ -103,26 +102,23 @@ public class FiceController : MonoBehaviour {
             LeftStickflag = false;
         }
 
-        //face1のずれを修正
+        //選択されてるステージに枠を合わせる
         this.transform.position = Target[HorizontalCount * Vertical + VerticalCount].transform.position;
-        if(HorizontalCount * Vertical + VerticalCount == 16)
-        {
-            this.transform.position = new Vector3(-8, Target[HorizontalCount * Vertical + VerticalCount].transform.position.y, Target[HorizontalCount * Vertical + VerticalCount].transform.position.z);
-        }
 
-        //顔を決定する
+        //ステージを決定する
         if ((XCI.GetButtonDown(XboxButton.B, XboxController.First) || Input.GetKeyDown(KeyCode.Space)))
         {
-            TManager_cs.Face_Data = Target[HorizontalCount * Vertical + VerticalCount].transform.GetComponent<SpriteRenderer>().sprite;
+            TManager_cs.SelectStage_Data = Target[HorizontalCount * Vertical + VerticalCount].transform.GetComponent<TextMeshPro>().text;
 
             TManager_cs.ChangePage(true);
 
             //非表示設定
             this.transform.GetComponent<SpriteRenderer>().enabled = false;
             text.SetActive(false);
+            Target[0].transform.parent.gameObject.SetActive(false);
         }
 
-        //名前選択に戻る
+        //カラー選択に戻る
         if ((XCI.GetButtonDown(XboxButton.A, XboxController.First) || Input.GetKeyDown(KeyCode.Backspace)))
         {
             TManager_cs.ChangePage(false);
@@ -130,6 +126,7 @@ public class FiceController : MonoBehaviour {
             //非表示設定
             this.transform.GetComponent<SpriteRenderer>().enabled = false;
             text.SetActive(false);
+            Target[0].transform.parent.gameObject.SetActive(false);
         }
     }
 }
