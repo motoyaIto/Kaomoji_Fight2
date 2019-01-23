@@ -121,7 +121,7 @@ public class FiceController : MonoBehaviour {
         }
 
         //名前選択に戻る
-        if ((XCI.GetButtonDown(XboxButton.A, XboxController.First) || Input.GetKeyDown(KeyCode.Space)))
+        if ((XCI.GetButtonDown(XboxButton.A, XboxController.First) || Input.GetKeyDown(KeyCode.Backspace)))
         {
             TManager_cs.ChangePage(false);
         }
