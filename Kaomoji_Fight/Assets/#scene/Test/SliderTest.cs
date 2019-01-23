@@ -27,4 +27,5 @@ public class SliderTest : MonoBehaviour {
 
         slider.value = hp;
 	}
+
 }

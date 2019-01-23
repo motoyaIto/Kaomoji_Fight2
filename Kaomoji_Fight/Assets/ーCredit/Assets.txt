@@ -24,3 +24,7 @@ https://assetstore.unity.com/packages/tools/network/photon-unity-networking-clas
 
 -- RuntimeViewer --
 https://assetstore.unity.com/packages/tools/utilities/runtimeviewer-67350?aid=1011lGbg&utm_source=aff
+
+
+-- HSV-Color-Picker-Unity --
+https://github.com/judah4/HSV-Color-Picker-Unity
