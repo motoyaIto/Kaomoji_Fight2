@@ -93,13 +93,11 @@ public class CursorController2 : MonoBehaviour {
         }
     }
 
-    private void Update()
+    public void PageUpdate()
     {
         //自分が選ばれていなかったら
         if (TManager_cs.SelectMode_Data != NT_TitleManager.SELECTMODE.NAME)
         {
-            this.transform.GetComponent<SpriteRenderer>().enabled = false;
-            text.SetActive(false);
             return;
         }
         else
@@ -283,6 +281,10 @@ public class CursorController2 : MonoBehaviour {
         {
             if(TextNamber > 0)
             {
+                //非表示設定
+                this.transform.GetComponent<SpriteRenderer>().enabled = false;
+                text.SetActive(false);
+
                 TManager_cs.ChangePage(true);
 
                 string name = "";
