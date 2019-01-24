@@ -36,11 +36,6 @@ public class Title : MonoBehaviour
 
     void Update()
     {
-        if (TManager_cs.Mode_Data != TitleManager.SELECTMODE.TITLE || TManager_cs.ControllerLock_Data == true)
-        {
-            return;
-        }
-
         //点滅処理
         TMPro_cs.color = GetAlphaColor(TMPro_cs.color);
                    

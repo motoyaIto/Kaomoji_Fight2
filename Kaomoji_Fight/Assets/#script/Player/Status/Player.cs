@@ -80,7 +80,7 @@ public class Player : RaycastController
     private AudioClip jump_ac;              // ジャンプ
     private AudioClip bomb_ac;
 
-
+    private PhotonView photonView_cs = null;
 
     #endregion
 
@@ -117,6 +117,9 @@ public class Player : RaycastController
 
         //HPゲージを取得する
         HPgageObj = PSM.SetHPgage(CNConvert(ControlerNamber) + 1);
+
+        // PhotonViewの取得
+        photonView_cs = GetComponent<PhotonView>();
     }
 
     private void Reset()
@@ -126,6 +129,9 @@ public class Player : RaycastController
 
     void Update()
     {
+        // 自分以外の操作を受け付けない
+        if (!photonView_cs.isMine) return;
+
         //キャラのy軸のdirection方向にscrollの力をかける
         rig.velocity = new Vector2(scroll * direction, rig.velocity.y);
 

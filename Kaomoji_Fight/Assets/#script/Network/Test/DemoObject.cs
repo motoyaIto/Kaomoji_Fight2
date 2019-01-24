@@ -1,11 +1,8 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
-
-public enum EEventType : byte
-{
-    hello = 1,
-}
+using UnityEngine.UI;
 
 public class DemoObject : MonoBehaviour {
 
@@ -21,12 +18,15 @@ public class DemoObject : MonoBehaviour {
         Color.white, Color.red, Color.green, Color.blue, Color.green,
     };
 
-    private string m_eventLog = null;
+    private Text m_eventLog = null;
 
     private bool onemore_flag = false;
     // Prefabのパスの用意 ☆-=☆-=☆-=☆-=☆-=☆-=☆-=☆-=☆-=☆-=☆-=☆-=☆-=☆-=
     private string effect_path = "prefab/Effect/Knife_InstantDeath_Effect";
     //☆-=☆-=☆-=☆-=☆-=☆-=☆-=☆-=☆-=☆-=☆-=☆-=☆-=☆-=☆-=☆-=☆-=☆-=☆-=
+
+    private Color[] PLAYER_COLOR = new Color[] { Color.white, Color.red, Color.green, Color.blue, Color.yellow };
+    private int randomColor = 0;
 
     private void Awake()
     {
@@ -36,10 +36,21 @@ public class DemoObject : MonoBehaviour {
         PhotonNetwork.OnEventCall += OnRaiseEvent;
     }
 
+    public void Hello()
+    {
+        var option = new RaiseEventOptions()
+        {
+            CachingOption = EventCaching.DoNotCache,
+            Receivers = ReceiverGroup.All,
+        };
+        PhotonNetwork.RaiseEvent((byte)EEventType.hello, "Our!", true, option);
+    }
+
     private void Start()
     {
         int ownerID = m_photonView.ownerId;
         m_color = MATERIAL_COLORS[ownerID];
+        randomColor = Random.Range(0, 5);
     }
 
     private void Update()
@@ -52,12 +63,16 @@ public class DemoObject : MonoBehaviour {
 
         if (Input.GetKey(KeyCode.M))
         {
+            Hello();
             onemore_flag = false;
         }
-        if (Input.GetKey(KeyCode.Mouse3) && !onemore_flag)
+        if (Input.GetKey(KeyCode.Mouse3))
         {
             m_photonView.RPC("ShowEffect", PhotonTargets.AllBuffered);
-            onemore_flag = true;
+        }
+        if (Input.GetKey(KeyCode.Mouse4))
+        {
+            SetPlayerColor(randomColor);
         }
 
 
@@ -69,9 +84,9 @@ public class DemoObject : MonoBehaviour {
         transform.position = pos;
 
         // マテリアルの青の成分のみを時間経過によって変化させる.
-        m_color.b += m_colorSpeed * Time.deltaTime;
-        m_color.b = Mathf.Repeat(m_color.b, 1.0f);
-        m_render.material.color = m_color;
+        //m_color.b += m_colorSpeed * Time.deltaTime;
+        //m_color.b = Mathf.Repeat(m_color.b, 1.0f);
+        //m_render.material.color = m_color;
     }
 
     void OnPhotonSerializeView(PhotonStream i_stream, PhotonMessageInfo i_info)
@@ -106,13 +121,11 @@ public class DemoObject : MonoBehaviour {
     }
 
 
-    private void RaiseEventTest()
-    {
-
-    }
-
     private void OnRaiseEvent(byte i_eventcode, object i_content, int i_senderid)
     {
+        m_eventLog = GameObject.Find("Text").GetComponent<Text>();
+        m_eventLog.text = "";
+
         string eventMessage = null;
 
         var eventType = (EEventType)i_eventcode;
@@ -127,7 +140,35 @@ public class DemoObject : MonoBehaviour {
 
         if (!string.IsNullOrEmpty(eventMessage))
         {
-           // m_eventLog.text += eventMessage + System.Environment.NewLine;
+            m_eventLog.text += eventMessage + System.Environment.NewLine;
+        }
+    }
+
+    // カスタムプロパティの実験
+    public void SetPlayerColor(int i_colorIndex)
+    {
+        var properties = new ExitGames.Client.Photon.Hashtable();
+        properties.Add("Color", i_colorIndex);
+
+        PhotonNetwork.player.SetCustomProperties(properties);
+    }
+
+    public void OnPhotonPlayerPropertiesChanged(object[] i_playerAndUpdatedProps)
+    {
+        var player = i_playerAndUpdatedProps[0] as PhotonPlayer;
+        var properties = i_playerAndUpdatedProps[1] as ExitGames.Client.Photon.Hashtable;
+
+
+        object colorValue = null;
+        if (properties.TryGetValue("Color", out colorValue))
+        {
+            int colorIndex = (int)colorValue;
+
+            // ゲーム上のPlayer用のオブジェクトの中からPhotonViewのIDが変更したPlayerと同じオブジェクトの色を変更する。
+            var playerObjects = GameObject.FindGameObjectsWithTag("Player");
+            var playerObject = playerObjects.FirstOrDefault(obj => obj.GetComponent<PhotonView>().ownerId == player.ID);
+            playerObject.GetComponent<Renderer>().material.color = PLAYER_COLOR[colorIndex];
+            return;
         }
     }
 }

@@ -24,7 +24,11 @@ Material:
         m_Offset: {x: 0, y: 0}
     m_Floats:
     - _ColorMask: 15
-    - _Hue: 190
+<<<<<<< HEAD
+    - _Hue: 295
+=======
+    - _Hue: 345
+>>>>>>> Sub
     - _Sat: 1
     - _Stencil: 0
     - _StencilComp: 8
