@@ -45,4 +45,5 @@ MonoBehaviour:
   - DebugNum
   - ShowEffect
   - Write_DownTimerText
+  - SpawnPlayer
   DisableAutoOpenWizard: 1
