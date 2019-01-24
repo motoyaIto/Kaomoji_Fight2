@@ -4,7 +4,8 @@ using UnityEngine;
 using XboxCtrlrInput;
 using System;
 
-public class NT_TitleManager : MonoBehaviour{
+public class NT_TitleManager : MonoBehaviour
+{
 
     public enum SELECTMODE
     {
@@ -32,6 +33,8 @@ public class NT_TitleManager : MonoBehaviour{
     [SerializeField]
     private GameObject[] Page;
 
+    private float count = 0;//回転角をカウント
+
 
 
     //プレイヤーデータ
@@ -42,19 +45,21 @@ public class NT_TitleManager : MonoBehaviour{
 
 
     // Use this for initialization
-    void Start() {
+    void Start()
+    {
         //シーンのロード
         SceneManagerController.LoadScene();
 
     }
-	// Update is called once per frame
-	void Update () {        
-		
+    // Update is called once per frame
+    void Update()
+    {
+
         //ページ切り替え中
-        if(ChangePageFlag == true)
+        if (ChangePageFlag == true)
         {
             //次のページ
-            if(OpenPageFlag == true)
+            if (OpenPageFlag == true)
             {
                 this.NextPage();
             }
@@ -62,23 +67,37 @@ public class NT_TitleManager : MonoBehaviour{
             {
                 this.PreviousPage();
             }
+
+            //ページをめくるのをやめてモードを切り替える
+            if (count > 180)
+            {
+                ChangePageFlag = false;
+                if (OpenPageFlag == true)
+                {
+                    mode++;
+                }
+                else
+                {
+                    mode--;
+                }
+            }
         }
         else
         {
             //名前選択
-            if(mode == SELECTMODE.NAME)
+            if (mode == SELECTMODE.NAME)
             {
                 Page[(int)mode].transform.GetChild(6).GetComponent<CursorController2>().PageUpdate();
                 return;
             }
             //キャラクター選択
-            if(mode == SELECTMODE.FICESELECT)
+            if (mode == SELECTMODE.FICESELECT)
             {
                 Page[(int)mode].transform.GetChild(1).GetComponent<FiceController>().PageUpdate();
                 return;
             }
             //色選択
-            if(mode == SELECTMODE.COLORSELECT)
+            if (mode == SELECTMODE.COLORSELECT)
             {
                 Page[(int)mode].transform.GetChild(1).GetComponent<ColorSelectController>().Name_Data = PlayerName;
                 Page[(int)mode].transform.GetChild(1).GetComponent<ColorSelectController>().Fice_Data = Face;
@@ -93,7 +112,7 @@ public class NT_TitleManager : MonoBehaviour{
             }
 
             //マックスだったら
-            if(mode == SELECTMODE.MAX)
+            if (mode == SELECTMODE.MAX)
             {
                 Page[(int)mode].transform.GetChild(0).GetComponent<NT_Confirmation>().Name_Data = PlayerName;
                 Page[(int)mode].transform.GetChild(0).GetComponent<NT_Confirmation>().Face_Data = Face;
@@ -102,7 +121,7 @@ public class NT_TitleManager : MonoBehaviour{
                 Page[(int)mode].transform.GetChild(0).GetComponent<NT_Confirmation>().PageUpdate();
             }
         }
-	}
+    }
 
     /// <summary>
     /// ページをめくる
@@ -113,30 +132,18 @@ public class NT_TitleManager : MonoBehaviour{
         if (ChangePageFlag != false) return;
         OpenPageFlag = Open;
         ChangePageFlag = true;
-
-        //ページをめくるのをやめてモードを切り替える
-        StartCoroutine(DelayMethod(1.20f, 
-            () => 
-            {
-                ChangePageFlag = false;
-                if(OpenPageFlag == true)
-                {
-                    mode++;
-                }
-                else
-                {
-                    mode--;
-                }
-            }));
+        count = 0;
     }
 
     private void NextPage()
     {
+        count += OpenSpeed;
         Page[(int)mode].transform.RotateAround(CenterPoint.transform.position, Vector3.right, -OpenSpeed);
     }
 
     private void PreviousPage()
     {
+        count += OpenSpeed;
         Page[(int)mode - 1].transform.RotateAround(CenterPoint.transform.position, Vector3.right, OpenSpeed);
     }
 
@@ -191,7 +198,7 @@ public class NT_TitleManager : MonoBehaviour{
         }
     }
 
-    public  string SelectStage_Data
+    public string SelectStage_Data
     {
         set
         {
