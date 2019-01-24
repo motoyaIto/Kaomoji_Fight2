@@ -13,10 +13,15 @@ public class NetworkConnect : MonoBehaviour {
     // ルームの名前
     private const string ROOM_NAME = "RoomA";
 
+    private void Awake()
+    {
+        // PhotonServerに接続（引数にバージョンを入れる）
+        PhotonNetwork.ConnectUsingSettings(null);
+    }
+
     private void Start()
     {
-        // Photonに接続（引数にバージョンを入れる）
-        PhotonNetwork.ConnectUsingSettings(null);
+        
     }
 
     private void OnJoinedLobby()
@@ -40,6 +45,25 @@ public class NetworkConnect : MonoBehaviour {
 
         // 第1引数はルーム名、第2引数はルームオプション、第3引数はロビーです。
         PhotonNetwork.JoinOrCreateRoom(ROOM_NAME, roomOptions, TypedLobby.Default);
+    }
+
+
+    // Room参加NG時
+    private void OnPhotonJoinFailed()
+    {
+        // 名前なしRoom作成
+        PhotonNetwork.CreateRoom(null);
+    }
+
+
+    // Room参加OK時
+    private void OnJoinedRoom()
+    {
+        if(PhotonNetwork.countOfPlayers < PhotonNetwork.room.MaxPlayers)
+        {
+            // プレイヤーの生成
+            return;
+        }
     }
 
 }
