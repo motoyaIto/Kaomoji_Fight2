@@ -50,6 +50,7 @@ public class NT_Confirmation : MonoBehaviour {
         //各自設定
         nameText.text = name;
         playerFace.transform.GetComponent<SpriteRenderer>().material.SetColor("_EmissionColor", color);
+        playerFace.transform.GetComponent<SpriteRenderer>().sprite = Face;
         nameText.color = color;
         stageText.text = stage;
 
@@ -61,12 +62,15 @@ public class NT_Confirmation : MonoBehaviour {
             //非表示設定
             texts.SetActive(false);
             playerFace.SetActive(false);
+            nameText.text = "";
+            stageText.text = "";
         }
 
         //決定する
         if ((XCI.GetButtonDown(XboxButton.Start, XboxController.First) || Input.GetKeyDown(KeyCode.Space)))
         {
             playerdata = new NT_PlayerData(name, Face, color, stage);
+            SceneManagerController.ChangeScene();
         }
     }
 

@@ -5,10 +5,10 @@ using UnityEngine;
 public class NT_PlayerData{
 
     //プレイヤーデータ
-    private string name = "";
-    private Sprite Face;
-    private Color color;
-    private string SelectStage = "";
+    public string name = "";
+    public Sprite Face;
+    public Color color;
+    public string SelectStage = "";
 
     public static NT_PlayerData Instance
     {
