@@ -38,7 +38,8 @@ public class NT_TitleManager : MonoBehaviour{
     private string PlayerName = "";
     private Sprite Face;
     private Color PlayerColor;
-    private string SelectStage = "";
+    private string Stage = "";
+
 
     // Use this for initialization
     void Start() {
@@ -50,7 +51,7 @@ public class NT_TitleManager : MonoBehaviour{
 	void Update () {        
 		
         //ページ切り替え中
-        if(ChangePageFlag == true && mode != SELECTMODE.MAX)
+        if(ChangePageFlag == true)
         {
             //次のページ
             if(OpenPageFlag == true)
@@ -90,6 +91,16 @@ public class NT_TitleManager : MonoBehaviour{
                 Page[(int)mode].transform.GetChild(2).GetComponent<NT_StageSelect>().PageUpdate();
                 return;
             }
+
+            //マックスだったら
+            if(mode == SELECTMODE.MAX)
+            {
+                Page[(int)mode].transform.GetChild(0).GetComponent<NT_Confirmation>().Name_Data = PlayerName;
+                Page[(int)mode].transform.GetChild(0).GetComponent<NT_Confirmation>().Face_Data = Face;
+                Page[(int)mode].transform.GetChild(0).GetComponent<NT_Confirmation>().Color_Data = PlayerColor;
+                Page[(int)mode].transform.GetChild(0).GetComponent<NT_Confirmation>().Stage_Data = Stage;
+                Page[(int)mode].transform.GetChild(0).GetComponent<NT_Confirmation>().PageUpdate();
+            }
         }
 	}
 
@@ -103,11 +114,6 @@ public class NT_TitleManager : MonoBehaviour{
         OpenPageFlag = Open;
         ChangePageFlag = true;
 
-        if(OpenPageFlag == true && mode + 1 == SELECTMODE.MAX)
-        {
-            mode++;
-            return;
-        }
         //ページをめくるのをやめてモードを切り替える
         StartCoroutine(DelayMethod(1.20f, 
             () => 
@@ -189,7 +195,7 @@ public class NT_TitleManager : MonoBehaviour{
     {
         set
         {
-            SelectStage = value;
+            Stage = value;
         }
     }
 }
