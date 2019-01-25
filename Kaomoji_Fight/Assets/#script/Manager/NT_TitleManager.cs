@@ -4,7 +4,8 @@ using UnityEngine;
 using XboxCtrlrInput;
 using System;
 
-public class NT_TitleManager : MonoBehaviour{
+public class NT_TitleManager : MonoBehaviour
+{
 
     public enum SELECTMODE
     {
@@ -32,28 +33,33 @@ public class NT_TitleManager : MonoBehaviour{
     [SerializeField]
     private GameObject[] Page;
 
+    private float count = 0;//回転角をカウント
+
 
 
     //プレイヤーデータ
     private string PlayerName = "";
     private Sprite Face;
     private Color PlayerColor;
-    private string SelectStage = "";
+    private string Stage = "";
+
 
     // Use this for initialization
-    void Start() {
+    void Start()
+    {
         //シーンのロード
         SceneManagerController.LoadScene();
 
     }
-	// Update is called once per frame
-	void Update () {        
-		
+    // Update is called once per frame
+    void Update()
+    {
+
         //ページ切り替え中
-        if(ChangePageFlag == true && mode != SELECTMODE.MAX)
+        if (ChangePageFlag == true)
         {
             //次のページ
-            if(OpenPageFlag == true)
+            if (OpenPageFlag == true)
             {
                 this.NextPage();
             }
@@ -61,23 +67,37 @@ public class NT_TitleManager : MonoBehaviour{
             {
                 this.PreviousPage();
             }
+
+            //ページをめくるのをやめてモードを切り替える
+            if (count > 180)
+            {
+                ChangePageFlag = false;
+                if (OpenPageFlag == true)
+                {
+                    mode++;
+                }
+                else
+                {
+                    mode--;
+                }
+            }
         }
         else
         {
             //名前選択
-            if(mode == SELECTMODE.NAME)
+            if (mode == SELECTMODE.NAME)
             {
                 Page[(int)mode].transform.GetChild(6).GetComponent<CursorController2>().PageUpdate();
                 return;
             }
             //キャラクター選択
-            if(mode == SELECTMODE.FICESELECT)
+            if (mode == SELECTMODE.FICESELECT)
             {
                 Page[(int)mode].transform.GetChild(1).GetComponent<FiceController>().PageUpdate();
                 return;
             }
             //色選択
-            if(mode == SELECTMODE.COLORSELECT)
+            if (mode == SELECTMODE.COLORSELECT)
             {
                 Page[(int)mode].transform.GetChild(1).GetComponent<ColorSelectController>().Name_Data = PlayerName;
                 Page[(int)mode].transform.GetChild(1).GetComponent<ColorSelectController>().Fice_Data = Face;
@@ -90,8 +110,18 @@ public class NT_TitleManager : MonoBehaviour{
                 Page[(int)mode].transform.GetChild(2).GetComponent<NT_StageSelect>().PageUpdate();
                 return;
             }
+
+            //マックスだったら
+            if (mode == SELECTMODE.MAX)
+            {
+                Page[(int)mode].transform.GetChild(0).GetComponent<NT_Confirmation>().Name_Data = PlayerName;
+                Page[(int)mode].transform.GetChild(0).GetComponent<NT_Confirmation>().Face_Data = Face;
+                Page[(int)mode].transform.GetChild(0).GetComponent<NT_Confirmation>().Color_Data = PlayerColor;
+                Page[(int)mode].transform.GetChild(0).GetComponent<NT_Confirmation>().Stage_Data = Stage;
+                Page[(int)mode].transform.GetChild(0).GetComponent<NT_Confirmation>().PageUpdate();
+            }
         }
-	}
+    }
 
     /// <summary>
     /// ページをめくる
@@ -102,35 +132,18 @@ public class NT_TitleManager : MonoBehaviour{
         if (ChangePageFlag != false) return;
         OpenPageFlag = Open;
         ChangePageFlag = true;
-
-        if(OpenPageFlag == true && mode + 1 == SELECTMODE.MAX)
-        {
-            mode++;
-            return;
-        }
-        //ページをめくるのをやめてモードを切り替える
-        StartCoroutine(DelayMethod(1.20f, 
-            () => 
-            {
-                ChangePageFlag = false;
-                if(OpenPageFlag == true)
-                {
-                    mode++;
-                }
-                else
-                {
-                    mode--;
-                }
-            }));
+        count = 0;
     }
 
     private void NextPage()
     {
+        count += OpenSpeed;
         Page[(int)mode].transform.RotateAround(CenterPoint.transform.position, Vector3.right, -OpenSpeed);
     }
 
     private void PreviousPage()
     {
+        count += OpenSpeed;
         Page[(int)mode - 1].transform.RotateAround(CenterPoint.transform.position, Vector3.right, OpenSpeed);
     }
 
@@ -185,11 +198,11 @@ public class NT_TitleManager : MonoBehaviour{
         }
     }
 
-    public  string SelectStage_Data
+    public string SelectStage_Data
     {
         set
         {
-            SelectStage = value;
+            Stage = value;
         }
     }
 }
