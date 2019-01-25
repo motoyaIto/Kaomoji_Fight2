@@ -96,6 +96,8 @@ public class Player : RaycastController
         walk_ac = (AudioClip)Resources.Load("Sound/SE/Move/walk");          //歩く音
         jump_ac = (AudioClip)Resources.Load("Sound/SE/Jump/jump");           //ジャンプ音  
         bomb_ac = Resources.Load<AudioClip>("Sound/SE/Deth/ded2");
+
+       
     }
 
     new void Start()
@@ -120,6 +122,7 @@ public class Player : RaycastController
 
         // PhotonViewの取得
         photonView_cs = GetComponent<PhotonView>();
+        this.transform.GetComponent<SpriteRenderer>().material = Resources.Load<Material>("Material/P" + photonView_cs.ownerId + "Color");
     }
 
     private void Reset()
