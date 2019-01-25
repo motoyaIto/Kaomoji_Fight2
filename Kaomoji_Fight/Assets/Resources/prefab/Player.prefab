@@ -416,6 +416,7 @@ MonoBehaviour:
   ObservedComponents:
   - {fileID: 114699640438122724}
   - {fileID: 4718931800437274}
+  - {fileID: 114150048692008370}
   ObservedComponentsFoldoutOpen: 1
   viewIdField: 0
   instantiationId: -1
@@ -502,7 +503,7 @@ MonoBehaviour:
     InterpolateRotateTowardsSpeed: 180
     InterpolateLerpSpeed: 5
   m_ScaleModel:
-    SynchronizeEnabled: 1
+    SynchronizeEnabled: 0
     InterpolateOption: 2
     InterpolateMoveTowardsSpeed: 1
     InterpolateLerpSpeed: 0
