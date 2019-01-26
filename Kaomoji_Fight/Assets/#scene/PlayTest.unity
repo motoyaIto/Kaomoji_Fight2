@@ -998,6 +998,16 @@ Prefab:
       propertyPath: instantiationId
       value: 1
       objectReference: {fileID: 0}
+    - target: {fileID: 114211429998777996, guid: 78d1e039b7f3eda4aa36763dc47e6a87,
+        type: 2}
+      propertyPath: viewIdField
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 114211429998777996, guid: 78d1e039b7f3eda4aa36763dc47e6a87,
+        type: 2}
+      propertyPath: instantiationId
+      value: 2
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: 78d1e039b7f3eda4aa36763dc47e6a87, type: 2}
   m_IsPrefabParent: 0

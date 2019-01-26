@@ -46,4 +46,5 @@ MonoBehaviour:
   - ShowEffect
   - Write_DownTimerText
   - SpawnPlayer
+  - MethodRPC
   DisableAutoOpenWizard: 1
