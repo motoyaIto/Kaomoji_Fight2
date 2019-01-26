@@ -20,7 +20,7 @@ public class PhotonManager : Photon.MonoBehaviour {
 
     private string ROOM_NAME = "RoomA";
 
-    private GameObject[] player_obj = null;
+    private GameObject player_obj;
     private Material[] playerMaterial = null;
     private string[] playerName = null;
     private Color[] playerColor = null;
@@ -42,7 +42,7 @@ public class PhotonManager : Photon.MonoBehaviour {
 
     private void Start()
     {
-        player_obj = new GameObject[4];
+        
         playerMaterial = new Material[4];
         playerName = new string[4];
         playerColor = new Color[4];
@@ -112,8 +112,8 @@ public class PhotonManager : Photon.MonoBehaviour {
     {
         if (PhotonNetwork.room.PlayerCount < PhotonNetwork.room.MaxPlayers)
         {
-            //SpawnPlayer();
-            photonView.RPC("SpawnPlayer", PhotonTargets.AllBuffered);
+            SpawnPlayer();
+        //    photonView.RPC("SpawnPlayer", PhotonTargets.AllBuffered);
         }
         Debug.Log(PhotonNetwork.room.Name);
     }
@@ -122,6 +122,7 @@ public class PhotonManager : Photon.MonoBehaviour {
     void OnPhotonPlayerConnected(PhotonPlayer newPlayer)
     {
         Debug.Log("new Player");
+        player_obj.transform.GetComponent<Player>().PushPlayerData();
     }
 
     //void OnGUI()
@@ -158,16 +159,18 @@ public class PhotonManager : Photon.MonoBehaviour {
     {
         int PlayerNum = PhotonNetwork.room.PlayerCount - 1;
 
+        player_obj = PhotonNetwork.Instantiate(player_prefab, new Vector3(0, 0, 0), Quaternion.identity, 0);
+
         //自分を生成
-        player_obj[PlayerNum] = PhotonNetwork.Instantiate(player_prefab, Vector3.zero, Quaternion.identity, 0) as GameObject;
-        player_obj[PlayerNum].transform.GetComponent<SpriteRenderer>().material = Resources.Load<Material>("Material/P" + PhotonNetwork.room.PlayerCount + "Color");
-        playerMaterial[PlayerNum] = Resources.Load<Material>("Material/P" + PhotonNetwork.room.PlayerCount + "Color");
-        player_obj[PlayerNum].transform.GetComponent<SpriteRenderer>().material.SetColor("_EmissionColor", NT_PlayerData.Instance.color);
-        playerColor[PlayerNum] = NT_PlayerData.Instance.color;
-        player_obj[PlayerNum].transform.GetComponent<SpriteRenderer>().sprite = NT_PlayerData.Instance.Face;
-        playerFace[PlayerNum] = NT_PlayerData.Instance.Face;
-        player_obj[PlayerNum].name = NT_PlayerData.Instance.name;
-        playerName[PlayerNum] = NT_PlayerData.Instance.name;
+        //player_obj =  PhotonNetwork.Instantiate(player_prefab, Vector3.zero, Quaternion.identity, 0) /*as GameObject*/;
+        //player_obj[PlayerNum].transform.GetComponent<SpriteRenderer>().material = Resources.Load<Material>("Material/P" + PhotonNetwork.room.PlayerCount + "Color");
+        //playerMaterial[PlayerNum] = Resources.Load<Material>("Material/P" + PhotonNetwork.room.PlayerCount + "Color");
+        //player_obj[PlayerNum].transform.GetComponent<SpriteRenderer>().material.SetColor("_EmissionColor", NT_PlayerData.Instance.color);
+        //playerColor[PlayerNum] = NT_PlayerData.Instance.color;
+        //player_obj[PlayerNum].transform.GetComponent<SpriteRenderer>().sprite = NT_PlayerData.Instance.Face;
+        //playerFace[PlayerNum] = NT_PlayerData.Instance.Face;
+        //player_obj[PlayerNum].name = NT_PlayerData.Instance.name;
+        //playerName[PlayerNum] = NT_PlayerData.Instance.name;
 
         ////自分以外の先に入っている人
         //for (int i = 0; i < PhotonNetwork.room.PlayerCount; i++)

@@ -10,7 +10,7 @@ using UnityEngine.UI;
 [RequireComponent(typeof(Rigidbody2D))]
 public class Player : RaycastController
 {
-
+    PhotonView view;
     //状態異常
     public struct StatesAbnormality
     {
@@ -110,7 +110,7 @@ public class Player : RaycastController
         statesUp.Substitution = false;
 
         controller = GetComponent<Contoroller2d>();
-        PSM = GameObject.Find("PlaySceneManager").transform.GetComponent<PlaySceneManager>();
+        //PSM = GameObject.Find("PlaySceneManager").transform.GetComponent<PlaySceneManager>();
         rig = GetComponent<Rigidbody2D>();
 
         // プレイヤー同士の当たり判定をしない
@@ -118,17 +118,45 @@ public class Player : RaycastController
         Physics2D.IgnoreLayerCollision(P_layer, P_layer);
 
         //HPゲージを取得する
-        HPgageObj = PSM.SetHPgage(CNConvert(ControlerNamber) + 1);
+       // HPgageObj = PSM.SetHPgage(CNConvert(ControlerNamber) + 1);
 
         // PhotonViewの取得
         photonView_cs = GetComponent<PhotonView>();
+
         this.transform.GetComponent<SpriteRenderer>().material = Resources.Load<Material>("Material/P" + photonView_cs.ownerId + "Color");
+        // 持ち主でないのなら制御させない
+        if (!photonView_cs.isMine)
+        {
+            return;
+        }
+
+        this.name = NT_PlayerData.Instance.name;
+        this.transform.GetComponent<SpriteRenderer>().sprite = NT_PlayerData.Instance.Face;
+        this.transform.GetComponent<SpriteRenderer>().material.SetColor("_EmissionColor", NT_PlayerData.Instance.color);
+
+        this.PushPlayerData();
     }
 
     private void Reset()
     {
         rig = GetComponent<Rigidbody2D>();
     }
+
+    public void PushPlayerData()
+    {
+        PhotonView photonView = this.GetComponent<PhotonView>();
+        photonView.RPC("MethodRPC", PhotonTargets.All, photonView_cs.ownerId, NT_PlayerData.Instance.name, NT_PlayerData.Instance.Face.name, new Vector3(NT_PlayerData.Instance.color.r, NT_PlayerData.Instance.color.g, NT_PlayerData.Instance.color.b));
+    }
+
+
+    [PunRPC]
+    public void MethodRPC(int id, string name, string face, Vector3 color)
+    {
+        this.name = name;
+        this.transform.GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("textures/use/Player/" + face);
+        this.transform.GetComponent<SpriteRenderer>().material.SetColor("_EmissionColor", new Color(color.x, color.y, color.z, 1.0f));
+    }
+
 
     void Update()
     {
@@ -509,7 +537,7 @@ public class Player : RaycastController
     private void OnDisable()
     {
         if (isQuitting) return;
-        PSM.death_player[CNConvert(ControlerNamber)] = false;
+        //PSM.death_player[CNConvert(ControlerNamber)] = false;
     }
 
     // Controllerの番号をint型で取得
