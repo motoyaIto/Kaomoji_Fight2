@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 using UnityEngine.UI;
+using System;
 
 public enum Controller
 {
@@ -122,7 +123,7 @@ public class PhotonManager : Photon.MonoBehaviour {
     void OnPhotonPlayerConnected(PhotonPlayer newPlayer)
     {
         Debug.Log("new Player");
-        player_obj.transform.GetComponent<Player>().PushPlayerData();
+        StartCoroutine(this.DelayMethod(0.1f, () => { player_obj.transform.GetComponent<Player>().PushPlayerData(); }));
     }
 
     //void OnGUI()
@@ -233,6 +234,18 @@ public class PhotonManager : Photon.MonoBehaviour {
     //    // 他のプレイヤーのデータ照合
     //    //player.transform.GetComponent<SpriteRenderer>().sprite = Instantiate(Resources.Load<Sprite>("textuers/use/Player/" + hash_prop["Sprite"]));
     //}
+
+    /// <summary>
+    /// 渡された処理を指定時間後に実行する
+    /// </summary>
+    /// <param name="waitTime">遅延時間</param>
+    /// <param name="action">実行する処理</param>
+    /// <returns></returns>
+    protected IEnumerator DelayMethod(float waitTime, Action action)
+    {
+        yield return new WaitForSeconds(waitTime);
+        action();
+    }
 
 
     private void Update()
