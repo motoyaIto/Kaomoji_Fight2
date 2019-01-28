@@ -4,6 +4,8 @@ using System.Linq;
 using UnityEngine;
 using UnityEngine.UI;
 using System;
+using System.Text;
+using TMPro;
 
 public enum Controller
 {
@@ -22,11 +24,6 @@ public class PhotonManager : Photon.MonoBehaviour {
     private string ROOM_NAME = "RoomA";
 
     private GameObject player_obj;
-    private Material[] playerMaterial = null;
-    private string[] playerName = null;
-    private Color[] playerColor = null;
-    private Sprite[] playerFace = null;
-    private string[] stage = null;
 
     // デバッグ用
     private Text m_RoomLog = null;
@@ -34,6 +31,42 @@ public class PhotonManager : Photon.MonoBehaviour {
 
     // カスタムプロパティを一時保存する
     private string text = "";
+
+    //ステージ//////////////////////////////////////////////////////////
+    //文字になる文字群
+    private string[] MOZI =
+    {
+        "あ", "い", "う", "え", "お",
+        "か", "き", "く", "け", "こ",
+        "さ", "し", "す", "せ", "そ",
+        "た", "ち", "つ", "て", "と",
+        "な", "に", "ぬ", "ね", "の",
+        "は", "ひ", "ふ", "へ", "ほ",
+        "ま", "み", "む", "め", "も",
+        "や",       "ゆ",       "よ",
+        "ら", "り", "る", "れ", "ろ",
+        "わ",       "を",       "ん",
+
+        "が", "ぎ", "ぐ", "げ", "ご",
+        "ざ", "じ", "ず", "ぜ", "ぞ",
+        "だ", "ぢ", "づ", "で", "ど",
+        "ば", "び", "ぶ", "べ", "ぼ",
+
+        "ぱ", "ぴ", "ぷ", "ぺ", "ぽ",
+
+        "ぁ", "ぃ", "ぅ", "ぇ", "ぉ",
+        "ゃ", "ゅ", "ょ", "っ", "ー",
+    };
+    [SerializeField]
+    private string StageName;
+    private string StageText;
+    private GameObject StageBlock;  //ステージ
+    private Material Mozi_mate;   //文字material
+    private GameObject[] StageBlocks = null;//ブロックの配列
+
+    private int StageTextName = 0;  //テキストの文字数
+    private int StagexCount = 0;    //x座標の移動
+    private int StageyCount = 0;    //y座標の移動
 
     void Awake()
     {
@@ -43,15 +76,20 @@ public class PhotonManager : Photon.MonoBehaviour {
 
     private void Start()
     {
-        
-        playerMaterial = new Material[4];
-        playerName = new string[4];
-        playerColor = new Color[4];
-        playerFace = new Sprite[4];
-        stage = new string[4];
-
         m_RoomLog = GameObject.Find("Text").GetComponent<Text>();
         m_RoomLog.text = "";
+
+        //ステージ////////////////////////////////////////////////////////////////
+        //テキスト一覧の取得
+        StageText = System.IO.File.ReadAllText("Assets/Resources/Texts/" + StageName + ".txt", Encoding.GetEncoding("Shift_JIS"));
+
+        StageTextName = StageText.Length;
+
+        //文字数分の配列
+        StageBlocks = new GameObject[StageTextName];
+        //文字を表示するボックスをResourcesから読み込む
+        StageBlock = (GameObject)Resources.Load("prefab/Stage/StageBlock");
+        Mozi_mate = Resources.Load<Material>("Material/StageBlock_Mozi");
     }
 
     void OnDestory()
@@ -111,12 +149,22 @@ public class PhotonManager : Photon.MonoBehaviour {
     // ルーム接続時の呼び出し
     void OnJoinedRoom()
     {
+        Debug.Log("ルーム入室");
+        Debug.Log(PhotonNetwork.room.Name);
         if (PhotonNetwork.room.PlayerCount < PhotonNetwork.room.MaxPlayers)
         {
             SpawnPlayer();
-        //    photonView.RPC("SpawnPlayer", PhotonTargets.AllBuffered);
+            //一文字ずつ設定する
+            for (int i = 0; i < StageTextName; i++)
+            {
+                string mozi = StageText.Substring(i, 1);
+                StageBlocks[i] = StageBlock;
+
+
+                CreateStageBlock(mozi);
+            }
         }
-        Debug.Log(PhotonNetwork.room.Name);
+        
     }
 
 
@@ -126,114 +174,15 @@ public class PhotonManager : Photon.MonoBehaviour {
         StartCoroutine(this.DelayMethod(0.1f, () => { player_obj.transform.GetComponent<Player>().PushPlayerData(); }));
     }
 
-    //void OnGUI()
-    //{
-    //    // ルームにいる場合のみ
-    //    if (PhotonNetwork.inRoom)
-    //    {
-    //        // ルームの状態を取得
-    //        Room room = PhotonNetwork.room;
-    //        if (room == null)
-    //        {
-    //            return;
-    //        }
-    //        // ルームのカスタムプロパティを取得.ルームのカスタムプロパティを取得し、Hashtableにセットしています。
-    //        ExitGames.Client.Photon.Hashtable cp = room.CustomProperties;
-    //        //Hashtableの要素の”CustomPropeties”をLabelで表示しています。
-    //        GUILayout.Label((string)cp["CustomProperties"], GUILayout.Width(150));
-    //        text = GUILayout.TextField(text, 100, GUILayout.Width(150));
-
-    //        // カスタムプロパティを更新
-    //        if (GUILayout.Button("更新"))
-    //        {
-    //            cp["CustomProperties"] = text;
-    //            //ルームのカスタムプロパティにセットします。
-    //            room.SetCustomProperties(cp);
-    //        }
-    //    }
-    //}
-
-
+ 
     [PunRPC]
     // プレイヤーの生成
     private void SpawnPlayer()
     {
         int PlayerNum = PhotonNetwork.room.PlayerCount - 1;
 
-        player_obj = PhotonNetwork.Instantiate(player_prefab, new Vector3(0, 0, 0), Quaternion.identity, 0);
-
-        //自分を生成
-        //player_obj =  PhotonNetwork.Instantiate(player_prefab, Vector3.zero, Quaternion.identity, 0) /*as GameObject*/;
-        //player_obj[PlayerNum].transform.GetComponent<SpriteRenderer>().material = Resources.Load<Material>("Material/P" + PhotonNetwork.room.PlayerCount + "Color");
-        //playerMaterial[PlayerNum] = Resources.Load<Material>("Material/P" + PhotonNetwork.room.PlayerCount + "Color");
-        //player_obj[PlayerNum].transform.GetComponent<SpriteRenderer>().material.SetColor("_EmissionColor", NT_PlayerData.Instance.color);
-        //playerColor[PlayerNum] = NT_PlayerData.Instance.color;
-        //player_obj[PlayerNum].transform.GetComponent<SpriteRenderer>().sprite = NT_PlayerData.Instance.Face;
-        //playerFace[PlayerNum] = NT_PlayerData.Instance.Face;
-        //player_obj[PlayerNum].name = NT_PlayerData.Instance.name;
-        //playerName[PlayerNum] = NT_PlayerData.Instance.name;
-
-        ////自分以外の先に入っている人
-        //for (int i = 0; i < PhotonNetwork.room.PlayerCount; i++)
-        //{
-        //    Debug.Log(playerColor[i] + " " + playerFace[i].name + " " + playerName[i]);
-
-        //    player_obj[i].transform.GetComponent<SpriteRenderer>().material = playerMaterial[i];
-        //    player_obj[i].transform.GetComponent<SpriteRenderer>().material.SetColor("_EmissionColor", playerColor[i]);
-        //    player_obj[i].transform.GetComponent<SpriteRenderer>().sprite = playerFace[i];
-        //    player_obj[i].name = playerName[i];
-        //}
-
-
-        // プレイヤーカスタムプロパティに送るデータ
-        //SetPlayerPropertys(playerFace[PlayerNum].ToString());
+        player_obj = PhotonNetwork.Instantiate(player_prefab, new Vector3(0, 0, 0), Quaternion.identity, 0);       
     }
-
-
-    //void OnPhotonSerializeView(PhotonStream stream, PhotonMessageInfo info)
-    //{
-    //    if (stream.isWriting)
-    //    {
-    //        // 送信データ
-    //        stream.SendNext(player_obj[PhotonNetwork.room.PlayerCount].transform.GetComponent<SpriteRenderer>().material);
-    //        stream.SendNext(player_obj[PhotonNetwork.room.PlayerCount].transform.GetComponent<SpriteRenderer>().sprite);
-    //        stream.SendNext(player_obj[PhotonNetwork.room.PlayerCount].transform.GetComponent<SpriteRenderer>().color);
-    //        stream.SendNext(player_obj[PhotonNetwork.room.PlayerCount].name);
-    //    }
-    //    else
-    //    {
-    //        // 受信データ
-    //        player_obj[PhotonNetwork.room.PlayerCount].GetComponent<SpriteRenderer>().material = (Material)stream.ReceiveNext();
-    //        player_obj[PhotonNetwork.room.PlayerCount].GetComponent<SpriteRenderer>().sprite = (Sprite)stream.ReceiveNext();
-    //        player_obj[PhotonNetwork.room.PlayerCount].GetComponent<SpriteRenderer>().color = (Color)stream.ReceiveNext();
-    //        player_obj[PhotonNetwork.room.PlayerCount].name = (string)stream.ReceiveNext();
-
-    //    }
-    //}
-
-    //// カスタムプレイヤープロパティ
-    //public void SetPlayerPropertys(string spr)
-    //{
-    //    var properties = new ExitGames.Client.Photon.Hashtable();
-    //    properties.Add("Sprite", spr);
-
-    //    PhotonNetwork.player.SetCustomProperties(properties);
-    //}
-
-    //// カスタムプロパティの受信
-    //public void OnPhotonPlayerPropertiesChanged(object[] i_playerAndUpdatedProps)
-    //{
-    //    var player_data = i_playerAndUpdatedProps[0] as PhotonPlayer;
-    //    var hash_prop = i_playerAndUpdatedProps[1] as ExitGames.Client.Photon.Hashtable;
-
-
-    //    var players = GameObject.FindGameObjectsWithTag("Player");
-    //    var player = players.FirstOrDefault(obj => obj.GetComponent<PhotonView>().ownerId == player_data.ID);
-
-
-    //    // 他のプレイヤーのデータ照合
-    //    //player.transform.GetComponent<SpriteRenderer>().sprite = Instantiate(Resources.Load<Sprite>("textuers/use/Player/" + hash_prop["Sprite"]));
-    //}
 
     /// <summary>
     /// 渡された処理を指定時間後に実行する
@@ -252,6 +201,60 @@ public class PhotonManager : Photon.MonoBehaviour {
     {
         if (PhotonNetwork.room != null) m_RoomLog.text = "" + PhotonNetwork.room.PlayerCount;
         
+    }
+
+    //ステージ/////////////////////////////////////////////////////////////////////
+    private void CreateStageBlock(string mozi)
+    {
+        //改行が入っていないとき
+        if (mozi != "\r" && mozi != "\n")
+        {
+            //スペースが入っていないとき
+            if (mozi != " " && mozi != "　")
+            {
+                //新しく作るオブジェクトの座標
+                Vector3 pos = new Vector3(
+                       this.transform.position.x + StageBlock.transform.localScale.x / 2 + StageBlock.transform.localScale.x * StagexCount,
+                       this.transform.position.y + StageBlock.transform.localScale.y / 2 + StageBlock.transform.localScale.y * StageyCount,
+                        0.0f);
+
+                //オブジェクトを生成する
+                StageBlock = PhotonNetwork.InstantiateSceneObject("prefab/Stage/StageBlock", pos, Quaternion.identity, 0, null);
+                //ボックスの下のテキストを取得する
+                GameObject textdata = StageBlock.transform.Find("Text").gameObject;
+                //テキストに文字を書き込む
+                textdata.GetComponent<TextMeshPro>().text = mozi;
+                StageBlock.name = "StageBlock" + "(" + mozi + ")";
+                // RectTransformを追加
+                StageBlock.AddComponent<RectTransform>();
+                //weaponだったら
+                if (Array.IndexOf(MOZI, mozi) >= 0)
+                {
+                    //文字用スクリプトをセットする
+                    GameObject weapon = StageBlock;
+                    weapon.AddComponent<MoziBlocController>().enabled = false;
+
+                    //文字用マテリアルに変更
+                    Material StageBlock_MoziMateral = Mozi_mate;
+                    StageBlock.GetComponent<Renderer>().material = StageBlock_MoziMateral;
+
+
+                    //文字フラグを立てる
+                    BlockController Block_cs = StageBlock.transform.GetComponent<BlockController>();
+                    Block_cs.Mozi = true;
+                }
+
+            }
+            //右に一文字ずらす
+            StagexCount++;
+        }
+        else
+        {
+            //一行下にずらす
+            StageyCount--;
+            //文字位置をスタートに戻す
+            StagexCount = 0;
+        }
     }
 }
 
