@@ -151,6 +151,7 @@ public class PhotonManager : Photon.MonoBehaviour {
     {
         Debug.Log("ルーム入室");
         Debug.Log(PhotonNetwork.room.Name);
+
         if (PhotonNetwork.room.PlayerCount < PhotonNetwork.room.MaxPlayers)
         {
             SpawnPlayer();
@@ -158,10 +159,8 @@ public class PhotonManager : Photon.MonoBehaviour {
             for (int i = 0; i < StageTextName; i++)
             {
                 string mozi = StageText.Substring(i, 1);
-                StageBlocks[i] = StageBlock;
 
-
-                CreateStageBlock(mozi);
+                CreateStageBlock(i, mozi);
             }
         }
         
@@ -171,7 +170,18 @@ public class PhotonManager : Photon.MonoBehaviour {
     void OnPhotonPlayerConnected(PhotonPlayer newPlayer)
     {
         Debug.Log("new Player");
+        //プレイヤーの同期
         StartCoroutine(this.DelayMethod(0.1f, () => { player_obj.transform.GetComponent<Player>().PushPlayerData(); }));
+
+        //ステージの同期
+        StartCoroutine(this.DelayMethod(0.1f, () =>
+        {
+            //一文字ずつ設定する
+            for (int i = 0; i < StageTextName; i++)
+            {
+                if (StageBlocks[i] != null) StageBlocks[i].transform.GetComponent<BlockController>().NewConectPlayer();
+            }
+        }));
     }
 
  
@@ -204,7 +214,7 @@ public class PhotonManager : Photon.MonoBehaviour {
     }
 
     //ステージ/////////////////////////////////////////////////////////////////////
-    private void CreateStageBlock(string mozi)
+    private void CreateStageBlock(int nam, string mozi)
     {
         //改行が入っていないとき
         if (mozi != "\r" && mozi != "\n")
@@ -219,20 +229,21 @@ public class PhotonManager : Photon.MonoBehaviour {
                         0.0f);
 
                 //オブジェクトを生成する
-                StageBlock = PhotonNetwork.InstantiateSceneObject("prefab/Stage/StageBlock", pos, Quaternion.identity, 0, null);
+                StageBlocks[nam] = PhotonNetwork.InstantiateSceneObject("prefab/Stage/StageBlock", pos, Quaternion.identity, 0, null);
                 //ボックスの下のテキストを取得する
-                GameObject textdata = StageBlock.transform.Find("Text").gameObject;
+                GameObject textdata = StageBlocks[nam].transform.Find("Text").gameObject;
                 //テキストに文字を書き込む
                 textdata.GetComponent<TextMeshPro>().text = mozi;
-                StageBlock.name = "StageBlock" + "(" + mozi + ")";
+                StageBlocks[nam].name = "StageBlock" + "(" + mozi + ")";
                 // RectTransformを追加
-                StageBlock.AddComponent<RectTransform>();
+                StageBlocks[nam].AddComponent<RectTransform>();
                 //weaponだったら
                 if (Array.IndexOf(MOZI, mozi) >= 0)
                 {
                     //文字用スクリプトをセットする
-                    GameObject weapon = StageBlock;
+                    GameObject weapon = StageBlocks[nam];
                     weapon.AddComponent<MoziBlocController>().enabled = false;
+                    StageBlocks[nam] = weapon;
 
                     //文字用マテリアルに変更
                     Material StageBlock_MoziMateral = Mozi_mate;

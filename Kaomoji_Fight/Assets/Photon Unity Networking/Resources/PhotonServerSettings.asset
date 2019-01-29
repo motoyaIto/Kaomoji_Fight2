@@ -47,4 +47,6 @@ MonoBehaviour:
   - Write_DownTimerText
   - SpawnPlayer
   - MethodRPC
+  - CatchNewStageData
+  - CatchStageData
   DisableAutoOpenWizard: 1

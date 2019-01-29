@@ -432,7 +432,7 @@ public class Player : RaycastController
         if (hitFoot.collider != null && hitFoot.collider.tag != "Stage" && oldRayStage != null)
         {
             //取得できる文字の色を元に戻す
-            oldRayStage.transform.GetChild(0).GetComponent<TextMeshPro>().color = new Color(0, 0, 0);
+            oldRayStage.transform.GetComponent<BlockController>().ChangeTextColor(new Color(0, 0, 0));
         }
 
         //ゲットできるオブジェクトだったら
@@ -447,7 +447,7 @@ public class Player : RaycastController
             if (hitFoot.collider.transform.position != oldRayStage.transform.position)
             {
                 //取得できる文字の色を元に戻す
-                oldRayStage.transform.GetChild(0).GetComponent<TextMeshPro>().color = new Color(0, 0, 0);
+                oldRayStage.transform.GetComponent<BlockController>().ChangeTextColor(new Color(0, 0, 0));
 
                 oldRayStage = hitFoot.collider;
             }
@@ -455,7 +455,7 @@ public class Player : RaycastController
             //取得できるオブジェクトを自分と同じ色に変更
             if (hitFoot.collider.transform.GetComponent<BlockController>().Mozi == true)
             {
-                hitFoot.collider.transform.GetChild(0).GetComponent<TextMeshPro>().color = this.transform.GetComponent<Renderer>().material.GetColor("_EmissionColor");
+                hitFoot.collider.transform.GetComponent<BlockController>().ChangeTextColor(this.transform.GetComponent<Renderer>().material.GetColor("_EmissionColor"));
             }
         }
 
@@ -643,7 +643,7 @@ public class Player : RaycastController
         if (oldRayStage != null)
         {
             //取得できる文字の色を元に戻す
-            oldRayStage.transform.GetChild(0).GetComponent<TextMeshPro>().color = new Color(0, 0, 0);
+            oldRayStage.transform.GetComponent<BlockController>().ChangeTextColor(new Color(0, 0, 0));
         }
     }
 
