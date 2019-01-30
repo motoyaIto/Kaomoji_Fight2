@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 using UnityEngine.UI;
+
+using Cinemachine;
 using System;
 using System.Text;
 using TMPro;
@@ -32,6 +34,13 @@ public class PhotonManager : Photon.MonoBehaviour {
     // カスタムプロパティを一時保存する
     private string text = "";
 
+    [SerializeField]
+    private GameObject[] players;
+
+    //カメラ//////////////////////////////////////////////////////////
+    private CinemachineTargetGroup TargetGroup;
+    private bool newPlayerFlag = false;
+    private int newPlayerID = 0;
     //ステージ//////////////////////////////////////////////////////////
     //文字になる文字群
     private string[] MOZI =
@@ -78,6 +87,11 @@ public class PhotonManager : Photon.MonoBehaviour {
     {
         m_RoomLog = GameObject.Find("Text").GetComponent<Text>();
         m_RoomLog.text = "";
+
+        //カメラ////////////////////////////////////////////////////////////////
+        //カメラにターゲットするプレイヤーの数を設定
+        TargetGroup = this.GetComponent<CinemachineTargetGroup>();
+        //TargetGroup.m_Targets = new CinemachineTargetGroup.Target[PlayData.Instance.playerNum];
 
         //ステージ////////////////////////////////////////////////////////////////
         //テキスト一覧の取得
@@ -142,8 +156,6 @@ public class PhotonManager : Photon.MonoBehaviour {
                 //GameObject.Find("StatusText").GetComponent<Text>().text = rooms[i].Name;
             }
         }
-
-
     }
 
     // ルーム接続時の呼び出し
@@ -154,14 +166,32 @@ public class PhotonManager : Photon.MonoBehaviour {
 
         if (PhotonNetwork.room.PlayerCount < PhotonNetwork.room.MaxPlayers)
         {
+            //プレイヤーを生成
             SpawnPlayer();
-            //一文字ずつ設定する
-            for (int i = 0; i < StageTextName; i++)
-            {
-                string mozi = StageText.Substring(i, 1);
 
-                CreateStageBlock(i, mozi);
+            //床を生成(マスターのみ)
+            if (PhotonNetwork.isMasterClient == true)
+            {
+                for (int i = 0; i < StageTextName; i++)
+                {
+                    string mozi = StageText.Substring(i, 1);
+
+                    CreateStageBlock(i, mozi);
+                }
             }
+            //今存在するプレイヤーをカメラにアタッチする
+            //if(PhotonNetwork.playerList.Length)
+            StartCoroutine(this.DelayMethod(0.5f, () =>
+            {
+                for (int i = 0; i < PhotonNetwork.playerList.Length; i++)
+                {
+                    if (PhotonNetwork.playerList[i].NickName != NT_PlayerData.Instance.name)
+                    {
+                        this.CameraSet(GameObject.Find(PhotonNetwork.playerList[i].NickName).transform);
+                    }
+                }
+            }));
+            
         }
         
     }
@@ -169,19 +199,27 @@ public class PhotonManager : Photon.MonoBehaviour {
 
     void OnPhotonPlayerConnected(PhotonPlayer newPlayer)
     {
+        newPlayerFlag = true;
+
         Debug.Log("new Player");
         //プレイヤーの同期
         StartCoroutine(this.DelayMethod(0.1f, () => { player_obj.transform.GetComponent<Player>().PushPlayerData(); }));
 
-        //ステージの同期
-        StartCoroutine(this.DelayMethod(0.1f, () =>
+        //ステージの同期(マスターのみ)
+        if (PhotonNetwork.isMasterClient == true)
         {
-            //一文字ずつ設定する
-            for (int i = 0; i < StageTextName; i++)
+            StartCoroutine(this.DelayMethod(0.1f, () =>
             {
-                if (StageBlocks[i] != null) StageBlocks[i].transform.GetComponent<BlockController>().NewConectPlayer();
-            }
-        }));
+                //一文字ずつ設定する
+                for (int i = 0; i < StageTextName; i++)
+                {
+                    if (StageBlocks[i] != null) StageBlocks[i].transform.GetComponent<BlockController>().NewConectPlayer();
+                }
+            }));
+        }
+
+        //カメラにアタッチするプレイヤーを設定
+        newPlayerID = newPlayer.ID;//おーなーID       
     }
 
  
@@ -191,7 +229,12 @@ public class PhotonManager : Photon.MonoBehaviour {
     {
         int PlayerNum = PhotonNetwork.room.PlayerCount - 1;
 
-        player_obj = PhotonNetwork.Instantiate(player_prefab, new Vector3(0, 0, 0), Quaternion.identity, 0);       
+        player_obj = PhotonNetwork.Instantiate(player_prefab, new Vector3(10, 0, 0), Quaternion.identity, 0);
+
+        //プレイヤー名をphotonに登録
+        PhotonNetwork.playerName = NT_PlayerData.Instance.name;
+        //カメラに自分を設定
+        this.CameraSet(player_obj.transform);       
     }
 
     /// <summary>
@@ -211,6 +254,47 @@ public class PhotonManager : Photon.MonoBehaviour {
     {
         if (PhotonNetwork.room != null) m_RoomLog.text = "" + PhotonNetwork.room.PlayerCount;
         
+        if(newPlayerFlag == true)
+        {
+            for(int i = 0; i < PhotonNetwork.playerList.Length; i++)
+            {
+                if (newPlayerID == PhotonNetwork.playerList[i].ID)
+                {
+                    GameObject player = GameObject.Find(PhotonNetwork.playerList[i].NickName);
+                    if (player != null)
+                    {
+                        this.CameraSet(player.transform);
+                    }
+                }
+            }
+        }
+    }
+
+    //カメラ/////////////////////////////////////////////////////////////////////
+    private void CameraSet(Transform player)
+    {
+        //カメラのターゲットに設定
+        for(int i = 0; i < TargetGroup.m_Targets.Length; i++)
+        {
+            //すでに登録されていたら
+            //if(TargetGroup.m_Targets[i].target != null && TargetGroup.m_Targets[i].target.name == player.gameObject.name)
+            //{
+            //    return;
+            //}
+
+            //登録されていないところに登録
+            if(TargetGroup.m_Targets[i].target == null)
+            {
+                TargetGroup.m_Targets[i].target = player;
+                TargetGroup.m_Targets[i].weight = 1;
+                TargetGroup.m_Targets[i].radius = 1;
+
+                newPlayerFlag = false;
+
+                return;
+            }
+
+        }
     }
 
     //ステージ/////////////////////////////////////////////////////////////////////
@@ -224,12 +308,13 @@ public class PhotonManager : Photon.MonoBehaviour {
             {
                 //新しく作るオブジェクトの座標
                 Vector3 pos = new Vector3(
-                       this.transform.position.x + StageBlock.transform.localScale.x / 2 + StageBlock.transform.localScale.x * StagexCount,
-                       this.transform.position.y + StageBlock.transform.localScale.y / 2 + StageBlock.transform.localScale.y * StageyCount,
+                       (this.transform.position.x-10) + StageBlock.transform.localScale.x / 2 + StageBlock.transform.localScale.x * StagexCount,
+                       (this.transform.position.y+10) + StageBlock.transform.localScale.y / 2 + StageBlock.transform.localScale.y * StageyCount,
                         0.0f);
 
                 //オブジェクトを生成する
                 StageBlocks[nam] = PhotonNetwork.InstantiateSceneObject("prefab/Stage/StageBlock", pos, Quaternion.identity, 0, null);
+                
                 //ボックスの下のテキストを取得する
                 GameObject textdata = StageBlocks[nam].transform.Find("Text").gameObject;
                 //テキストに文字を書き込む
@@ -247,13 +332,15 @@ public class PhotonManager : Photon.MonoBehaviour {
 
                     //文字用マテリアルに変更
                     Material StageBlock_MoziMateral = Mozi_mate;
-                    StageBlock.GetComponent<Renderer>().material = StageBlock_MoziMateral;
+                    StageBlocks[nam].GetComponent<Renderer>().material = StageBlock_MoziMateral;
 
 
                     //文字フラグを立てる
                     BlockController Block_cs = StageBlock.transform.GetComponent<BlockController>();
                     Block_cs.Mozi = true;
                 }
+               
+               
 
             }
             //右に一文字ずらす
