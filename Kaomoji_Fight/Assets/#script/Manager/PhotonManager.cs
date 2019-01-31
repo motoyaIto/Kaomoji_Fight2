@@ -77,6 +77,9 @@ public class PhotonManager : Photon.MonoBehaviour {
     private int StagexCount = 0;    //x座標の移動
     private int StageyCount = 0;    //y座標の移動
 
+    //HPバー//////////////////////////////////////////////////////////
+    private GameObject HPber;
+
     void Awake()
     {
         // Photon接続
@@ -191,9 +194,9 @@ public class PhotonManager : Photon.MonoBehaviour {
                     }
                 }
             }));
-            
         }
-        
+
+        CreateHPber();
     }
 
 
@@ -350,6 +353,12 @@ public class PhotonManager : Photon.MonoBehaviour {
             //文字位置をスタートに戻す
             StagexCount = 0;
         }
+    }
+
+    //ステージ/////////////////////////////////////////////////////////////////////
+    public void CreateHPber()
+    {
+        HPber = PhotonNetwork.Instantiate("prefab/UI/HPgage2", new Vector3(0, 0, 0), Quaternion.identity, 0);
     }
 }
 

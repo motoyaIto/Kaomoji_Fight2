@@ -50,4 +50,6 @@ MonoBehaviour:
   - CatchNewStageData
   - CatchStageData
   - PushPlayerData
+  - CatchHPData
+  - PushHPData
   DisableAutoOpenWizard: 1
