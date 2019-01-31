@@ -202,9 +202,6 @@ public class PhotonManager : Photon.MonoBehaviour {
         newPlayerFlag = true;
 
         Debug.Log("new Player");
-        //プレイヤーの同期
-        StartCoroutine(this.DelayMethod(0.1f, () => { player_obj.transform.GetComponent<Player>().PushPlayerData(); }));
-
         //ステージの同期(マスターのみ)
         if (PhotonNetwork.isMasterClient == true)
         {

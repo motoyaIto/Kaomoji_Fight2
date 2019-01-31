@@ -49,4 +49,5 @@ MonoBehaviour:
   - MethodRPC
   - CatchNewStageData
   - CatchStageData
+  - PushPlayerData
   DisableAutoOpenWizard: 1
