@@ -124,17 +124,18 @@ public class Player : RaycastController
         photonView_cs = GetComponent<PhotonView>();
 
         this.transform.GetComponent<SpriteRenderer>().material = Resources.Load<Material>("Material/P" + photonView_cs.ownerId + "Color");
-        // 持ち主でないのなら制御させない
+        
+        // 持ち主でないのなら持ち主にデータを要請する
         if (!photonView_cs.isMine)
         {
+            this.PleaseMyData();
             return;
         }
 
+        //データを登録する
         this.name = NT_PlayerData.Instance.name;
         this.transform.GetComponent<SpriteRenderer>().sprite = NT_PlayerData.Instance.Face;
         this.transform.GetComponent<SpriteRenderer>().material.SetColor("_EmissionColor", NT_PlayerData.Instance.color);
-
-        this.PushPlayerData();
     }
 
     private void Reset()
@@ -142,19 +143,53 @@ public class Player : RaycastController
         rig = GetComponent<Rigidbody2D>();
     }
 
+    /// <summary>
+    /// 持ち主にデータを要求する
+    /// </summary>
+    public void PleaseMyData()
+    {
+        PhotonView photonView = this.GetComponent<PhotonView>();
+        photonView.RPC("PushPlayerData", PhotonTargets.Others, photonView.ownerId);
+    }
+
     public void PushPlayerData()
     {
         PhotonView photonView = this.GetComponent<PhotonView>();
-        photonView.RPC("MethodRPC", PhotonTargets.All, photonView_cs.ownerId, NT_PlayerData.Instance.name, NT_PlayerData.Instance.Face.name, new Vector3(NT_PlayerData.Instance.color.r, NT_PlayerData.Instance.color.g, NT_PlayerData.Instance.color.b));
+        photonView.RPC("MethodRPC", PhotonTargets.OthersBuffered, photonView_cs.ownerId, NT_PlayerData.Instance.name, NT_PlayerData.Instance.Face.name, new Vector3(NT_PlayerData.Instance.color.r, NT_PlayerData.Instance.color.g, NT_PlayerData.Instance.color.b));
     }
 
+    /// <summary>
+    /// データを送信する
+    /// </summary>
+    /// <param name="ownerID">おーなーID</param>
+    [PunRPC]
+    public void PushPlayerData(int ownerID)
+    {
+        if (ownerID == this.transform.GetComponent<PhotonView>().ownerId)
+        {
+            PhotonView photonView = this.GetComponent<PhotonView>();
+            photonView.RPC("MethodRPC", PhotonTargets.OthersBuffered, photonView_cs.ownerId, NT_PlayerData.Instance.name, NT_PlayerData.Instance.Face.name, new Vector3(NT_PlayerData.Instance.color.r, NT_PlayerData.Instance.color.g, NT_PlayerData.Instance.color.b));
+        }
+    }
 
+    /// <summary>
+    /// 持ち主からデータを受信する
+    /// </summary>
+    /// <param name="id">おーなーID</param>
+    /// <param name="name">オーナー名</param>
+    /// <param name="face">キャラクター</param>
+    /// <param name="color">色</param>
     [PunRPC]
     public void MethodRPC(int id, string name, string face, Vector3 color)
     {
-        this.name = name;
-        this.transform.GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("textures/use/Player/" + face);
-        this.transform.GetComponent<SpriteRenderer>().material.SetColor("_EmissionColor", new Color(color.x, color.y, color.z, 1.0f));
+        if (id == this.transform.GetComponent<PhotonView>().ownerId)
+        {
+            this.name = name;
+            this.transform.GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("textures/use/Player/" + face);
+            this.transform.GetComponent<SpriteRenderer>().material.SetColor("_EmissionColor", new Color(color.x, color.y, color.z, 1.0f));
+
+            //GameObject.Find("PhotonManager").GetComponent<PhotonManager>().CreatedPlayer();
+        }
     }
 
 
