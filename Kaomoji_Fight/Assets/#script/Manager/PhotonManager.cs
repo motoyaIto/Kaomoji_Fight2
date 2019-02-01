@@ -17,6 +17,11 @@ public enum Controller
     Force
 };
 
+public enum EeventType : byte
+{
+    stageEvent = 1
+}
+
 public class PhotonManager : Photon.MonoBehaviour {
 
     //  prefabのばしょ ------------------- //
@@ -26,10 +31,6 @@ public class PhotonManager : Photon.MonoBehaviour {
     private string ROOM_NAME = "RoomA";
 
     private GameObject player_obj;
-
-    // デバッグ用
-    private Text m_RoomLog = null;
-
 
     // カスタムプロパティを一時保存する
     private string text = "";
@@ -88,9 +89,6 @@ public class PhotonManager : Photon.MonoBehaviour {
 
     private void Start()
     {
-        m_RoomLog = GameObject.Find("Text").GetComponent<Text>();
-        m_RoomLog.text = "";
-
         //カメラ////////////////////////////////////////////////////////////////
         //カメラにターゲットするプレイヤーの数を設定
         TargetGroup = this.GetComponent<CinemachineTargetGroup>();
@@ -252,8 +250,6 @@ public class PhotonManager : Photon.MonoBehaviour {
 
     private void Update()
     {
-        if (PhotonNetwork.room != null) m_RoomLog.text = "" + PhotonNetwork.room.PlayerCount;
-        
         if(newPlayerFlag == true)
         {
             for(int i = 0; i < PhotonNetwork.playerList.Length; i++)
