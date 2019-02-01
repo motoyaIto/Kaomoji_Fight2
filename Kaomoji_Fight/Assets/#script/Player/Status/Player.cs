@@ -85,6 +85,8 @@ public class Player : RaycastController
 
     private PhotonView photonView_cs = null;
 
+    private TextMeshProUGUI tmpu;   //選択したステージ名を表示するための場所
+
     #endregion
 
 
@@ -100,7 +102,7 @@ public class Player : RaycastController
         jump_ac = (AudioClip)Resources.Load("Sound/SE/Jump/jump");           //ジャンプ音  
         bomb_ac = Resources.Load<AudioClip>("Sound/SE/Deth/ded2");
 
-       
+        PhotonNetwork.OnEventCall += OnRaiseEvent;
     }
 
     new void Start()
@@ -139,6 +141,16 @@ public class Player : RaycastController
         this.name = NT_PlayerData.Instance.name;
         this.transform.GetComponent<SpriteRenderer>().sprite = NT_PlayerData.Instance.Face;
         this.transform.GetComponent<SpriteRenderer>().material.SetColor("_EmissionColor", NT_PlayerData.Instance.color);
+
+
+        // オプション
+        RaiseEventOptions option = new RaiseEventOptions()
+        {
+            CachingOption = EventCaching.AddToRoomCache,
+            Receivers = ReceiverGroup.All,
+        };
+        // 選択したステージを表示
+        PhotonNetwork.RaiseEvent((byte)EeventType.stageEvent, NT_PlayerData.Instance.SelectStage, true, option);
     }
 
     private void Reset()
@@ -686,6 +698,27 @@ public class Player : RaycastController
         {
             //取得できる文字の色を元に戻す
             oldRayStage.transform.GetComponent<BlockController>().ChangeTextColor(new Color(0, 0, 0));
+        }
+    }
+
+    private void OnRaiseEvent(byte eventcode, object content, int senderid)
+    {
+        tmpu = GameObject.Find("P" + senderid + "StageSelect").GetComponent<TextMeshProUGUI>();
+        string eventMessage = null;
+        var eventtype = (EeventType)eventcode;
+
+        switch (eventtype)
+        {
+            case EeventType.stageEvent:
+                eventMessage = (string)content;
+                break;
+            default:
+                break;
+        }
+
+        if (!string.IsNullOrEmpty(eventMessage))
+        {
+            Debug.Log(tmpu.text = (string)content);
         }
     }
 
