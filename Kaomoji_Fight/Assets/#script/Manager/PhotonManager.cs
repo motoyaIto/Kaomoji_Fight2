@@ -34,8 +34,8 @@ public class PhotonManager : Photon.MonoBehaviour {
     // カスタムプロパティを一時保存する
     private string text = "";
 
-    [SerializeField]
-    private GameObject[] players;
+    private int NowPlayernum = 0;
+    private int CreatedNowPlayernum = 0;
 
     //カメラ//////////////////////////////////////////////////////////
     private CinemachineTargetGroup TargetGroup;
@@ -184,16 +184,16 @@ public class PhotonManager : Photon.MonoBehaviour {
             }
             //今存在するプレイヤーをカメラにアタッチする
             //if(PhotonNetwork.playerList.Length)
-            StartCoroutine(this.DelayMethod(0.5f, () =>
-            {
-                for (int i = 0; i < PhotonNetwork.playerList.Length; i++)
-                {
-                    if (PhotonNetwork.playerList[i].NickName != NT_PlayerData.Instance.name)
-                    {
-                        this.CameraSet(GameObject.Find(PhotonNetwork.playerList[i].NickName).transform);
-                    }
-                }
-            }));
+            //StartCoroutine(this.DelayMethod(0.5f, () =>
+            //{
+            //    for (int i = 0; i < PhotonNetwork.playerList.Length; i++)
+            //    {
+            //        if (PhotonNetwork.playerList[i].NickName != NT_PlayerData.Instance.name)
+            //        {
+            //            this.CameraSet(GameObject.Find(PhotonNetwork.playerList[i].NickName).transform);
+            //        }
+            //    }
+            //}));
         }
 
         CreateHPber();
@@ -336,7 +336,7 @@ public class PhotonManager : Photon.MonoBehaviour {
 
 
                     //文字フラグを立てる
-                    BlockController Block_cs = StageBlock.transform.GetComponent<BlockController>();
+                    BlockController Block_cs = StageBlocks[nam].transform.GetComponent<BlockController>();
                     Block_cs.Mozi = true;
                 }
                
@@ -359,6 +359,11 @@ public class PhotonManager : Photon.MonoBehaviour {
     public void CreateHPber()
     {
         HPber = PhotonNetwork.Instantiate("prefab/UI/HPgage2", new Vector3(0, 0, 0), Quaternion.identity, 0);
+    }
+
+    public void CreatedPlayer()
+    {
+        CreatedNowPlayernum++;
     }
 }
 

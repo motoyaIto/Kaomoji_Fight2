@@ -25,6 +25,9 @@ public class Player : RaycastController
     }
 
     #region 変数群
+
+    private bool newplayer = true;
+
     [SerializeField, Header("コントローラー番号")]
     private XboxController ControlerNamber = XboxController.First;//何番目のコントローラーを適用するか
 
@@ -188,7 +191,11 @@ public class Player : RaycastController
             this.transform.GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("textures/use/Player/" + face);
             this.transform.GetComponent<SpriteRenderer>().material.SetColor("_EmissionColor", new Color(color.x, color.y, color.z, 1.0f));
 
-            //GameObject.Find("PhotonManager").GetComponent<PhotonManager>().CreatedPlayer();
+            if (newplayer == true)
+            {
+                GameObject.Find("PhotonManager").GetComponent<PhotonManager>().CreatedPlayer();
+                newplayer = false;
+            }
         }
     }
 
@@ -467,7 +474,7 @@ public class Player : RaycastController
         if (hitFoot.collider != null && hitFoot.collider.tag != "Stage" && oldRayStage != null)
         {
             //取得できる文字の色を元に戻す
-            oldRayStage.transform.GetComponent<BlockController>().ChangeTextColor(new Color(0, 0, 0));
+            oldRayStage.transform.GetComponent<BlockController>().ChangeTextColor(new Color(0, 0, 0, 1));
         }
 
         //ゲットできるオブジェクトだったら
@@ -482,7 +489,7 @@ public class Player : RaycastController
             if (hitFoot.collider.transform.position != oldRayStage.transform.position)
             {
                 //取得できる文字の色を元に戻す
-                oldRayStage.transform.GetComponent<BlockController>().ChangeTextColor(new Color(0, 0, 0));
+                oldRayStage.transform.GetComponent<BlockController>().ChangeTextColor(new Color(0, 0, 0, 1));
 
                 oldRayStage = hitFoot.collider;
             }
@@ -537,7 +544,7 @@ public class Player : RaycastController
             HaveMozi = true;
 
             //取得文字として登録
-            HPgageObj.transform.GetChild(4).GetComponent<GetMoziController>().SetTextMozi(block.transform.GetChild(0).GetComponent<TextMeshPro>().text);
+            //HPgageObj.transform.GetChild(4).GetComponent<GetMoziController>().SetTextMozi(block.transform.GetChild(0).GetComponent<TextMeshPro>().text);
 
             //プレイヤーの移動する向きに合わせて位置を調整
             this.ItemPositionControll(MoziObj, pos);
