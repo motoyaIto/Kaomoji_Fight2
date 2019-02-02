@@ -181,17 +181,16 @@ public class PhotonManager : Photon.MonoBehaviour {
                 }
             }
             //今存在するプレイヤーをカメラにアタッチする
-            //if(PhotonNetwork.playerList.Length)
-            //StartCoroutine(this.DelayMethod(0.5f, () =>
-            //{
-            //    for (int i = 0; i < PhotonNetwork.playerList.Length; i++)
-            //    {
-            //        if (PhotonNetwork.playerList[i].NickName != NT_PlayerData.Instance.name)
-            //        {
-            //            this.CameraSet(GameObject.Find(PhotonNetwork.playerList[i].NickName).transform);
-            //        }
-            //    }
-            //}));
+            StartCoroutine(this.DelayMethod(0.5f, () =>
+            {
+                for (int i = 0; i < PhotonNetwork.playerList.Length; i++)
+                {
+                    if (PhotonNetwork.playerList[i].NickName != NT_PlayerData.Instance.name)
+                    {
+                        this.CameraSet(GameObject.Find(PhotonNetwork.playerList[i].NickName).transform);
+                    }
+                }
+            }));
         }
 
         CreateHPber();
