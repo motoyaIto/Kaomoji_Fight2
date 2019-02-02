@@ -52,4 +52,6 @@ MonoBehaviour:
   - PushPlayerData
   - CatchHPData
   - PushHPData
+  - ChatchBlocData
+  - PushBlocData
   DisableAutoOpenWizard: 1

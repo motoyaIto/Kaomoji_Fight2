@@ -319,7 +319,7 @@ public class Player : RaycastController
         if (HaveMozi == true)
         {
             //文字の位置を調整
-            MoziBlocController WBController = MoziObj.gameObject.GetComponent<MoziBlocController>();
+            NT_MoziBlocController WBController = MoziObj.gameObject.GetComponent<NT_MoziBlocController>();
             Vector3 direction = Vector3.zero;
 
             if (velocity.x < 0.0f)
@@ -336,15 +336,13 @@ public class Player : RaycastController
             //文字を投げる
             if (XCI.GetButtonDown(XboxButton.B, ControlerNamber))
             {
-                MoziBlocController WB = MoziObj.GetComponent<MoziBlocController>();
-
-                WB.Attack(input);
+                //WBController.Attack(input);
             }
 
             // 文字を捨てる
             if (XCI.GetButton(XboxButton.X, ControlerNamber))
             {
-                this.ChangeMozi_Data = false;
+                HaveMozi = false;
                 Destroy(MoziObj);
             }
         }
@@ -353,7 +351,7 @@ public class Player : RaycastController
             //所持している文字をすべて消去する
             if (XCI.GetButtonDown(XboxButton.X, ControlerNamber))
             {
-                HPgageObj.transform.GetChild(4).GetComponent<GetMoziController>().AllDestroy();
+                //HPgageObj.transform.GetChild(4).GetComponent<GetMoziController>().AllDestroy();
             }
         }
 
@@ -537,28 +535,24 @@ public class Player : RaycastController
             this.PlaySound(audio, pickUp_ac, .2f);
 
             //床を文字として取得
-            MoziObj = Object.Instantiate(block) as GameObject;
+            MoziObj = PhotonNetwork.Instantiate("prefab/Stage/MoziBlock", this.transform.position, Quaternion.identity, 0);
             MoziObj.transform.SetParent(this.transform);
-            MoziObj.name = "MoziBlock" + block.name.Substring(block.name.IndexOf("("));
-            MoziObj.tag = tag.Trim();
+            MoziObj.name = "MoziBlock(" + block.transform.GetChild(0).GetComponent<TextMeshPro>().text + ")";
+            MoziObj.transform.GetChild(0).GetComponent<TextMeshPro>().text = block.transform.GetChild(0).GetComponent<TextMeshPro>().text;
 
-            //文字のスクリプトに張り替える
-            Destroy(MoziObj.GetComponent<BlockController>());
-            MoziObj.GetComponent<MoziBlocController>().enabled = true;
-
-            //オーナー登録
-            MoziObj.GetComponent<MoziBlocController>().Owner_Data = this.name;
-            //床から切り抜く
+            ////オーナー登録
+            //MoziObj.GetComponent<MoziBlocController>().Owner_Data = this.name;
+            ////床から切り抜く
             block.GetComponent<BlockController>().ChangeMozi();
 
-            MoziObj.GetComponent<BoxCollider2D>().enabled = false;
+            //MoziObj.GetComponent<BoxCollider2D>().enabled = false;
 
             HaveMozi = true;
 
-            //取得文字として登録
-            //HPgageObj.transform.GetChild(4).GetComponent<GetMoziController>().SetTextMozi(block.transform.GetChild(0).GetComponent<TextMeshPro>().text);
+            ////取得文字として登録
+            ////HPgageObj.transform.GetChild(4).GetComponent<GetMoziController>().SetTextMozi(block.transform.GetChild(0).GetComponent<TextMeshPro>().text);
 
-            //プレイヤーの移動する向きに合わせて位置を調整
+            ////プレイヤーの移動する向きに合わせて位置を調整
             this.ItemPositionControll(MoziObj, pos);
         }
     }

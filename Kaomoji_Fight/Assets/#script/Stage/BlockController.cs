@@ -36,20 +36,13 @@ public class BlockController : MonoBehaviour {
             {
                 TMPro.color = new Color(TMPro.color.r, TMPro.color.g, TMPro.color.b, (50 * (count / ResetTime)) * 1);
 
+                this.transform.GetComponent<BoxCollider2D>().enabled = true;
                 Stage = true;
                 count = 0.0f;
             }
         }
     }
-    /// <summary>
-    /// 床の復帰処理
-    /// </summary>
-    public void ReStageBlock()
-    {
-        this.transform.GetComponent<BoxCollider2D>().enabled = true;
-
-        PushStageData();
-    }
+   
 
     /// <summary>
     /// 床を抜く
@@ -62,14 +55,14 @@ public class BlockController : MonoBehaviour {
 
         TMPro.color = new Color(TMPro.color.r, TMPro.color.g, TMPro.color.b, 0.0f);
 
+        PushStageData();
         //ResetTime後、床を復帰する
-        Invoke("ReStageBlock", ResetTime);
+        //Invoke("ReStageBlock", ResetTime);
     }
 
     public void ChangeTextColor(Color color)
     {
         TMPro.color = color;
-        PushStageData();
     }
 
     public void NewConectPlayer()
@@ -87,13 +80,14 @@ public class BlockController : MonoBehaviour {
     public void PushStageData()
     {
         PhotonView photonView = this.GetComponent<PhotonView>();
-        photonView.RPC("CatchStageData", PhotonTargets.All, this.transform.GetComponent<BoxCollider2D>().enabled, /*TMPro.color.r, TMPro.color.g, TMPro.color.b,*/ TMPro.color.a);
+        photonView.RPC("CatchStageData", PhotonTargets.All, this.transform.GetComponent<BoxCollider2D>().enabled, Stage, TMPro.color.a);
     }
 
     [PunRPC]
-    private void CatchStageData(bool collider, /*float r, float g, float b,*/ float a)
+    private void CatchStageData(bool collider,bool stage, float a)
     {
         this.transform.GetComponent<BoxCollider2D>().enabled = collider;
+        Stage = stage;
         this.transform.GetChild(0).GetComponent<TextMeshPro>().color = new Color(this.transform.GetChild(0).GetComponent<TextMeshPro>().color.r, this.transform.GetChild(0).GetComponent<TextMeshPro>().color.g, this.transform.GetChild(0).GetComponent<TextMeshPro>().color.b, a);
     }
 
