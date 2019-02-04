@@ -40,7 +40,6 @@ public class NT_MoziBlocController : MonoBehaviour
         // 持ち主でないのなら持ち主にデータを要請する
         if (!this.transform.GetComponent<PhotonView>().isMine)
         {
-            Debug.Log("start");
             this.PleaseMyData();
             return;
         }
@@ -53,30 +52,25 @@ public class NT_MoziBlocController : MonoBehaviour
     {
         PhotonView photonView = this.GetComponent<PhotonView>();
         photonView.RPC("PushBlocData", PhotonTargets.Others, photonView.ownerId, photonView.viewID);
-        Debug.Log("please");
     }
 
     [PunRPC]
     private void PushBlocData(int ownerId, int viewId)
     {
-        Debug.Log("pushs");
         if (PhotonNetwork.player.ID == ownerId && this.transform.GetComponent<PhotonView>().viewID == viewId)
         {
-            Debug.Log("push");
             PhotonView photonView = this.GetComponent<PhotonView>();
             photonView.RPC("ChatchBlocData", PhotonTargets.AllBuffered,
                 this.transform.GetComponent<PhotonView>().ownerId,
                 photonView.viewID,
                 this.name,
                 this.transform.GetChild(0).GetComponent<TextMeshPro>().text);
-            Debug.Log("push end");
         }
     }
 
     [PunRPC]
     private void ChatchBlocData(int ownerId, int viewId, string name, string text)
     {
-        Debug.Log("get");
         if (this.transform.GetComponent<PhotonView>().viewID == viewId && this.transform.GetComponent<PhotonView>().ownerId == ownerId)
         {
             //オーナーオブジェクトの子になる
@@ -88,25 +82,24 @@ public class NT_MoziBlocController : MonoBehaviour
                 }
             }
 
-            Debug.Log("set");
             this.name = "MoziBlock(" + name + ")";
             this.transform.GetChild(0).GetComponent<TextMeshPro>().text = text;
         }
     }
 
-    protected virtual void OnEnable()
+    private void OnDestroy()
     {
-        ////所有者のスクリプト
-        //owner_cs = this.transform.parent.GetComponent<Player>();
+        PhotonView photonView = this.GetComponent<PhotonView>();
+        photonView.RPC("MyDestroy", PhotonTargets.AllBuffered, photonView.ownerId, photonView.viewID);
+    }
 
-        //PSManager_cs = GameObject.Find("PlaySceneManager").GetComponent<PlaySceneManager>();
-        //hitEffect = Resources.Load<GameObject>("prefab/Effect/Wave_01");
-
-        //MoziObj = this.transform.gameObject;
-       
-        //// 持たれているプレイヤーを取得
-        ////parent = this.transform.parent.GetComponent<Player>();
-        //parentName = this.transform.parent.GetComponent<Player>().name;
+    [PunRPC]
+    private void MyDestroy(int ownerId, int viewId)
+    {
+        if (this.transform.GetComponent<PhotonView>().ownerId == ownerId && this.transform.GetComponent<PhotonView>().viewID == viewId)
+        {
+            Destroy(this.gameObject);
+        }
     }
 
     public virtual void Update()
