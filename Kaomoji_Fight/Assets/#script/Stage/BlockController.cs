@@ -80,7 +80,7 @@ public class BlockController : MonoBehaviour {
     public void PushStageData()
     {
         PhotonView photonView = this.GetComponent<PhotonView>();
-        photonView.RPC("CatchStageData", PhotonTargets.All, this.transform.GetComponent<BoxCollider2D>().enabled, Stage, TMPro.color.a);
+        photonView.RPC("CatchStageData", PhotonTargets.AllBuffered, this.transform.GetComponent<BoxCollider2D>().enabled, Stage, TMPro.color.a);
     }
 
     [PunRPC]

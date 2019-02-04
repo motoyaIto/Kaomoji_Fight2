@@ -336,14 +336,14 @@ public class Player : RaycastController
             //文字を投げる
             if (XCI.GetButtonDown(XboxButton.B, ControlerNamber))
             {
-                //WBController.Attack(input);
+                WBController.Attack(input);
             }
 
             // 文字を捨てる
             if (XCI.GetButton(XboxButton.X, ControlerNamber))
             {
                 HaveMozi = false;
-                Destroy(MoziObj);
+                PhotonNetwork.Destroy(MoziObj);
             }
         }
         else
@@ -356,12 +356,12 @@ public class Player : RaycastController
         }
 
         //一文字ずつ消す
-        if (XCI.GetAxis(XboxAxis.LeftTrigger, ControlerNamber) > 0.8f && BackSpace == false)
-        {
-            HPgageObj.transform.GetChild(4).GetComponent<GetMoziController>().BackSpace();
+        //if (XCI.GetAxis(XboxAxis.LeftTrigger, ControlerNamber) > 0.8f && BackSpace == false)
+        //{
+        //    HPgageObj.transform.GetChild(4).GetComponent<GetMoziController>().BackSpace();
 
-            BackSpace = true;
-        }
+        //    BackSpace = true;
+        //}
         
         if(XCI.GetAxis(XboxAxis.LeftTrigger, ControlerNamber) < 0.2f)
         {
@@ -371,7 +371,7 @@ public class Player : RaycastController
         if(XCI.GetButtonDown(XboxButton.LeftBumper, ControlerNamber))
         {
             //取得文字として登録
-            HPgageObj.transform.GetChild(4).GetComponent<GetMoziController>().Semi_voicedPoint();
+            //HPgageObj.transform.GetChild(4).GetComponent<GetMoziController>().Semi_voicedPoint();
         }
 
         //武器に変換
@@ -540,8 +540,9 @@ public class Player : RaycastController
             MoziObj.name = "MoziBlock(" + block.transform.GetChild(0).GetComponent<TextMeshPro>().text + ")";
             MoziObj.transform.GetChild(0).GetComponent<TextMeshPro>().text = block.transform.GetChild(0).GetComponent<TextMeshPro>().text;
 
-            ////オーナー登録
-            //MoziObj.GetComponent<MoziBlocController>().Owner_Data = this.name;
+            //オーナー登録
+            MoziObj.GetComponent<NT_MoziBlocController>().OwnerName_Data = this.name;
+            MoziObj.GetComponent<NT_MoziBlocController>().Ownercs_Data = this.transform.GetComponent<Player>();
             ////床から切り抜く
             block.GetComponent<BlockController>().ChangeMozi();
 

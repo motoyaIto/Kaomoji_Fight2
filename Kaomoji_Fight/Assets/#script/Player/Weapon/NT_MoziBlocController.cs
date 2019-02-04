@@ -7,10 +7,8 @@ using System;
 
 public class NT_MoziBlocController : MonoBehaviour
 {
-    protected PlaySceneManager PSManager_cs;//プレイシーンマネージャー
+    protected PhotonManager PManager_cs;//プレイシーンマネージャー
     protected string mozi;                  //自分の文字
-
-    protected GameObject MoziObj;           //自分のゲームオブジェクト
 
     [SerializeField]
     protected float DamageValue = 1.0f;     //ダメージ量
@@ -29,7 +27,7 @@ public class NT_MoziBlocController : MonoBehaviour
     protected Player owner_cs;              //所有者のplayerスクリプト
     protected bool Mozi_use = false;      //文字を投げた(true)投げてない(false)
 
-    private GameObject hitEffect;           // ヒットエフェクト
+    private string hitEffect = "prefab/Effect/Wave_01";           // ヒットエフェクト
 
     // 音
     private AudioSource As;
@@ -37,6 +35,7 @@ public class NT_MoziBlocController : MonoBehaviour
 
     private void Start()
     {
+        PManager_cs = GameObject.Find("PhotonManager").GetComponent<PhotonManager>();
         // 持ち主でないのなら持ち主にデータを要請する
         if (!this.transform.GetComponent<PhotonView>().isMine)
         {
@@ -87,28 +86,13 @@ public class NT_MoziBlocController : MonoBehaviour
         }
     }
 
-    private void OnDestroy()
-    {
-        PhotonView photonView = this.GetComponent<PhotonView>();
-        photonView.RPC("MyDestroy", PhotonTargets.AllBuffered, photonView.ownerId, photonView.viewID);
-    }
-
-    [PunRPC]
-    private void MyDestroy(int ownerId, int viewId)
-    {
-        if (this.transform.GetComponent<PhotonView>().ownerId == ownerId && this.transform.GetComponent<PhotonView>().viewID == viewId)
-        {
-            Destroy(this.gameObject);
-        }
-    }
-
     public virtual void Update()
     {
-        //// 飛んでったブロックの削除
-        //if (this.transform.position.x < Death_LUpos.x || this.transform.position.x > Death_RDpos.x || this.transform.position.y > Death_LUpos.y || this.transform.position.y < Death_RDpos.y)
-        //{
-        //    Destroy(this.transform.gameObject);
-        //}
+        // 飛んでったブロックの削除
+        if (this.transform.position.x < Death_LUpos.x || this.transform.position.x > Death_RDpos.x || this.transform.position.y > Death_LUpos.y || this.transform.position.y < Death_RDpos.y)
+        {
+            PhotonNetwork.Destroy(this.gameObject);
+        }
 
     }
 
@@ -118,27 +102,40 @@ public class NT_MoziBlocController : MonoBehaviour
     /// <param name="shot">使用した座標</param>
     public void Attack(Vector3 shot)
     {
-        //Rigidbody2D rig2d = MoziObj.AddComponent<Rigidbody2D>();
-        //rig2d.gravityScale = .01f;
+        Rigidbody2D rig2d = this.gameObject.AddComponent<Rigidbody2D>();
+        rig2d.gravityScale = .01f;
 
-        //owner_cs.ChangeMozi_Data = false;
+        owner_cs.ChangeMozi_Data = false;
 
-        //// 親から離れる
-        //this.transform.SetParent(null);
+        // 親から離れる
+        this.transform.SetParent(null);
 
-        ////ウェポンにボックスコライダーをオンにする
-        //MoziObj.GetComponent<BoxCollider2D>().enabled = true;
-        //MoziObj.GetComponent<BoxCollider2D>().isTrigger = true;
-        //Mozi_use = true;
+        //ウェポンにボックスコライダーをオンにする
+        this.transform.GetComponent<BoxCollider2D>().enabled = true;
+        this.transform.GetComponent<BoxCollider2D>().isTrigger = true;
+        Mozi_use = true;
 
-        //// 動かずに投げたら
-        //if (shot == Vector3.zero)
-        //{
-        //    // 上に投げる
-        //    shot = Vector3.up;
-        //}
-        //// ⊂二二二（ ＾ω＾）二⊃ ﾌﾞｰﾝ
-        //rig2d.AddForce(shot * thrust);
+        // 動かずに投げたら
+        if (shot == Vector3.zero)
+        {
+            // 上に投げる
+            shot = Vector3.up;
+        }
+        // ⊂二二二（ ＾ω＾）二⊃ ﾌﾞｰﾝ
+        rig2d.AddForce(shot * thrust);
+
+        PhotonView photonView = this.GetComponent<PhotonView>();
+        photonView.RPC("AttackData", PhotonTargets.Others, photonView.ownerId, photonView.viewID);
+    }
+
+    [PunRPC]
+    private void AttackData(int ownerId, int viewId)
+    {
+        if (this.transform.GetComponent<PhotonView>().ownerId == ownerId && this.transform.GetComponent<PhotonView>().viewID == viewId)
+        {
+            // 親から離れる
+            this.transform.SetParent(null);
+        }
     }
 
     /// <summary>
@@ -153,16 +150,16 @@ public class NT_MoziBlocController : MonoBehaviour
 
     protected virtual void OnTriggerEnter2D(Collider2D collision)
     {
-        //if (CheckHit_Rival(collision) == true)
-        //{
-        //    //プレイヤーにダメージを与える
-        //    PSManager_cs.Player_ReceiveDamage(collision.gameObject, this.gameObject, collision.GetComponent<Player>().PlayerNumber_data);
+        if (CheckHit_Rival(collision) == true)
+        {
+            //プレイヤーにダメージを与える
+            PManager_cs.MoziAttack(collision.gameObject, this.gameObject);
 
-        //    //エフェクト
-        //    var hitobj = Instantiate(hitEffect, this.transform.position + transform.forward, Quaternion.identity) as GameObject;
-        //    Destroy(this.gameObject);
-        //    Mozi_use = false;
-        //}
+            //エフェクト
+            var hitobj = PhotonNetwork.Instantiate(hitEffect, this.transform.position + transform.forward, Quaternion.identity, 0);
+            PhotonNetwork.Destroy(this.gameObject);
+            Mozi_use = false;
+        }
     }
 
     protected bool CheckHit_Rival(Collider2D collider)
@@ -205,16 +202,25 @@ public class NT_MoziBlocController : MonoBehaviour
     }
 
 
-    public string Owner_Data
+    public string OwnerName_Data
     {
         set
         {
-            owner = value;
+            parentName = value;
+        }
+    }
+
+    public Player Ownercs_Data
+    {
+        set
+        {
+            owner_cs = value;
         }
 
         get
         {
-            return owner;
+            return owner_cs;
         }
     }
+
 }
