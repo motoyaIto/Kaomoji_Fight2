@@ -55,4 +55,6 @@ MonoBehaviour:
   - ChatchBlocData
   - PushBlocData
   - MyDestroy
+  - AttackData
+  - MoziAttackData
   DisableAutoOpenWizard: 1

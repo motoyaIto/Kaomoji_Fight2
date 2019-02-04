@@ -82,6 +82,8 @@ public class PhotonManager : Photon.MonoBehaviour {
     private int StageyCount = 0;    //y座標の移動
 
     //HPバー//////////////////////////////////////////////////////////
+    [SerializeField]
+    private GameObject HPbers;
     private GameObject HPber;
 
     void Awake()
@@ -290,6 +292,45 @@ public class PhotonManager : Photon.MonoBehaviour {
         }
     }
 
+    /// <summary>
+    /// 文字攻撃
+    /// </summary>
+    /// <param name="damagePlayer">ダメージを受けたキャラ</param>
+    /// <param name="weapon">ダメージを与えた武器</param>
+    public void MoziAttack(GameObject damagePlayer, GameObject weapon)
+    {
+        Debug.Log(weapon.name);
+        Debug.Log(damagePlayer.name);
+        float DamageValue = weapon.GetComponent<NT_MoziBlocController>().DamageValue_Data;
+
+        // ダメージ音
+        //audio.volume = .3f;
+        //audio.PlayOneShot(audioClip_hit);
+
+        //ダメージを受けたプレイヤーのHPバーを減らす
+        for (int i = 0; i < HPbers.transform.childCount; i++)
+        {
+            GameObject hpber = HPbers.transform.GetChild(i).gameObject;
+
+            if (hpber.transform.GetComponent<PhotonView>().ownerId == damagePlayer.GetComponent<PhotonView>().ownerId)
+            {
+                hpber.transform.GetComponent<Slider>().value -= weapon.transform.GetComponent<NT_MoziBlocController>().DamageValue_Data;
+
+                PhotonView photonView = this.GetComponent<PhotonView>();
+                photonView.RPC("MoziAttackData", PhotonTargets.All, hpber.transform.GetComponent<PhotonView>().ownerId, DamageValue);
+            }
+        }
+    }
+
+    [PunRPC]
+    private void MoziAttackData(int ownerId, float damageValue)
+    {
+        if (HPber.transform.GetComponent<PhotonView>().ownerId == ownerId)
+        {
+            HPber.transform.GetComponent<Slider>().value -= damageValue;
+        }
+    }
+
     //カメラ/////////////////////////////////////////////////////////////////////
     private void CameraSet(Transform player)
     {
@@ -375,7 +416,7 @@ public class PhotonManager : Photon.MonoBehaviour {
         }
     }
 
-    //ステージ/////////////////////////////////////////////////////////////////////
+    //HPバー/////////////////////////////////////////////////////////////////////
     public void CreateHPber()
     {
         HPber = PhotonNetwork.Instantiate("prefab/UI/HPgage2", new Vector3(0, 0, 0), Quaternion.identity, 0);
