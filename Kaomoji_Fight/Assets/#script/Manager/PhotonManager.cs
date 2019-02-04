@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 using UnityEngine.UI;
+using XboxCtrlrInput;
 
 using Cinemachine;
 using System;
@@ -37,6 +38,8 @@ public class PhotonManager : Photon.MonoBehaviour {
 
     private int NowPlayernum = 0;
     private int CreatedNowPlayernum = 0;
+
+    private PlayerData[] playerdata = null;
 
     //カメラ//////////////////////////////////////////////////////////
     private CinemachineTargetGroup TargetGroup;
@@ -263,6 +266,28 @@ public class PhotonManager : Photon.MonoBehaviour {
                 }
             }
         }
+
+        if (XCI.GetButtonDown(XboxButton.Start, XboxController.First))
+        {
+            int rand = (int)UnityEngine.Random.Range(.0f, (float)PhotonNetwork.room.PlayerCount) + 1;
+
+            // 選ばれたのは「綾鷹」でした
+            string selectStage = GameObject.Find("P" + rand + "StageSelect").GetComponent<TextMeshProUGUI>().text;
+
+            //プレイヤーデータを渡す
+            CreatePlayer_data();
+            if (PhotonNetwork.room.PlayerCount > 2)
+            {
+                // シーンロード
+                SceneManagerController.LoadScene();
+                SceneManagerController.ChangeScene();
+            }
+            else
+            {
+                Debug.Log("２人以上ではないのでプレイすることが出来ません(´・ω・｀)");
+            }
+
+        }
     }
 
     //カメラ/////////////////////////////////////////////////////////////////////
@@ -359,6 +384,17 @@ public class PhotonManager : Photon.MonoBehaviour {
     public void CreatedPlayer()
     {
         CreatedNowPlayernum++;
+    }
+
+    public void CreatePlayer_data()
+    {
+        playerdata = new PlayerData[CreatedNowPlayernum];
+
+        for (int i = 0; i < CreatedNowPlayernum; i++)
+        {
+            Debug.Log(i + " / " + CreatedNowPlayernum);
+            //playerdata[i] = new PlayerData(NT_PlayerData.Instance.name[i], NT_PlayerData.Instance.color[i], NT_PlayerData.Instance.Face[i], new Vector3(10 * (i + 1), 30, 0), XboxController.First, 100);
+        }
     }
 }
 
