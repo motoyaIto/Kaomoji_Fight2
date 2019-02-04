@@ -416,7 +416,7 @@ public class Player : RaycastController
             else if (XCI.GetButtonDown(XboxButton.X, ControlerNamber))
             {
                 weapon_use = false;
-                Destroy(weapon);
+                PhotonNetwork.Destroy(weapon.gameObject);
                 weapon = null;
             }
         }

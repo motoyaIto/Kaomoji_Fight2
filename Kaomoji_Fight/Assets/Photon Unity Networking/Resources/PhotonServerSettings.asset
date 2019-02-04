@@ -54,4 +54,5 @@ MonoBehaviour:
   - PushHPData
   - ChatchBlocData
   - PushBlocData
+  - MyDestroy
   DisableAutoOpenWizard: 1
