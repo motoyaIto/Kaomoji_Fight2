@@ -220,11 +220,6 @@ public class Player : RaycastController
         //キャラのy軸のdirection方向にscrollの力をかける
         rig.velocity = new Vector2(scroll * direction, rig.velocity.y);
 
-        // 落ちた時の対処
-        if (this.transform.position.y <= -50)
-        {
-            Destroy(this.transform.gameObject);
-        }
         //コントローラーロック
         if(controller_lock == true)
         {

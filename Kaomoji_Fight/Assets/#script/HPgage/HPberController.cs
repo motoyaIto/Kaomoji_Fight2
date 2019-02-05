@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using TMPro;
+using UnityEngine.UI;
 
 public class HPberController : MonoBehaviour {
 
@@ -42,12 +43,12 @@ public class HPberController : MonoBehaviour {
         if (id == this.transform.GetComponent<PhotonView>().ownerId)
         {
             PhotonView photonView = this.GetComponent<PhotonView>();
-            photonView.RPC("CatchHPData", PhotonTargets.OthersBuffered, this.transform.GetComponent<PhotonView>().ownerId, NT_PlayerData.Instance.name, NT_PlayerData.Instance.color.r, NT_PlayerData.Instance.color.g, NT_PlayerData.Instance.color.b, NT_PlayerData.Instance.color.a);
+            photonView.RPC("CatchHPData", PhotonTargets.OthersBuffered, this.transform.GetComponent<PhotonView>().ownerId, NT_PlayerData.Instance.name, NT_PlayerData.Instance.color.r, NT_PlayerData.Instance.color.g, NT_PlayerData.Instance.color.b, NT_PlayerData.Instance.color.a, this.transform.GetComponent<Slider>().value);
         }
     }
 
     [PunRPC]
-    private void CatchHPData(int id, string name, float r, float g, float b, float a)
+    private void CatchHPData(int id, string name, float r, float g, float b, float a, float value)
     {
         if (id == this.transform.GetComponent<PhotonView>().ownerId)
         {
@@ -59,6 +60,8 @@ public class HPberController : MonoBehaviour {
             this.name = name + "_HPber";
             this.transform.GetChild(2).GetComponent<TextMeshProUGUI>().text = name;
             this.transform.GetChild(2).GetComponent<TextMeshProUGUI>().color = new Color(r, g, b, a);
+
+            this.transform.GetComponent<Slider>().value = value;
         }
     }
 
