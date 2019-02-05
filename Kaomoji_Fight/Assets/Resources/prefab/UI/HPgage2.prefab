@@ -1054,6 +1054,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 26ed66bf58b1c13408fd48574a613dec, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  texts:
+  - {fileID: 114929240900275030}
+  - {fileID: 114799478025621398}
+  - {fileID: 114031647768457150}
+  - {fileID: 114868522276019914}
+  - {fileID: 114907935524028962}
 --- !u!222 &222064180673557086
 CanvasRenderer:
   m_ObjectHideFlags: 1

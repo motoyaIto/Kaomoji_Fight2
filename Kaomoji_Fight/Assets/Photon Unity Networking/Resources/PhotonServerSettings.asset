@@ -60,4 +60,8 @@ MonoBehaviour:
   - ResuscitationData
   - StageData
   - StageOverData
+  - BackSpaceData
+  - ChathTextData
+  - DestroyData
+  - Semi_voicedPointData
   DisableAutoOpenWizard: 1

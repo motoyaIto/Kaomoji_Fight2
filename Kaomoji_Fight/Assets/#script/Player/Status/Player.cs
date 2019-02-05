@@ -358,7 +358,7 @@ public class Player : RaycastController
             if (XCI.GetButtonDown(XboxButton.X, ControlerNamber))
             {
                 audio.PlayOneShot(delete_ac);
-                //HPgageObj.transform.GetChild(4).GetComponent<GetMoziController>().AllDestroy();
+                HPgageObj.transform.GetComponent<HPberController>().AllDestroy();
             }
         }
 
@@ -366,74 +366,71 @@ public class Player : RaycastController
         if (XCI.GetAxis(XboxAxis.LeftTrigger, ControlerNamber) > 0.8f && BackSpace == false)
         {
 
-            HPgageObj.transform.GetChild(4).GetComponent<GetMoziController>().BackSpace();
-            //if (XCI.GetAxis(XboxAxis.LeftTrigger, ControlerNamber) > 0.8f && BackSpace == false)
+            HPgageObj.transform.GetComponent<HPberController>().BackSpace();
+            BackSpace = true;
+
+            audio.PlayOneShot(delete_ac);
+        }
+        if (XCI.GetAxis(XboxAxis.LeftTrigger, ControlerNamber) < 0.2f)
+        {
+            BackSpace = false;
+        }
+
+        if (XCI.GetButtonDown(XboxButton.LeftBumper, ControlerNamber))
+        {
+            audio.PlayOneShot(change_ac);
+            //半濁点
+            HPgageObj.transform.GetComponent<HPberController>().Semi_voicedPoint();
+        }
+
+        //武器に変換
+        if (XCI.GetButtonDown(XboxButton.Y, ControlerNamber))
+        {
+            //if (weapon_use == false && EffectCorutine == false)
             //{
-            //audio.PlayOneShot(delete_ac);
-            //    HPgageObj.transform.GetChild(4).GetComponent<GetMoziController>().BackSpace();
-            //    BackSpace = true;
+            //    weapon = SelectWeapon.CreateSelectWeapon(HPgageObj.transform.GetChild(3).GetComponent<TextMeshProUGUI>().text + HPgageObj.transform.GetChild(4).GetComponent<TextMeshProUGUI>().text);
+
+
+            //    武器化出来たら
+            //    if (weapon != null)
+            //    {
+            //        GameObject EffectObj = null;
+            //        foreach (Transform Child in this.transform)
+            //        {
+            //            if (Child.name == "Top")
+            //            {
+            //                エフェクトの発生
+            //                EffectObj = Instantiate(CreateWeapon_Effect, Child.transform) as GameObject;
+            //            }
+            //        }
+            //        StartCoroutine(this.CreateWeapn(EffectObj));
+            //    }
+            //}
+        }
+
+        //武器を持っているとき
+        if (weapon_use == true)
+        {
+            //座標の調整
+            //ItemPositionControll(weapon, input);
+
+
+            ////武器を使う
+            //if (XCI.GetButtonDown(XboxButton.B, ControlerNamber))
+            //{
+            //    weapon_cs.Attack();
             //}
 
-            if (XCI.GetAxis(XboxAxis.LeftTrigger, ControlerNamber) < 0.2f)
-            {
-                BackSpace = false;
-            }
-
-            if (XCI.GetButtonDown(XboxButton.LeftBumper, ControlerNamber))
-            {
-                audio.PlayOneShot(change_ac);
-                //取得文字として登録
-                //HPgageObj.transform.GetChild(4).GetComponent<GetMoziController>().Semi_voicedPoint();
-            }
-
-            //武器に変換
-            if (XCI.GetButtonDown(XboxButton.Y, ControlerNamber))
-            {
-                //if (weapon_use == false && EffectCorutine == false)
-                //{
-                //    weapon = SelectWeapon.CreateSelectWeapon(HPgageObj.transform.GetChild(3).GetComponent<TextMeshProUGUI>().text + HPgageObj.transform.GetChild(4).GetComponent<TextMeshProUGUI>().text);
-
-
-                //    武器化出来たら
-                //    if (weapon != null)
-                //    {
-                //        GameObject EffectObj = null;
-                //        foreach (Transform Child in this.transform)
-                //        {
-                //            if (Child.name == "Top")
-                //            {
-                //                エフェクトの発生
-                //                EffectObj = Instantiate(CreateWeapon_Effect, Child.transform) as GameObject;
-                //            }
-                //        }
-                //        StartCoroutine(this.CreateWeapn(EffectObj));
-                //    }
-                //}
-            }
-
-            //武器を持っているとき
-            if (weapon_use == true)
-            {
-                //座標の調整
-                //ItemPositionControll(weapon, input);
-
-
-                ////武器を使う
-                //if (XCI.GetButtonDown(XboxButton.B, ControlerNamber))
-                //{
-                //    weapon_cs.Attack();
-                //}
-
-                //// 武器を捨てる
-                //else if (XCI.GetButtonDown(XboxButton.X, ControlerNamber))
-                //{
-                //    audio.PlayOneShot(delete_ac);
-                //    weapon_use = false;
-                //    PhotonNetwork.Destroy(weapon.gameObject);
-                //    weapon = null;
-                //}
-            }
+            //// 武器を捨てる
+            //else if (XCI.GetButtonDown(XboxButton.X, ControlerNamber))
+            //{
+            //    audio.PlayOneShot(delete_ac);
+            //    weapon_use = false;
+            //    PhotonNetwork.Destroy(weapon.gameObject);
+            //    weapon = null;
+            //}
         }
+
         // Ｒａｙ
         this.RayController();
     }
@@ -462,7 +459,7 @@ public class Player : RaycastController
             Destroy(MoziObj);
             HaveMozi = false;
         }
-        HPgageObj.transform.GetChild(4).GetComponent<GetMoziController>().AllDestroy();
+        //HPgageObj.transform.GetChild(4).GetComponent<GetMoziController>().AllDestroy();
     }
 
     public struct CollisionInfo
@@ -560,12 +557,10 @@ public class Player : RaycastController
             ////床から切り抜く
             block.GetComponent<BlockController>().ChangeMozi();
 
-            //MoziObj.GetComponent<BoxCollider2D>().enabled = false;
-
             HaveMozi = true;
 
-            ////取得文字として登録
-            ////HPgageObj.transform.GetChild(4).GetComponent<GetMoziController>().SetTextMozi(block.transform.GetChild(0).GetComponent<TextMeshPro>().text);
+            //取得文字として登録
+            HPgageObj.transform.GetComponent<HPberController>().SetTextMozi(block.transform.GetChild(0).GetComponent<TextMeshPro>().text);
 
             ////プレイヤーの移動する向きに合わせて位置を調整
             this.ItemPositionControll(MoziObj, pos);
@@ -730,6 +725,14 @@ public class Player : RaycastController
     //        tmpu.text = (string)content;
     //    }
     //}
+
+    public GameObject HPber_Data
+    {
+        set
+        {
+            HPgageObj = value;
+        }
+    }
 
     public int PlayerNumber_data
     {
