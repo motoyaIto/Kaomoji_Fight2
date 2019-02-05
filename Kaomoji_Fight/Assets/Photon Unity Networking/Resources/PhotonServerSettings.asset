@@ -49,4 +49,15 @@ MonoBehaviour:
   - MethodRPC
   - CatchNewStageData
   - CatchStageData
+  - PushPlayerData
+  - CatchHPData
+  - PushHPData
+  - ChatchBlocData
+  - PushBlocData
+  - MyDestroy
+  - AttackData
+  - MoziAttackData
+  - ResuscitationData
+  - StageData
+  - StageOverData
   DisableAutoOpenWizard: 1

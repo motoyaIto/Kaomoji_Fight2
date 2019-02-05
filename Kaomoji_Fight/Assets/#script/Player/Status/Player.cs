@@ -25,6 +25,9 @@ public class Player : RaycastController
     }
 
     #region 変数群
+
+    private bool newplayer = true;
+
     [SerializeField, Header("コントローラー番号")]
     private XboxController ControlerNamber = XboxController.First;//何番目のコントローラーを適用するか
 
@@ -86,6 +89,8 @@ public class Player : RaycastController
 
     private PhotonView photonView_cs = null;
 
+    private TextMeshProUGUI tmpu;   //選択したステージ名を表示するための場所
+
     #endregion
 
 
@@ -106,6 +111,10 @@ public class Player : RaycastController
         change_ac = (AudioClip)Resources.Load("Sound/SE/Other/char_switch");    //文字変換
 
 
+<<<<<<< HEAD
+=======
+        PhotonNetwork.OnEventCall += OnRaiseEvent;
+>>>>>>> Sub
     }
 
     new void Start()
@@ -132,17 +141,28 @@ public class Player : RaycastController
         photonView_cs = GetComponent<PhotonView>();
 
         this.transform.GetComponent<SpriteRenderer>().material = Resources.Load<Material>("Material/P" + photonView_cs.ownerId + "Color");
-        // 持ち主でないのなら制御させない
+        
+        // 持ち主でないのなら持ち主にデータを要請する
         if (!photonView_cs.isMine)
         {
+            this.PleaseMyData();
             return;
         }
 
+        //データを登録する
         this.name = NT_PlayerData.Instance.name;
         this.transform.GetComponent<SpriteRenderer>().sprite = NT_PlayerData.Instance.Face;
         this.transform.GetComponent<SpriteRenderer>().material.SetColor("_EmissionColor", NT_PlayerData.Instance.color);
 
-        this.PushPlayerData();
+
+        // オプション
+        RaiseEventOptions option = new RaiseEventOptions()
+        {
+            CachingOption = EventCaching.AddToRoomCache,
+            Receivers = ReceiverGroup.All,
+        };
+        // 選択したステージを表示
+        PhotonNetwork.RaiseEvent((byte)EeventType.stageEvent, NT_PlayerData.Instance.SelectStage, true, option);
     }
 
     private void Reset()
@@ -150,19 +170,57 @@ public class Player : RaycastController
         rig = GetComponent<Rigidbody2D>();
     }
 
+    /// <summary>
+    /// 持ち主にデータを要求する
+    /// </summary>
+    public void PleaseMyData()
+    {
+        PhotonView photonView = this.GetComponent<PhotonView>();
+        photonView.RPC("PushPlayerData", PhotonTargets.Others, photonView.ownerId);
+    }
+
     public void PushPlayerData()
     {
         PhotonView photonView = this.GetComponent<PhotonView>();
-        photonView.RPC("MethodRPC", PhotonTargets.All, photonView_cs.ownerId, NT_PlayerData.Instance.name, NT_PlayerData.Instance.Face.name, new Vector3(NT_PlayerData.Instance.color.r, NT_PlayerData.Instance.color.g, NT_PlayerData.Instance.color.b));
+        photonView.RPC("MethodRPC", PhotonTargets.OthersBuffered, photonView_cs.ownerId, NT_PlayerData.Instance.name, NT_PlayerData.Instance.Face.name, new Vector3(NT_PlayerData.Instance.color.r, NT_PlayerData.Instance.color.g, NT_PlayerData.Instance.color.b));
     }
 
+    /// <summary>
+    /// データを送信する
+    /// </summary>
+    /// <param name="ownerID">おーなーID</param>
+    [PunRPC]
+    public void PushPlayerData(int ownerID)
+    {
+        if (ownerID == this.transform.GetComponent<PhotonView>().ownerId)
+        {
+            PhotonView photonView = this.GetComponent<PhotonView>();
+            photonView.RPC("MethodRPC", PhotonTargets.OthersBuffered, photonView_cs.ownerId, NT_PlayerData.Instance.name, NT_PlayerData.Instance.Face.name, new Vector3(NT_PlayerData.Instance.color.r, NT_PlayerData.Instance.color.g, NT_PlayerData.Instance.color.b));
+        }
+    }
 
+    /// <summary>
+    /// 持ち主からデータを受信する
+    /// </summary>
+    /// <param name="id">おーなーID</param>
+    /// <param name="name">オーナー名</param>
+    /// <param name="face">キャラクター</param>
+    /// <param name="color">色</param>
     [PunRPC]
     public void MethodRPC(int id, string name, string face, Vector3 color)
     {
-        this.name = name;
-        this.transform.GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("textures/use/Player/" + face);
-        this.transform.GetComponent<SpriteRenderer>().material.SetColor("_EmissionColor", new Color(color.x, color.y, color.z, 1.0f));
+        if (id == this.transform.GetComponent<PhotonView>().ownerId)
+        {
+            this.name = name;
+            this.transform.GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("textures/use/Player/" + face);
+            this.transform.GetComponent<SpriteRenderer>().material.SetColor("_EmissionColor", new Color(color.x, color.y, color.z, 1.0f));
+
+            if (newplayer == true)
+            {
+                GameObject.Find("PhotonManager").GetComponent<PhotonManager>().CreatedPlayer();
+                newplayer = false;
+            }
+        }
     }
 
 
@@ -174,11 +232,6 @@ public class Player : RaycastController
         //キャラのy軸のdirection方向にscrollの力をかける
         rig.velocity = new Vector2(scroll * direction, rig.velocity.y);
 
-        // 落ちた時の対処
-        if (this.transform.position.y <= -50)
-        {
-            Destroy(this.transform.gameObject);
-        }
         //コントローラーロック
         if(controller_lock == true)
         {
@@ -274,7 +327,7 @@ public class Player : RaycastController
         if (HaveMozi == true)
         {
             //文字の位置を調整
-            MoziBlocController WBController = MoziObj.gameObject.GetComponent<MoziBlocController>();
+            NT_MoziBlocController WBController = MoziObj.gameObject.GetComponent<NT_MoziBlocController>();
             Vector3 direction = Vector3.zero;
 
             if (velocity.x < 0.0f)
@@ -291,18 +344,27 @@ public class Player : RaycastController
             //文字を投げる
             if (XCI.GetButtonDown(XboxButton.B, ControlerNamber))
             {
+<<<<<<< HEAD
                 audio.PlayOneShot(shot_ac);
                 MoziBlocController WB = MoziObj.GetComponent<MoziBlocController>();
 
                 WB.Attack(input);
+=======
+                WBController.Attack(input);
+>>>>>>> Sub
             }
 
             // 文字を捨てる
             if (XCI.GetButton(XboxButton.X, ControlerNamber))
             {
+<<<<<<< HEAD
                 audio.PlayOneShot(delete_ac);
                 this.ChangeMozi_Data = false;
                 Destroy(MoziObj);
+=======
+                HaveMozi = false;
+                PhotonNetwork.Destroy(MoziObj);
+>>>>>>> Sub
             }
         }
         else
@@ -310,19 +372,29 @@ public class Player : RaycastController
             //所持している文字をすべて消去する
             if (XCI.GetButtonDown(XboxButton.X, ControlerNamber))
             {
+<<<<<<< HEAD
                 audio.PlayOneShot(delete_ac);
                 HPgageObj.transform.GetChild(4).GetComponent<GetMoziController>().AllDestroy();
+=======
+                //HPgageObj.transform.GetChild(4).GetComponent<GetMoziController>().AllDestroy();
+>>>>>>> Sub
             }
         }
 
         //一文字ずつ消す
+<<<<<<< HEAD
         if (XCI.GetAxis(XboxAxis.LeftTrigger, ControlerNamber) > 0.8f && BackSpace == false)
         {
             audio.PlayOneShot(delete_ac);
             HPgageObj.transform.GetChild(4).GetComponent<GetMoziController>().BackSpace();
+=======
+        //if (XCI.GetAxis(XboxAxis.LeftTrigger, ControlerNamber) > 0.8f && BackSpace == false)
+        //{
+        //    HPgageObj.transform.GetChild(4).GetComponent<GetMoziController>().BackSpace();
+>>>>>>> Sub
 
-            BackSpace = true;
-        }
+        //    BackSpace = true;
+        //}
         
         if(XCI.GetAxis(XboxAxis.LeftTrigger, ControlerNamber) < 0.2f)
         {
@@ -333,7 +405,7 @@ public class Player : RaycastController
         {
             audio.PlayOneShot(change_ac);
             //取得文字として登録
-            HPgageObj.transform.GetChild(4).GetComponent<GetMoziController>().Semi_voicedPoint();
+            //HPgageObj.transform.GetChild(4).GetComponent<GetMoziController>().Semi_voicedPoint();
         }
 
         //武器に変換
@@ -379,7 +451,7 @@ public class Player : RaycastController
             {
                 audio.PlayOneShot(delete_ac);
                 weapon_use = false;
-                Destroy(weapon);
+                PhotonNetwork.Destroy(weapon.gameObject);
                 weapon = null;
             }
         }
@@ -448,7 +520,7 @@ public class Player : RaycastController
         if (hitFoot.collider != null && hitFoot.collider.tag != "Stage" && oldRayStage != null)
         {
             //取得できる文字の色を元に戻す
-            oldRayStage.transform.GetComponent<BlockController>().ChangeTextColor(new Color(0, 0, 0));
+            oldRayStage.transform.GetComponent<BlockController>().ChangeTextColor(new Color(0, 0, 0, 1));
         }
 
         //ゲットできるオブジェクトだったら
@@ -463,7 +535,7 @@ public class Player : RaycastController
             if (hitFoot.collider.transform.position != oldRayStage.transform.position)
             {
                 //取得できる文字の色を元に戻す
-                oldRayStage.transform.GetComponent<BlockController>().ChangeTextColor(new Color(0, 0, 0));
+                oldRayStage.transform.GetComponent<BlockController>().ChangeTextColor(new Color(0, 0, 0, 1));
 
                 oldRayStage = hitFoot.collider;
             }
@@ -499,28 +571,25 @@ public class Player : RaycastController
             this.PlaySound(audio, pickUp_ac, .2f);
 
             //床を文字として取得
-            MoziObj = Object.Instantiate(block) as GameObject;
+            MoziObj = PhotonNetwork.Instantiate("prefab/Stage/MoziBlock", this.transform.position, Quaternion.identity, 0);
             MoziObj.transform.SetParent(this.transform);
-            MoziObj.name = "MoziBlock" + block.name.Substring(block.name.IndexOf("("));
-            MoziObj.tag = tag.Trim();
-
-            //文字のスクリプトに張り替える
-            Destroy(MoziObj.GetComponent<BlockController>());
-            MoziObj.GetComponent<MoziBlocController>().enabled = true;
+            MoziObj.name = "MoziBlock(" + block.transform.GetChild(0).GetComponent<TextMeshPro>().text + ")";
+            MoziObj.transform.GetChild(0).GetComponent<TextMeshPro>().text = block.transform.GetChild(0).GetComponent<TextMeshPro>().text;
 
             //オーナー登録
-            MoziObj.GetComponent<MoziBlocController>().Owner_Data = this.name;
-            //床から切り抜く
+            MoziObj.GetComponent<NT_MoziBlocController>().OwnerName_Data = this.name;
+            MoziObj.GetComponent<NT_MoziBlocController>().Ownercs_Data = this.transform.GetComponent<Player>();
+            ////床から切り抜く
             block.GetComponent<BlockController>().ChangeMozi();
 
-            MoziObj.GetComponent<BoxCollider2D>().enabled = false;
+            //MoziObj.GetComponent<BoxCollider2D>().enabled = false;
 
             HaveMozi = true;
 
-            //取得文字として登録
-            HPgageObj.transform.GetChild(4).GetComponent<GetMoziController>().SetTextMozi(block.transform.GetChild(0).GetComponent<TextMeshPro>().text);
+            ////取得文字として登録
+            ////HPgageObj.transform.GetChild(4).GetComponent<GetMoziController>().SetTextMozi(block.transform.GetChild(0).GetComponent<TextMeshPro>().text);
 
-            //プレイヤーの移動する向きに合わせて位置を調整
+            ////プレイヤーの移動する向きに合わせて位置を調整
             this.ItemPositionControll(MoziObj, pos);
         }
     }
@@ -660,6 +729,27 @@ public class Player : RaycastController
         {
             //取得できる文字の色を元に戻す
             oldRayStage.transform.GetComponent<BlockController>().ChangeTextColor(new Color(0, 0, 0));
+        }
+    }
+
+    private void OnRaiseEvent(byte eventcode, object content, int senderid)
+    {
+        tmpu = GameObject.Find("P" + senderid + "StageSelect").GetComponent<TextMeshProUGUI>();
+        string eventMessage = null;
+        var eventtype = (EeventType)eventcode;
+
+        switch (eventtype)
+        {
+            case EeventType.stageEvent:
+                eventMessage = (string)content;
+                break;
+            default:
+                break;
+        }
+
+        if (!string.IsNullOrEmpty(eventMessage))
+        {
+            Debug.Log(tmpu.text = (string)content);
         }
     }
 
