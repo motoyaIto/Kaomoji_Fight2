@@ -102,7 +102,7 @@ public class Player : RaycastController
         jump_ac = (AudioClip)Resources.Load("Sound/SE/Jump/jump");           //ジャンプ音  
         bomb_ac = Resources.Load<AudioClip>("Sound/SE/Deth/ded2");
 
-        PhotonNetwork.OnEventCall += OnRaiseEvent;
+        //PhotonNetwork.OnEventCall += OnRaiseEvent;
     }
 
     new void Start()
@@ -691,26 +691,26 @@ public class Player : RaycastController
         }
     }
 
-    private void OnRaiseEvent(byte eventcode, object content, int senderid)
-    {
-        tmpu = GameObject.Find("P" + senderid + "StageSelect").GetComponent<TextMeshProUGUI>();
-        string eventMessage = null;
-        var eventtype = (EeventType)eventcode;
+    //private void OnRaiseEvent(byte eventcode, object content, int senderid)
+    //{
+    //    tmpu = GameObject.Find("P" + senderid + "StageSelect").GetComponent<TextMeshProUGUI>();
+    //    string eventMessage = null;
+    //    var eventtype = (EeventType)eventcode;
 
-        switch (eventtype)
-        {
-            case EeventType.stageEvent:
-                eventMessage = (string)content;
-                break;
-            default:
-                break;
-        }
+    //    switch (eventtype)
+    //    {
+    //        case EeventType.stageEvent:
+    //            eventMessage = (string)content;
+    //            break;
+    //        default:
+    //            break;
+    //    }
 
-        if (!string.IsNullOrEmpty(eventMessage))
-        {
-            Debug.Log(tmpu.text = (string)content);
-        }
-    }
+    //    if (!string.IsNullOrEmpty(eventMessage))
+    //    {
+    //        tmpu.text = (string)content;
+    //    }
+    //}
 
     public int PlayerNumber_data
     {

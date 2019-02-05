@@ -15,7 +15,7 @@ public static class SceneManagerController
         TITLE,
       
         PLAY,
-        RESULT
+        //RESULT
     };
 
 	// Use this for initialization
@@ -24,7 +24,7 @@ public static class SceneManagerController
         Cursor.lockState = CursorLockMode.Confined;
        
         //次のシーンを読み込む
-        if (SceneManager.GetActiveScene().buildIndex < (int)SceneName.RESULT)
+        if (SceneManager.GetActiveScene().buildIndex < (int)SceneName.PLAY)
         {
             ope = SceneManager.LoadSceneAsync(SceneManager.GetActiveScene().buildIndex + 1);
         }

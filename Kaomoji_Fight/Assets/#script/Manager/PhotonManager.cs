@@ -277,32 +277,32 @@ public class PhotonManager : Photon.MonoBehaviour {
 
         if (player_obj != null)
         {
-            if (XCI.GetButtonDown(XboxButton.Start, XboxController.First))
-            {
-                int rand = (int)UnityEngine.Random.Range(.0f, (float)PhotonNetwork.room.PlayerCount) + 1;
+            //if (XCI.GetButtonDown(XboxButton.Start, XboxController.First))
+            //{
+            //    int rand = (int)UnityEngine.Random.Range(.0f, (float)PhotonNetwork.room.PlayerCount) + 1;
 
-                // 選ばれたのは「綾鷹」でした
-                string selectStage = GameObject.Find("P" + rand + "StageSelect").GetComponent<TextMeshProUGUI>().text;
-                if (selectStage == "ランダム")
-                {
-                    int srand = (int)UnityEngine.Random.Range(1.0f, 8.0f);
-                    selectStage = "stage" + srand;
-                }
+            //    // 選ばれたのは「綾鷹」でした
+            //    string selectStage = GameObject.Find("P" + rand + "StageSelect").GetComponent<TextMeshProUGUI>().text;
+            //    if (selectStage == "ランダム")
+            //    {
+            //        int srand = (int)UnityEngine.Random.Range(1.0f, 8.0f);
+            //        selectStage = "stage" + srand;
+            //    }
 
-                //プレイヤーデータを渡す
-                CreatePlayer_data();
-                if (PhotonNetwork.room.PlayerCount > 2)
-                {
-                    // シーンロード
-                    SceneManagerController.LoadScene();
-                    SceneManagerController.ChangeScene();
-                }
-                else
-                {
-                    Debug.Log("２人以上ではないのでプレイすることが出来ません(´・ω・｀)");
-                }
+            //    //プレイヤーデータを渡す
+            //    CreatePlayer_data();
+            //    if (PhotonNetwork.room.PlayerCount > 2)
+            //    {
+            //        // シーンロード
+            //        SceneManagerController.LoadScene();
+            //        SceneManagerController.ChangeScene();
+            //    }
+            //    else
+            //    {
+            //        Debug.Log("２人以上ではないのでプレイすることが出来ません(´・ω・｀)");
+            //    }
 
-            }
+            //}
 
             //ステージ外に出たら
             if (player_obj.transform.position.y + 10 < DownPos)
@@ -314,17 +314,31 @@ public class PhotonManager : Photon.MonoBehaviour {
                 photonView.RPC("StageOverData", PhotonTargets.OthersBuffered, HPber.transform.GetComponent<PhotonView>().ownerId, HPber.transform.GetComponent<Slider>().maxValue / 10);
             }
 
-            //プレイヤーが死んだら回復させて上からリスポンさせる
+            ////プレイヤーが死んだら回復させて上からリスポンさせる
+            //if (HPber.transform.GetComponent<Slider>().value < 0.1f)
+            //{
+            //    HPber.transform.GetComponent<Slider>().value = 100;
+            //    player_obj.transform.position = new Vector3(RightPos / 2, 30);
+
+            //    PhotonView photonView = this.GetComponent<PhotonView>();
+            //    photonView.RPC("ResuscitationData", PhotonTargets.OthersBuffered, HPber.transform.GetComponent<PhotonView>().ownerId);
+            //}
+
+            //プレイヤーが死んだら切断する
             if (HPber.transform.GetComponent<Slider>().value < 0.1f)
             {
-                HPber.transform.GetComponent<Slider>().value = 100;
-                player_obj.transform.position = new Vector3(RightPos / 2, 30);
-
-                PhotonView photonView = this.GetComponent<PhotonView>();
-                photonView.RPC("ResuscitationData", PhotonTargets.OthersBuffered, HPber.transform.GetComponent<PhotonView>().ownerId);
+                PhotonNetwork.LeaveRoom();
+                SceneManagerController.LoadScene();
+                SceneManagerController.ChangeScene();
             }
         }
     }
+
+    private void OnLeftRoom()
+    {
+        Debug.Log("退室");
+    }
+
 
     [PunRPC]
     public void StageData(float down, float right)
