@@ -512,6 +512,7 @@ public class PhotonManager : Photon.MonoBehaviour {
     public void CreateHPber()
     {
         HPber = PhotonNetwork.Instantiate("prefab/UI/HPgage2", new Vector3(0, 0, 0), Quaternion.identity, 0);
+        player_obj.transform.GetComponent<Player>().HPber_Data = HPber;
     }
 
     public void CreatedPlayer()
