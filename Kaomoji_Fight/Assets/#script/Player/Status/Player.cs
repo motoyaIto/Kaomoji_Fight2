@@ -110,11 +110,7 @@ public class Player : RaycastController
         create_ac = (AudioClip)Resources.Load("Sound/SE/Other/create");         //生成音
         change_ac = (AudioClip)Resources.Load("Sound/SE/Other/char_switch");    //文字変換
 
-
-<<<<<<< HEAD
-=======
         PhotonNetwork.OnEventCall += OnRaiseEvent;
->>>>>>> Sub
     }
 
     new void Start()
@@ -135,13 +131,13 @@ public class Player : RaycastController
         Physics2D.IgnoreLayerCollision(P_layer, P_layer);
 
         //HPゲージを取得する
-       // HPgageObj = PSM.SetHPgage(CNConvert(ControlerNamber) + 1);
+        // HPgageObj = PSM.SetHPgage(CNConvert(ControlerNamber) + 1);
 
         // PhotonViewの取得
         photonView_cs = GetComponent<PhotonView>();
 
         this.transform.GetComponent<SpriteRenderer>().material = Resources.Load<Material>("Material/P" + photonView_cs.ownerId + "Color");
-        
+
         // 持ち主でないのなら持ち主にデータを要請する
         if (!photonView_cs.isMine)
         {
@@ -233,7 +229,7 @@ public class Player : RaycastController
         rig.velocity = new Vector2(scroll * direction, rig.velocity.y);
 
         //コントローラーロック
-        if(controller_lock == true)
+        if (controller_lock == true)
         {
             return;
         }
@@ -273,7 +269,7 @@ public class Player : RaycastController
             ItemPositionControll(MoziObj, input);
         }
 
-        
+
 
 
         if (XCI.GetButtonDown(XboxButton.A, ControlerNamber) && !jump)
@@ -344,27 +340,16 @@ public class Player : RaycastController
             //文字を投げる
             if (XCI.GetButtonDown(XboxButton.B, ControlerNamber))
             {
-<<<<<<< HEAD
                 audio.PlayOneShot(shot_ac);
-                MoziBlocController WB = MoziObj.GetComponent<MoziBlocController>();
-
-                WB.Attack(input);
-=======
                 WBController.Attack(input);
->>>>>>> Sub
             }
 
             // 文字を捨てる
             if (XCI.GetButton(XboxButton.X, ControlerNamber))
             {
-<<<<<<< HEAD
                 audio.PlayOneShot(delete_ac);
-                this.ChangeMozi_Data = false;
-                Destroy(MoziObj);
-=======
                 HaveMozi = false;
                 PhotonNetwork.Destroy(MoziObj);
->>>>>>> Sub
             }
         }
         else
@@ -372,90 +357,83 @@ public class Player : RaycastController
             //所持している文字をすべて消去する
             if (XCI.GetButtonDown(XboxButton.X, ControlerNamber))
             {
-<<<<<<< HEAD
                 audio.PlayOneShot(delete_ac);
-                HPgageObj.transform.GetChild(4).GetComponent<GetMoziController>().AllDestroy();
-=======
                 //HPgageObj.transform.GetChild(4).GetComponent<GetMoziController>().AllDestroy();
->>>>>>> Sub
             }
         }
 
         //一文字ずつ消す
-<<<<<<< HEAD
         if (XCI.GetAxis(XboxAxis.LeftTrigger, ControlerNamber) > 0.8f && BackSpace == false)
         {
-            audio.PlayOneShot(delete_ac);
+
             HPgageObj.transform.GetChild(4).GetComponent<GetMoziController>().BackSpace();
-=======
-        //if (XCI.GetAxis(XboxAxis.LeftTrigger, ControlerNamber) > 0.8f && BackSpace == false)
-        //{
-        //    HPgageObj.transform.GetChild(4).GetComponent<GetMoziController>().BackSpace();
->>>>>>> Sub
+            //if (XCI.GetAxis(XboxAxis.LeftTrigger, ControlerNamber) > 0.8f && BackSpace == false)
+            //{
+            //audio.PlayOneShot(delete_ac);
+            //    HPgageObj.transform.GetChild(4).GetComponent<GetMoziController>().BackSpace();
+            //    BackSpace = true;
+            //}
 
-        //    BackSpace = true;
-        //}
-        
-        if(XCI.GetAxis(XboxAxis.LeftTrigger, ControlerNamber) < 0.2f)
-        {
-            BackSpace = false;
-        }
-
-        if(XCI.GetButtonDown(XboxButton.LeftBumper, ControlerNamber))
-        {
-            audio.PlayOneShot(change_ac);
-            //取得文字として登録
-            //HPgageObj.transform.GetChild(4).GetComponent<GetMoziController>().Semi_voicedPoint();
-        }
-
-        //武器に変換
-        if(XCI.GetButtonDown(XboxButton.Y, ControlerNamber))
-        {
-            if (weapon_use == false && EffectCorutine == false)
+            if (XCI.GetAxis(XboxAxis.LeftTrigger, ControlerNamber) < 0.2f)
             {
-                weapon = SelectWeapon.CreateSelectWeapon(HPgageObj.transform.GetChild(3).GetComponent<TextMeshProUGUI>().text + HPgageObj.transform.GetChild(4).GetComponent<TextMeshProUGUI>().text);
-
-
-                //武器化出来たら
-                if (weapon != null)
-                {
-                    GameObject EffectObj = null;
-                    foreach (Transform Child in this.transform)
-                    {
-                        if(Child.name == "Top")
-                        {
-                            //エフェクトの発生
-                            EffectObj = Instantiate(CreateWeapon_Effect, Child.transform) as GameObject;
-                        }
-                    }
-                    StartCoroutine(this.CreateWeapn(EffectObj));
-                }
-            }
-        }
-
-        //武器を持っているとき
-        if(weapon_use == true)
-        {
-            //座標の調整
-            ItemPositionControll(weapon, input);
-            
-
-            //武器を使う
-            if (XCI.GetButtonDown(XboxButton.B, ControlerNamber))
-            {
-                weapon_cs.Attack();
+                BackSpace = false;
             }
 
-            // 武器を捨てる
-            else if (XCI.GetButtonDown(XboxButton.X, ControlerNamber))
+            if (XCI.GetButtonDown(XboxButton.LeftBumper, ControlerNamber))
             {
-                audio.PlayOneShot(delete_ac);
-                weapon_use = false;
-                PhotonNetwork.Destroy(weapon.gameObject);
-                weapon = null;
+                audio.PlayOneShot(change_ac);
+                //取得文字として登録
+                //HPgageObj.transform.GetChild(4).GetComponent<GetMoziController>().Semi_voicedPoint();
+            }
+
+            //武器に変換
+            if (XCI.GetButtonDown(XboxButton.Y, ControlerNamber))
+            {
+                //if (weapon_use == false && EffectCorutine == false)
+                //{
+                //    weapon = SelectWeapon.CreateSelectWeapon(HPgageObj.transform.GetChild(3).GetComponent<TextMeshProUGUI>().text + HPgageObj.transform.GetChild(4).GetComponent<TextMeshProUGUI>().text);
+
+
+                //    武器化出来たら
+                //    if (weapon != null)
+                //    {
+                //        GameObject EffectObj = null;
+                //        foreach (Transform Child in this.transform)
+                //        {
+                //            if (Child.name == "Top")
+                //            {
+                //                エフェクトの発生
+                //                EffectObj = Instantiate(CreateWeapon_Effect, Child.transform) as GameObject;
+                //            }
+                //        }
+                //        StartCoroutine(this.CreateWeapn(EffectObj));
+                //    }
+                //}
+            }
+
+            //武器を持っているとき
+            if (weapon_use == true)
+            {
+                //座標の調整
+                //ItemPositionControll(weapon, input);
+
+
+                ////武器を使う
+                //if (XCI.GetButtonDown(XboxButton.B, ControlerNamber))
+                //{
+                //    weapon_cs.Attack();
+                //}
+
+                //// 武器を捨てる
+                //else if (XCI.GetButtonDown(XboxButton.X, ControlerNamber))
+                //{
+                //    audio.PlayOneShot(delete_ac);
+                //    weapon_use = false;
+                //    PhotonNetwork.Destroy(weapon.gameObject);
+                //    weapon = null;
+                //}
             }
         }
-
         // Ｒａｙ
         this.RayController();
     }
@@ -527,7 +505,7 @@ public class Player : RaycastController
         if (hitFoot.collider != null && hitFoot.collider.tag == "Stage")
         {
             //前のオブジェクトが登録されていなかったら
-            if(oldRayStage == null)
+            if (oldRayStage == null)
             {
                 oldRayStage = hitFoot.collider;
             }
@@ -539,7 +517,7 @@ public class Player : RaycastController
 
                 oldRayStage = hitFoot.collider;
             }
-            
+
             //取得できるオブジェクトを自分と同じ色に変更
             if (hitFoot.collider.transform.GetComponent<BlockController>().Mozi == true)
             {
@@ -550,7 +528,7 @@ public class Player : RaycastController
         // 文字をゲットするかも
         if (XCI.GetButtonDown(XboxButton.B, ControlerNamber) && weapon_use == false && hitFoot.transform.tag == "Stage")
         {
-            this.GetMozi(hitFoot, this.transform.position);   
+            this.GetMozi(hitFoot, this.transform.position);
         }
     }
 
@@ -678,7 +656,7 @@ public class Player : RaycastController
 
     public void ItemPositionControll(GameObject Item, Vector2 vec2)
     {
-        if ((HaveMozi  == true|| weapon_use == true) && weaponMoveLock == false)
+        if ((HaveMozi == true || weapon_use == true) && weaponMoveLock == false)
         {
             foreach (Transform child in this.transform)
             {
