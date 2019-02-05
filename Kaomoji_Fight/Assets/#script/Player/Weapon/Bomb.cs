@@ -7,7 +7,9 @@ using XboxCtrlrInput;
 public class Bomb : Weapon {
 
     private Vector2 speed = Vector2.zero; //飛ばしてる弾の速度
-    private float thrust = 30.8f;          // 爆弾の推進力
+    private float thrust = 30.8f;         // 爆弾の推進力
+    private AudioSource sound01;          // 投げるSE
+    private AudioSource sound02;          //ヒットSE
     protected override void Start()
     {
         base.Start();
@@ -29,6 +31,10 @@ public class Bomb : Weapon {
         bombEffect_cs.PSManager_csData = PSManager_cs;
         bombEffect_cs.Weapon_Data = this.gameObject;
         bombEffect_cs.OwnerName_Data = owner_cs.PlayerName_Data;
+
+        AudioSource[] audioSources = GetComponents<AudioSource>();
+        sound01 = audioSources[0];
+        sound02 = audioSources[1];
     }
 
     private void Update()
@@ -58,6 +64,10 @@ public class Bomb : Weapon {
                 // 投げる
                 speed = input * thrust;
                 this.transform.GetComponent<Rigidbody2D>().velocity = speed;
+
+                //SE再生
+                sound01.PlayOneShot(sound01.clip);
+
             }
 
             //Bボタンを離したら
@@ -101,6 +111,9 @@ public class Bomb : Weapon {
             Effect.SetActive(true);
             //エフェクトの発生場所を指定の座標に
             Effect.transform.position = this.transform.position;
+
+            //ヒットSE再生
+            sound02.PlayOneShot(sound02.clip);
 
             //エフェクト発生を待って破棄する
             //StartCoroutine(this.DelayMethod(EffectWait, () => { Destroy(Effect); }));

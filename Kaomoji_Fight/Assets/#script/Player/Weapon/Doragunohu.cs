@@ -10,6 +10,7 @@ public class Doragunohu : Weapon {
     float BulletSpeed = 0.3f;   //弾の速度
     float Range = 100.0f;       //射程
     float ArrivalTime = 0.2f;   //到達タイム
+    private AudioSource sound01;            // 撃つSE
 
     protected override void Start()
     {
@@ -210,6 +211,9 @@ public class Doragunohu : Weapon {
         owner_cs.Directtion_Data = 0.0f;
 
         this.transform.GetChild(1).gameObject.SetActive(true);
+
+        //SE再生
+        sound01.PlayOneShot(sound01.clip);
 
         //武器を右か左に寄せる
         if (input.x >= 0)

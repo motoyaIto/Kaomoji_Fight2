@@ -5,6 +5,8 @@ using UnityEngine;
 
 public class Yari : Weapon {
 
+    private AudioSource sound01;            // 振るSE
+    private AudioSource sound02;            //ヒットSE
     protected override void Start()
     {
         base.Start();
@@ -22,6 +24,8 @@ public class Yari : Weapon {
     {
         if (weapon_use == true)
         {
+            //SE再生
+            sound01.PlayOneShot(sound01.clip);
             count += Time.deltaTime;
 
             if (SRenderer.flipX == false)
@@ -56,6 +60,8 @@ public class Yari : Weapon {
         count = 0.0f;
         collider.enabled = true;
 
+        //SE再生
+        sound01.PlayOneShot(sound01.clip);
         //武器を右か左に寄せる
         if (this.transform.localPosition.x > 0)
         {
@@ -101,6 +107,7 @@ public class Yari : Weapon {
                 base.EffectOccurrence(this.transform.position + new Vector3(-1, 0, 0), new Vector3(-180, 0, 0));
                 owner_cs.Directtion_Data = -5.5f;
             }
+            sound02.PlayOneShot(sound02.clip);
         }
     }
 }

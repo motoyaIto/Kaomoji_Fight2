@@ -10,7 +10,7 @@ public class Gan : Weapon {
     private string LeftRight = "Top";   //かまえている方向
 
     private float reaction = 0.5f;  //反動で打てない秒数
-
+    private AudioSource sound01;            // 撃つSE
 
     protected override void Start()
     {
@@ -79,6 +79,8 @@ public class Gan : Weapon {
         //撃つ
         if (Bullet > 0)
         {
+            //SE再生
+            sound01.PlayOneShot(sound01.clip);
             this.transform.GetChild(0).GetComponent<Bullet>().Owner_csData = owner_cs;
             //銃弾の調整
             this.transform.GetChild(0).gameObject.SetActive(true);
