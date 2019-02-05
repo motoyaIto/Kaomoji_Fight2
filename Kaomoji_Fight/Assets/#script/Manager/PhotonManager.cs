@@ -283,6 +283,11 @@ public class PhotonManager : Photon.MonoBehaviour {
 
                 // 選ばれたのは「綾鷹」でした
                 string selectStage = GameObject.Find("P" + rand + "StageSelect").GetComponent<TextMeshProUGUI>().text;
+                if (selectStage == "ランダム")
+                {
+                    int srand = (int)UnityEngine.Random.Range(1.0f, 8.0f);
+                    selectStage = "stage" + srand;
+                }
 
                 //プレイヤーデータを渡す
                 CreatePlayer_data();
