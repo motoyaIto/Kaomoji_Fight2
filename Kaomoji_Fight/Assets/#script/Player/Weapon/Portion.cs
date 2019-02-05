@@ -5,6 +5,7 @@ using UnityEngine;
 
 public class Portion : Weapon
 {
+    private AudioSource sound01;            // 撃つSE
     protected override void Start()
     {
         base.Start();
@@ -18,6 +19,9 @@ public class Portion : Weapon
     {
         //回復
         PSManager_cs.Effect_myself(this.transform.parent.gameObject, this.gameObject, this.transform.parent.GetComponent<Player>().PlayerNumber_data);
+
+        //SE再生
+        sound01.PlayOneShot(sound01.clip);
 
         //回復エフェクト
         base.EffectOccurrence();

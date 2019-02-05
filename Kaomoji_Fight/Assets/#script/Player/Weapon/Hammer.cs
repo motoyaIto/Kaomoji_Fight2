@@ -9,6 +9,8 @@ public class Hammer : Weapon
     float Acceleration = 1.12f;     //加速度
     string LeftRight = "";          //右か左か
     Vector3 targetPos;              //中心に回る座標
+    private AudioSource sound01;    // 振るSE
+    private AudioSource sound02;    //ヒットSE
 
     protected override void Start()
     {
@@ -26,6 +28,8 @@ public class Hammer : Weapon
     {
         if (weapon_use == true)
         {
+            //SE再生
+            sound01.PlayOneShot(sound01.clip);
             //ニュートラルの時
             if (LeftRight == "")
             {
@@ -204,6 +208,9 @@ public class Hammer : Weapon
             PSManager_cs.Player_Damage(collision.gameObject, this.gameObject, collision.transform.GetComponent<Player>().PlayerNumber_data);
 
             base.EffectOccurrence(this.transform.GetChild(0).position, Vector3.zero);
+
+            //ヒットSE再生
+            sound02.PlayOneShot(sound02.clip);
         }
     }
 }

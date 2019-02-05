@@ -6,7 +6,8 @@ using UnityEngine;
 public class Sword : Weapon {
 
     private float RotationalDistanc = 0.0f; //回転距離
-
+    private AudioSource sound01;            // 振るSE
+    private AudioSource sound02;            //ヒットSE
     protected override void Start()
     {
         base.Start();
@@ -21,6 +22,8 @@ public class Sword : Weapon {
     {
         if(weapon_use == true)
         {
+            //SE再生
+            sound01.PlayOneShot(sound01.clip);
             //剣を回転
             RotationalDistanc += Time.deltaTime * 80.0f;
             this.transform.RotateAround(this.transform.parent.position, Vector3.up, RotationalDistanc);
@@ -67,6 +70,8 @@ public class Sword : Weapon {
         {
             base.EffectOccurrence_World(this.transform.position + new Vector3(0.2f, 0.0f, 0.0f), Vector3.zero);
             PSManager_cs.Player_Damage(collision.gameObject, this.gameObject, collision.transform.GetComponent<Player>().PlayerNumber_data);
+            //ヒットSE再生
+            sound02.PlayOneShot(sound02.clip);
         }
     }
 }

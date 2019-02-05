@@ -79,6 +79,10 @@ public class Player : RaycastController
     private AudioClip walk_ac;              //歩く
     private AudioClip jump_ac;              // ジャンプ
     private AudioClip bomb_ac;
+    private AudioClip avoidance_ac;         //回避
+    private AudioClip delete_ac;            //削除
+    private AudioClip create_ac;            //生成音
+    private AudioClip change_ac;            //文字変換
 
     private PhotonView photonView_cs = null;
 
@@ -92,12 +96,16 @@ public class Player : RaycastController
         audio = this.GetComponent<AudioSource>();
         audio2 = this.GetComponent<AudioSource>();
         pickUp_ac = (AudioClip)Resources.Load("Sound/SE/Move/pickUp");      //拾う音
-        shot_ac = (AudioClip)Resources.Load("Sound/SE/Shooting/launcher");   //投げる音
+        shot_ac = (AudioClip)Resources.Load("Sound/SE/Attack/shoot");   //投げる音
         walk_ac = (AudioClip)Resources.Load("Sound/SE/Move/walk");          //歩く音
         jump_ac = (AudioClip)Resources.Load("Sound/SE/Jump/jump");           //ジャンプ音  
         bomb_ac = Resources.Load<AudioClip>("Sound/SE/Deth/ded2");
+        avoidance_ac = (AudioClip)Resources.Load("Sound/SE/Move/avoidance");    //回避音
+        delete_ac = (AudioClip)Resources.Load("Sound/SE/Other/char_delete");    //消去音
+        create_ac = (AudioClip)Resources.Load("Sound/SE/Other/create");         //生成音
+        change_ac = (AudioClip)Resources.Load("Sound/SE/Other/char_switch");    //文字変換
 
-       
+
     }
 
     new void Start()
@@ -237,6 +245,7 @@ public class Player : RaycastController
             // アニメーションに差し替え予定？
             if (!Avoidance)
             {
+                audio.PlayOneShot(avoidance_ac);
                 if (input.x < .0f)
                 {
                     this.transform.position += new Vector3(-5f, 0f);
@@ -282,6 +291,7 @@ public class Player : RaycastController
             //文字を投げる
             if (XCI.GetButtonDown(XboxButton.B, ControlerNamber))
             {
+                audio.PlayOneShot(shot_ac);
                 MoziBlocController WB = MoziObj.GetComponent<MoziBlocController>();
 
                 WB.Attack(input);
@@ -290,6 +300,7 @@ public class Player : RaycastController
             // 文字を捨てる
             if (XCI.GetButton(XboxButton.X, ControlerNamber))
             {
+                audio.PlayOneShot(delete_ac);
                 this.ChangeMozi_Data = false;
                 Destroy(MoziObj);
             }
@@ -299,6 +310,7 @@ public class Player : RaycastController
             //所持している文字をすべて消去する
             if (XCI.GetButtonDown(XboxButton.X, ControlerNamber))
             {
+                audio.PlayOneShot(delete_ac);
                 HPgageObj.transform.GetChild(4).GetComponent<GetMoziController>().AllDestroy();
             }
         }
@@ -306,6 +318,7 @@ public class Player : RaycastController
         //一文字ずつ消す
         if (XCI.GetAxis(XboxAxis.LeftTrigger, ControlerNamber) > 0.8f && BackSpace == false)
         {
+            audio.PlayOneShot(delete_ac);
             HPgageObj.transform.GetChild(4).GetComponent<GetMoziController>().BackSpace();
 
             BackSpace = true;
@@ -318,6 +331,7 @@ public class Player : RaycastController
 
         if(XCI.GetButtonDown(XboxButton.LeftBumper, ControlerNamber))
         {
+            audio.PlayOneShot(change_ac);
             //取得文字として登録
             HPgageObj.transform.GetChild(4).GetComponent<GetMoziController>().Semi_voicedPoint();
         }
@@ -363,6 +377,7 @@ public class Player : RaycastController
             // 武器を捨てる
             else if (XCI.GetButtonDown(XboxButton.X, ControlerNamber))
             {
+                audio.PlayOneShot(delete_ac);
                 weapon_use = false;
                 Destroy(weapon);
                 weapon = null;
@@ -375,6 +390,7 @@ public class Player : RaycastController
 
     private IEnumerator CreateWeapn(GameObject effect)
     {
+        audio.PlayOneShot(create_ac);
         EffectCorutine = true;
         yield return new WaitForSeconds(1.0f);
         EffectCorutine = false;

@@ -9,6 +9,9 @@ public class Knife : Weapon {
     private int[] InstantDeathNamber;      //ランダムで即死を与える値
     private float InstantDeathProbability = 0.04f;//即死の確率
     private GameObject InstatDeath_Effect;
+    private AudioSource sound01;                  // 振るSE
+    private AudioSource sound02;                  //ヒットSE
+    private AudioSource sound03;                  //即死SE
     /// <summary>
     /// 武器を目的の位置にずらす
     /// </summary>
@@ -66,6 +69,8 @@ public class Knife : Weapon {
     {
         if (weapon_use == false)
         {
+            //SE再生
+            sound01.PlayOneShot(sound01.clip);
             //武器を左に寄せる
             if (this.transform.localPosition.x < 0)
             {
@@ -158,8 +163,13 @@ public class Knife : Weapon {
                     //エフェクト発生を待って破棄する
                     StartCoroutine(this.DelayMethod(2.0f, () => { Destroy(EffectObj); }));
 
+                    //即死SE再生
+                    sound03.PlayOneShot(sound03.clip);
+
                     break;
                 }
+                //ヒットSE再生
+                sound02.PlayOneShot(sound02.clip);
             }
 
             if(InstantDeath == false)
