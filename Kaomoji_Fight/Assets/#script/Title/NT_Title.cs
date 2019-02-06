@@ -21,8 +21,18 @@ public class NT_Title : MonoBehaviour
     private float time;         //タイマー
 
     TextMeshPro TMPro_cs;//テキストメッシュプロcs
-    AudioSource audio;
-    
+    private new AudioSource audio;
+    private new AudioSource audio2;
+    private AudioClip start_ac;
+
+    private void Awake()
+    {
+        audio = this.GetComponent<AudioSource>();
+        audio2 = this.GetComponent<AudioSource>();
+        start_ac = (AudioClip)Resources.Load("Sound/SE/Start/start");      //決定音
+
+    }
+
     void Start()
     {
         //初回の鳴らすのを止める
@@ -48,6 +58,7 @@ public class NT_Title : MonoBehaviour
         //スペースキー(デバッグ用)・1PコントローラーのBボタンが押されたらページをめくる
         if (Input.GetKeyDown(KeyCode.Space) || XCI.GetButtonDown(XboxButton.B, XboxController.First))
         {
+            audio.PlayOneShot(start_ac);
             videoPlayer.Stop();
             audio.PlayOneShot(audio.clip);
             TManager_cs.ChangePage(true);

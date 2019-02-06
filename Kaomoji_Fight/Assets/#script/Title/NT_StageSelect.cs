@@ -22,6 +22,22 @@ public class NT_StageSelect : MonoBehaviour {
     private int VerticalCount = 0;          //縦の今の番号
     private int HorizontalCount = 0;        //横の今の番号
 
+    private new AudioSource audio;
+    private new AudioSource audio2;
+    private AudioClip cursor_ac;    //カーソル移動音
+    private AudioClip decision_ac;
+    private AudioClip cancel_ac;
+
+    private void Awake()
+    {
+        audio = this.GetComponent<AudioSource>();
+        audio2 = this.GetComponent<AudioSource>();
+        cursor_ac = (AudioClip)Resources.Load("Sound/SE/Select/Decision/cursor");      //カーソル移動音
+        decision_ac = (AudioClip)Resources.Load("Sound/SE/Select/Decision/decision");      //決定音
+        cancel_ac = (AudioClip)Resources.Load("Sound/SE/Select/Cancel/cancel");
+
+    }
+
     void Start()
     {
         //各csの取得
@@ -52,6 +68,7 @@ public class NT_StageSelect : MonoBehaviour {
         //上入力
         if (Input.GetKeyDown(KeyCode.UpArrow) || XCI.GetDPadDown(XboxDPad.Up, XboxController.First) || (LeftStickInput.y > 0.9f && LeftStickflag == false))
         {
+            audio.PlayOneShot(cursor_ac);
             VerticalCount--;
             LeftStickflag = true;
 
@@ -64,6 +81,7 @@ public class NT_StageSelect : MonoBehaviour {
         //下入力
         else if (Input.GetKeyDown(KeyCode.DownArrow) || XCI.GetDPadDown(XboxDPad.Down, XboxController.First) || (LeftStickInput.y < -0.9f && LeftStickflag == false))
         {
+            audio.PlayOneShot(cursor_ac);
             VerticalCount++;
             LeftStickflag = true;
 
@@ -76,6 +94,7 @@ public class NT_StageSelect : MonoBehaviour {
         //右入力
         else if (Input.GetKeyDown(KeyCode.RightArrow) || XCI.GetDPadDown(XboxDPad.Right, XboxController.First) || (LeftStickInput.x > 0.9f && LeftStickflag == false))
         {
+            audio.PlayOneShot(cursor_ac);
             HorizontalCount--;
             LeftStickflag = true;
 
@@ -88,6 +107,7 @@ public class NT_StageSelect : MonoBehaviour {
         //左入力
         else if (Input.GetKeyDown(KeyCode.LeftArrow) || XCI.GetDPadDown(XboxDPad.Left, XboxController.First) || (LeftStickInput.x < -0.9f && LeftStickflag == false))
         {
+            audio.PlayOneShot(cursor_ac);
             HorizontalCount++;
             LeftStickflag = true;
 
@@ -108,6 +128,7 @@ public class NT_StageSelect : MonoBehaviour {
         //ステージを決定する
         if ((XCI.GetButtonDown(XboxButton.B, XboxController.First) || Input.GetKeyDown(KeyCode.Space)))
         {
+            audio.PlayOneShot(decision_ac);
             TManager_cs.SelectStage_Data = Target[HorizontalCount * Vertical + VerticalCount].transform.GetComponent<TextMeshPro>().text;
 
             TManager_cs.ChangePage(true);
@@ -121,6 +142,7 @@ public class NT_StageSelect : MonoBehaviour {
         //カラー選択に戻る
         if ((XCI.GetButtonDown(XboxButton.A, XboxController.First) || Input.GetKeyDown(KeyCode.Backspace)))
         {
+            audio.PlayOneShot(cancel_ac);
             TManager_cs.ChangePage(false);
 
             //非表示設定

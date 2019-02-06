@@ -32,6 +32,14 @@ public class CursorController2 : MonoBehaviour {
 
     private bool BackSpace = false;//バックスペースフラグ
 
+    private new AudioSource audio;
+    private new AudioSource audio2;
+    private AudioClip cursor_ac;    //カーソル移動音
+    private AudioClip switch_ac;
+    private AudioClip decision_ac;
+    private AudioClip cancel_ac;
+
+
     //変換表
     private static string[][] ChangeMozi = new string[][]
         {
@@ -44,6 +52,16 @@ public class CursorController2 : MonoBehaviour {
             new string[2]{"や", "ゃ"}, new string[2]{"ゆ", "ゅ"}, new string[2]{"よ", "ょ"}
         };
 
+    private void Awake()
+    {
+        audio = this.GetComponent<AudioSource>();
+        audio2 = this.GetComponent<AudioSource>();
+        cursor_ac = (AudioClip)Resources.Load("Sound/SE/Select/Decision/cursor");      //カーソル移動音
+        switch_ac = (AudioClip)Resources.Load("Sound/SE/Select/switch");                //文字選
+        decision_ac = (AudioClip)Resources.Load("Sound/SE/Select/Decision/decision");      //決定音
+        cancel_ac = (AudioClip)Resources.Load("Sound/SE/Select/Cancel/cancel");
+
+    }
     void Start() {
         //各csの取得
         TManager_cs = TManager.GetComponent<NT_TitleManager>();
@@ -114,6 +132,7 @@ public class CursorController2 : MonoBehaviour {
         {
             VerticalCount--;
             LeftStickflag = true;
+            audio.PlayOneShot(cursor_ac);
 
             //下に戻る
             if (VerticalCount < 0)
@@ -125,7 +144,8 @@ public class CursorController2 : MonoBehaviour {
         else if (Input.GetKeyDown(KeyCode.DownArrow) || XCI.GetDPadDown(XboxDPad.Down, XboxController.First) || (LeftStickInput.y < -0.9f && LeftStickflag == false))
         {
             VerticalCount++;
-            LeftStickflag = true;           
+            LeftStickflag = true;
+            audio.PlayOneShot(cursor_ac);
 
             //上に戻る
             if (VerticalCount > TargetMozi[HorizontalCount].Length - 1)
@@ -138,6 +158,7 @@ public class CursorController2 : MonoBehaviour {
         {
             HorizontalCount--;
             LeftStickflag = true;
+            audio.PlayOneShot(cursor_ac);
 
             //や行を出るとき
             if (HorizontalCount == 6)
@@ -181,6 +202,7 @@ public class CursorController2 : MonoBehaviour {
         {
             HorizontalCount++;
             LeftStickflag = true;
+            audio.PlayOneShot(cursor_ac);
 
             //や行を出るとき
             if (HorizontalCount == 8)
@@ -241,7 +263,8 @@ public class CursorController2 : MonoBehaviour {
         if((((HorizontalCount <= 6 || HorizontalCount == 8) && VerticalCount <= 4) || (HorizontalCount == 7 && VerticalCount <= 2) || (HorizontalCount == 9 && VerticalCount <= 3)) && (XCI.GetButtonDown(XboxButton.B, XboxController.First) || Input.GetKeyDown(KeyCode.Space)))
         {
             NameText[TextNamber].transform.GetComponent<TextMeshPro>().text = TargetMozi[HorizontalCount][VerticalCount].transform.GetComponent<TextMeshPro>().text;
-           
+            audio.PlayOneShot(switch_ac);
+
             //次に移動
             if (TextNamber < 4)
             {
@@ -254,6 +277,7 @@ public class CursorController2 : MonoBehaviour {
         //バックスペース
         if (Input.GetKeyDown(KeyCode.Backspace) || XCI.GetAxis(XboxAxis.LeftTrigger, XboxController.First) > 0.8f && BackSpace == false || HorizontalCount == 10 && VerticalCount == 0 && ((XCI.GetButtonDown(XboxButton.B, XboxController.First)) || Input.GetKeyDown(KeyCode.Space)))
         {
+            audio.PlayOneShot(cancel_ac);
             BackSpace = true;
             NameText[TextNamber].transform.GetComponent<TextMeshPro>().text = "";
 
@@ -281,6 +305,7 @@ public class CursorController2 : MonoBehaviour {
         {
             if(TextNamber > 0)
             {
+                audio.PlayOneShot(decision_ac);
                 //非表示設定
                 this.transform.GetComponent<SpriteRenderer>().enabled = false;
                 text.SetActive(false);
