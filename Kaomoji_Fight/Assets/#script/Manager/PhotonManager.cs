@@ -325,18 +325,13 @@ public class PhotonManager : Photon.MonoBehaviour {
             //}
 
             //プレイヤーが死んだら切断する
-            if (HPber.transform.GetComponent<Slider>().value < 0.1f)
+            if (HPber.transform.GetComponent<Slider>().value < 0.1f || Input.GetKeyDown(KeyCode.Z))
             {
-                PhotonNetwork.LeaveRoom();
+                PhotonNetwork.Disconnect();
                 SceneManagerController.LoadScene();
                 SceneManagerController.ChangeScene();
             }
         }
-    }
-
-    private void OnLeftRoom()
-    {
-        Debug.Log("退室");
     }
 
 

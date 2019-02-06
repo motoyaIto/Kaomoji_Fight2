@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 using XboxCtrlrInput;
 using System;
 
@@ -47,6 +48,12 @@ public class NT_TitleManager : MonoBehaviour
     // Use this for initialization
     void Start()
     {
+        Scene sceneA = SceneManager.GetSceneByName("Wait");
+        if (sceneA.IsValid() == true)
+        {
+            return;
+        }
+
         //シーンのロード
         SceneManagerController.LoadScene();
 
