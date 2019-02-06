@@ -69,7 +69,7 @@ public class Sword : Weapon {
         if (collision.tag == "Player" && collision.name != owner_cs.PlayerName_Data)
         {
             base.EffectOccurrence_World(this.transform.position + new Vector3(0.2f, 0.0f, 0.0f), Vector3.zero);
-            PSManager_cs.Player_Damage(collision.gameObject, this.gameObject, collision.transform.GetComponent<Player>().PlayerNumber_data);
+            PManager_cs.WeaponAttack(collision.gameObject, this.gameObject);
             //ヒットSE再生
             sound02.PlayOneShot(sound02.clip);
         }

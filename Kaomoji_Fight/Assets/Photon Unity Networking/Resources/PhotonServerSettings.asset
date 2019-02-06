@@ -64,4 +64,10 @@ MonoBehaviour:
   - ChathTextData
   - DestroyData
   - Semi_voicedPointData
+  - AttackeData
+  - CreateEffect
+  - CreateEffect_WorldData
+  - PleasePlayerName
+  - PushWeaponData
+  - EffectOccurrenceData
   DisableAutoOpenWizard: 1

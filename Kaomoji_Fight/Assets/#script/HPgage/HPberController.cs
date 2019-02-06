@@ -271,4 +271,21 @@ public class HPberController : MonoBehaviour
             }
         }
     }
+
+    public string AllText()
+    {
+        string text = "";
+
+        for (int i = 0; i < texts.Length; i++)
+        {
+            if (texts[i].text == "")
+            {
+                break;
+            }
+
+            text += texts[i].text;
+        }
+
+        return text;
+    }
 }

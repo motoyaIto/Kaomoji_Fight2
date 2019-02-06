@@ -342,8 +342,6 @@ public class PhotonManager : Photon.MonoBehaviour {
     /// <param name="weapon">ダメージを与えた武器</param>
     public void MoziAttack(GameObject damagePlayer, GameObject weapon)
     {
-        //Debug.Log(weapon.name);
-        //Debug.Log(damagePlayer.name);
         float DamageValue = weapon.GetComponent<NT_MoziBlocController>().DamageValue_Data;
 
         // ダメージ音
@@ -360,13 +358,32 @@ public class PhotonManager : Photon.MonoBehaviour {
                 hpber.transform.GetComponent<Slider>().value -= weapon.transform.GetComponent<NT_MoziBlocController>().DamageValue_Data;
 
                 PhotonView photonView = this.GetComponent<PhotonView>();
-                photonView.RPC("MoziAttackData", PhotonTargets.All, hpber.transform.GetComponent<PhotonView>().ownerId, DamageValue);
+                photonView.RPC("AttackData", PhotonTargets.All, hpber.transform.GetComponent<PhotonView>().ownerId, DamageValue);
+            }
+        }
+    }
+
+    public void WeaponAttack(GameObject damagePlayer, GameObject weapon)
+    {
+        float DamageValue = weapon.GetComponent<Weapon>().DamageValue_Data;
+
+        //ダメージを受けたプレイヤーのHPバーを減らす
+        for (int i = 0; i < HPbers.transform.childCount; i++)
+        {
+            GameObject hpber = HPbers.transform.GetChild(i).gameObject;
+
+            if (hpber.transform.GetComponent<PhotonView>().ownerId == damagePlayer.GetComponent<PhotonView>().ownerId)
+            {
+                hpber.transform.GetComponent<Slider>().value -= weapon.transform.GetComponent<Weapon>().DamageValue_Data;
+
+                PhotonView photonView = this.GetComponent<PhotonView>();
+                photonView.RPC("AttackData", PhotonTargets.All, hpber.transform.GetComponent<PhotonView>().ownerId, DamageValue);
             }
         }
     }
 
     [PunRPC]
-    private void MoziAttackData(int ownerId, float damageValue)
+    private void AttackData(int ownerId, float damageValue)
     {
         if (HPber.transform.GetComponent<PhotonView>().ownerId == ownerId)
         {

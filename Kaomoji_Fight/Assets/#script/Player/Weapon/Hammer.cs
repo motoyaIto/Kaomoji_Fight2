@@ -22,14 +22,25 @@ public class Hammer : Weapon
 
         Effect = Resources.Load<GameObject>("prefab/Effect/Hammer_Effect");
         EffectWait = 0.2f;
+
+        // 持ち主でないのなら持ち主にデータを要請する
+        if (!this.transform.GetComponent<PhotonView>().isMine)
+        {
+            base.PleaseMyData();
+
+            return;
+        }
     }
 
     private void Update()
     {
+        // 持ち主でないのなら持ち主にデータを要請する
+        //if (!this.transform.GetComponent<PhotonView>().isMine) return;
+
         if (weapon_use == true)
         {
             //SE再生
-            sound01.PlayOneShot(sound01.clip);
+            //sound01.PlayOneShot(sound01.clip);
             //ニュートラルの時
             if (LeftRight == "")
             {
@@ -57,7 +68,11 @@ public class Hammer : Weapon
                     StartCoroutine(base.DelayMethod(0.5f, () =>
                     {
                         DamageValue = 15;
-                        owner_cs.ControllerLock_Data = false;
+                        // 持ち主でないのなら持ち主にデータを要請する
+                        if (this.transform.GetComponent<PhotonView>().isMine == true)
+                        {
+                            owner_cs.ControllerLock_Data = false;
+                        }
                         weapon_use = false;
 
                         this.transform.GetComponent<BoxCollider2D>().enabled = false;
@@ -73,8 +88,8 @@ public class Hammer : Weapon
                 }
 
             }
-            
-            
+
+
             if (RotationalDistanc < 10.0f && RotationalDistanc > -10.0f)
             {
                 //左に振る
@@ -106,7 +121,7 @@ public class Hammer : Weapon
                         if (child.name == "TopRight")
                         {
                             targetPos = child.position;
-                            
+
                             break;
                         }
                     }
@@ -120,7 +135,11 @@ public class Hammer : Weapon
             {
                 StartCoroutine(base.DelayMethod(0.5f, () =>
                 {
-                    owner_cs.ControllerLock_Data = false;
+                    // 持ち主でないのなら持ち主にデータを要請する
+                    if (this.transform.GetComponent<PhotonView>().isMine == true)
+                    {
+                        owner_cs.ControllerLock_Data = false;
+                    }
                     weapon_use = false;
 
                     this.transform.GetComponent<BoxCollider2D>().enabled = false;
@@ -136,12 +155,15 @@ public class Hammer : Weapon
         }
         else
         {
-            //武器を使用してないときは常に上でかまえる
-            foreach (Transform child in this.transform.parent)
+            if (this.transform.parent != null)
             {
-                if (child.name == "Top")
+                //武器を使用してないときは常に上でかまえる
+                foreach (Transform child in this.transform.parent)
                 {
-                    this.transform.position = child.position;
+                    if (child.name == "Top")
+                    {
+                        this.transform.position = child.position;
+                    }
                 }
             }
         }
@@ -151,7 +173,7 @@ public class Hammer : Weapon
     {
         weapon_use = true;
         owner_cs.ControllerLock_Data = true;
-        owner_cs.Directtion_Data = 0.0f;  
+        owner_cs.Directtion_Data = 0.0f;
 
         collider.enabled = true;
 
@@ -166,6 +188,8 @@ public class Hammer : Weapon
                     this.transform.position = child.position + new Vector3(0, 1.5f, 0);
                     LeftRight = "Right";
 
+                    PhotonView photonView = this.GetComponent<PhotonView>();
+                    photonView.RPC("AttackeData", PhotonTargets.OthersBuffered, LeftRight);
                     return;
                 }
             }
@@ -183,6 +207,8 @@ public class Hammer : Weapon
                     LeftRight = "Left";
                     this.transform.rotation = new Quaternion(this.transform.rotation.x, 180, this.transform.rotation.z, this.transform.rotation.w);
 
+                    PhotonView photonView = this.GetComponent<PhotonView>();
+                    photonView.RPC("AttackeData", PhotonTargets.OthersBuffered, LeftRight);
                     return;
                 }
             }
@@ -195,6 +221,57 @@ public class Hammer : Weapon
                 targetPos = child.position;
                 this.transform.position = child.position + new Vector3(0, 1.5f, 0);
 
+                PhotonView photonView = this.GetComponent<PhotonView>();
+                photonView.RPC("AttackeData", PhotonTargets.OthersBuffered, LeftRight);
+                return;
+            }
+        }
+    }
+
+    [PunRPC]
+    private void AttackeData(string attack)
+    {
+        weapon_use = true;
+
+        collider.enabled = true;
+
+        //右上かまえる
+        if (attack == "Right")
+        {
+            foreach (Transform child in this.transform.parent)
+            {
+                if (child.name == "TopRight")
+                {
+                    targetPos = child.position;
+                    this.transform.position = child.position + new Vector3(0, 1.5f, 0);
+                    LeftRight = "Right";
+                    return;
+                }
+            }
+        }
+
+        //左上かまえる
+        if (attack == "Left")
+        {
+            foreach (Transform child in this.transform.parent)
+            {
+                if (child.name == "TopLeft")
+                {
+                    targetPos = child.position;
+                    this.transform.position = child.position + new Vector3(0, 1.5f, 0);
+                    LeftRight = "Left";
+                    this.transform.rotation = new Quaternion(this.transform.rotation.x, 180, this.transform.rotation.z, this.transform.rotation.w);
+                    return;
+                }
+            }
+        }
+
+        foreach (Transform child in this.transform.parent)
+        {
+            if (child.name == "Top")
+            {
+                targetPos = child.position;
+                this.transform.position = child.position + new Vector3(0, 1.5f, 0);
                 return;
             }
         }
@@ -202,15 +279,49 @@ public class Hammer : Weapon
 
     private void OnTriggerEnter2D(Collider2D collision)
     {
-        if (collision.tag == "Player" && collision.name != owner_cs.PlayerName_Data)
+        // 持ち主でないのなら持ち主にデータを要請する
+        if (!this.transform.GetComponent<PhotonView>().isMine)
+        {
+            return;
+        }
+
+        if (collision.tag == "Player" && collision.name != ownerName)
         {
             //プレイヤーにダメージを与える
-            PSManager_cs.Player_Damage(collision.gameObject, this.gameObject, collision.transform.GetComponent<Player>().PlayerNumber_data);
+            PManager_cs.WeaponAttack(collision.gameObject, this.gameObject);
 
             base.EffectOccurrence(this.transform.GetChild(0).position, Vector3.zero);
 
             //ヒットSE再生
-            sound02.PlayOneShot(sound02.clip);
+            //sound02.PlayOneShot(sound02.clip);
+        }
+    }
+
+    [PunRPC]
+    private void PleasePlayerName(int ownerid, int id)
+    {
+        PhotonView photonView = this.GetComponent<PhotonView>();
+        if (photonView.ownerId == ownerid && photonView.viewID == id)
+        {
+            photonView.RPC("ChathOwmerName", PhotonTargets.OthersBuffered);
+        }
+    }
+
+    void OnPhotonSerializeView(PhotonStream i_stream, PhotonMessageInfo i_info)
+    {
+        if (weapon_use == false)
+        {
+            if (i_stream.isWriting)
+            {
+                //データの送信
+                i_stream.SendNext(this.transform.position);
+            }
+            else
+            {
+                //データの受信
+                Vector3 pos = (Vector3)i_stream.ReceiveNext();
+                this.transform.position = pos;
+            }
         }
     }
 }

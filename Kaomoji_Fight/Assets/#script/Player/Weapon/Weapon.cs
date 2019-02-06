@@ -3,12 +3,13 @@ using System.Collections.Generic;
 using UnityEngine;
 using System;
 
-abstract public class Weapon : MonoBehaviour {
+abstract public class Weapon : MonoBehaviour
+{
 
     protected Player owner_cs;              //オーナースクリプト
     protected string ownerName;             //オーナーの名前
 
-    protected PlaySceneManager PSManager_cs;//プレイシーンマネージャースクリプト
+    protected PhotonManager PManager_cs;//プレイシーンマネージャースクリプト
 
     protected SpriteRenderer SRenderer;      //武器画像を描画するレンダー
 
@@ -25,9 +26,46 @@ abstract public class Weapon : MonoBehaviour {
 
     protected virtual void Start()
     {
-        PSManager_cs = GameObject.Find("PlaySceneManager").GetComponent<PlaySceneManager>();
+        PManager_cs = GameObject.Find("PhotonManager").GetComponent<PhotonManager>();
 
         SRenderer = this.transform.GetComponent<SpriteRenderer>();
+    }
+
+    protected void PleaseMyData()
+    {
+        PhotonView photonView = this.GetComponent<PhotonView>();
+        photonView.RPC("PushWeaponData", PhotonTargets.Others, photonView.ownerId, photonView.viewID);
+    }
+
+    [PunRPC]
+    protected void PushWeaponData(int ownerId, int viewId)
+    {
+        if (PhotonNetwork.player.ID == ownerId && this.transform.GetComponent<PhotonView>().viewID == viewId)
+        {
+            PhotonView photonView = this.GetComponent<PhotonView>();
+            photonView.RPC("ChatchBlocData", PhotonTargets.Others,
+                this.transform.GetComponent<PhotonView>().ownerId,
+                photonView.viewID);
+        }
+    }
+
+    [PunRPC]
+    protected void ChatchBlocData(int ownerId, int viewId)
+    {
+        if (this.transform.GetComponent<PhotonView>().viewID == viewId && this.transform.GetComponent<PhotonView>().ownerId == ownerId)
+        {
+            //オーナーオブジェクトの子になる
+            for (int i = 0; i < PhotonNetwork.playerList.Length; i++)
+            {
+                if (PhotonNetwork.playerList[i].ID == ownerId && this.transform.GetComponent<PhotonView>().owner.NickName == PhotonNetwork.playerList[i].NickName)
+                {
+                    GameObject owner = GameObject.Find(this.transform.GetComponent<PhotonView>().owner.NickName);
+                    this.transform.SetParent(owner.transform);
+                    this.transform.position = owner.transform.position;
+                    return;
+                }
+            }
+        }
     }
 
     public abstract void Attack();
@@ -49,13 +87,23 @@ abstract public class Weapon : MonoBehaviour {
     /// </summary>
     protected void EffectOccurrence()
     {
-        //エフェクトの発生
-        GameObject EffectObj = Instantiate(Effect, this.transform) as GameObject;
-        // エフェクトの発生場所をプレイヤーの中心に
-        EffectObj.transform.position = new Vector3(this.transform.parent.transform.position.x, this.transform.position.y, 0);
+        PhotonView photonView = this.GetComponent<PhotonView>();
+        photonView.RPC("EffectOccurrenceData", PhotonTargets.AllBuffered, photonView.viewID); 
+    }
 
-        //エフェクト発生を待って破棄する
-        StartCoroutine(this.DelayMethod(EffectWait, () => { Destroy(EffectObj); }));
+    [PunRPC]
+    protected void EffectOccurrenceData(int id)
+    {
+        if (this.transform.GetComponent<PhotonView>().viewID == id)
+        {
+            //エフェクトの発生
+            GameObject EffectObj = Instantiate(Effect, this.transform) as GameObject;
+            // エフェクトの発生場所をプレイヤーの中心に
+            EffectObj.transform.position = new Vector3(this.transform.parent.transform.position.x, this.transform.position.y, 0);
+
+            //エフェクト発生を待って破棄する
+            StartCoroutine(this.DelayMethod(EffectWait, () => { Destroy(EffectObj); }));
+        }
     }
 
     /// <summary>
@@ -65,30 +113,50 @@ abstract public class Weapon : MonoBehaviour {
     /// <param name="rot">角度</param>
     protected void EffectOccurrence(Vector3 pos, Vector3 rot)
     {
-        //エフェクトの発生
-        GameObject EffectObj = Instantiate(Effect, this.transform) as GameObject;
-        
-        //エフェクトの発生場所を指定の座標に
-        EffectObj.transform.position = pos;
-        //エフェクトの回転
-        EffectObj.transform.rotation = new Quaternion(EffectObj.transform.rotation.x + rot.x, EffectObj.transform.rotation.y + rot.y, EffectObj.transform.rotation.z + rot.z, EffectObj.transform.rotation.w);
+        PhotonView photonView = this.GetComponent<PhotonView>();
+        photonView.RPC("CreateEffect", PhotonTargets.AllBuffered, photonView.viewID, pos, rot);
+    }
 
-        //エフェクト発生を待って破棄する
-        StartCoroutine(this.DelayMethod(EffectWait, () => { Destroy(EffectObj); }));
+    [PunRPC]
+    protected void CreateEffect(int id, Vector3 pos, Vector3 rot)
+    {
+        if (this.transform.GetComponent<PhotonView>().viewID == id)
+        {
+            //エフェクトの発生
+            GameObject EffectObj = Instantiate(Effect, this.transform) as GameObject;
+
+            //エフェクトの発生場所を指定の座標に
+            EffectObj.transform.position = pos;
+            //エフェクトの回転
+            EffectObj.transform.rotation = new Quaternion(EffectObj.transform.rotation.x + rot.x, EffectObj.transform.rotation.y + rot.y, EffectObj.transform.rotation.z + rot.z, EffectObj.transform.rotation.w);
+
+            //エフェクト発生を待って破棄する
+            StartCoroutine(this.DelayMethod(EffectWait, () => { Destroy(EffectObj); }));
+        }
     }
 
     protected void EffectOccurrence_World(Vector3 pos, Vector3 rot)
     {
-        //エフェクトの発生
-        GameObject EffectObj = Instantiate(Effect) as GameObject;
+        PhotonView photonView = this.GetComponent<PhotonView>();
+        photonView.RPC("CreateEffect_WorldData", PhotonTargets.AllBuffered, photonView.viewID, pos, rot);
+    }
 
-        //エフェクトの発生場所を指定の座標に
-        EffectObj.transform.position = pos;
-        //エフェクトの回転
-        EffectObj.transform.rotation = new Quaternion(EffectObj.transform.rotation.x + rot.x, EffectObj.transform.rotation.y + rot.y, EffectObj.transform.rotation.z + rot.z, EffectObj.transform.rotation.w);
+    [PunRPC]
+    protected void CreateEffect_WorldData(int id, Vector3 pos, Vector3 rot)
+    {
+        if (this.transform.GetComponent<PhotonView>().viewID == id)
+        {
+            //エフェクトの発生
+            GameObject EffectObj = Instantiate(Effect) as GameObject;
 
-        //エフェクト発生を待って破棄する
-        StartCoroutine(this.DelayMethod(EffectWait, () => { Destroy(EffectObj); }));
+            //エフェクトの発生場所を指定の座標に
+            EffectObj.transform.position = pos;
+            //エフェクトの回転
+            EffectObj.transform.rotation = new Quaternion(EffectObj.transform.rotation.x + rot.x, EffectObj.transform.rotation.y + rot.y, EffectObj.transform.rotation.z + rot.z, EffectObj.transform.rotation.w);
+
+            //エフェクト発生を待って破棄する
+            StartCoroutine(this.DelayMethod(EffectWait, () => { Destroy(EffectObj); }));
+        }
     }
 
     public Player Owner_csData

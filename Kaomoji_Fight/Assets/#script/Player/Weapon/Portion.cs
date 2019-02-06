@@ -18,7 +18,7 @@ public class Portion : Weapon
     public override void Attack()
     {
         //回復
-        PSManager_cs.Effect_myself(this.transform.parent.gameObject, this.gameObject, this.transform.parent.GetComponent<Player>().PlayerNumber_data);
+        PManager_cs.WeaponAttack(this.transform.parent.gameObject, this.gameObject);
 
         //SE再生
         sound01.PlayOneShot(sound01.clip);
