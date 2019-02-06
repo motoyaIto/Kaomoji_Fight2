@@ -14,7 +14,7 @@ public class NT_TitleManager : MonoBehaviour
         NAME,
         FICESELECT,
         COLORSELECT,
-        STAGESELECT,
+        //STAGESELECT,
 
         MAX
     }
@@ -111,12 +111,12 @@ public class NT_TitleManager : MonoBehaviour
                 Page[(int)mode].transform.GetChild(1).GetComponent<ColorSelectController>().PageUpdate();
                 return;
             }
-            //ステージ選択
-            if (mode == SELECTMODE.STAGESELECT)
-            {
-                Page[(int)mode].transform.GetChild(2).GetComponent<NT_StageSelect>().PageUpdate();
-                return;
-            }
+            ////ステージ選択
+            //if (mode == SELECTMODE.STAGESELECT)
+            //{
+            //    Page[(int)mode].transform.GetChild(2).GetComponent<NT_StageSelect>().PageUpdate();
+            //    return;
+            //}
 
             //マックスだったら
             if (mode == SELECTMODE.MAX)
@@ -124,7 +124,7 @@ public class NT_TitleManager : MonoBehaviour
                 Page[(int)mode].transform.GetChild(0).GetComponent<NT_Confirmation>().Name_Data = PlayerName;
                 Page[(int)mode].transform.GetChild(0).GetComponent<NT_Confirmation>().Face_Data = Face;
                 Page[(int)mode].transform.GetChild(0).GetComponent<NT_Confirmation>().Color_Data = PlayerColor;
-                Page[(int)mode].transform.GetChild(0).GetComponent<NT_Confirmation>().Stage_Data = Stage;
+                //Page[(int)mode].transform.GetChild(0).GetComponent<NT_Confirmation>().Stage_Data = Stage;
                 Page[(int)mode].transform.GetChild(0).GetComponent<NT_Confirmation>().PageUpdate();
             }
         }

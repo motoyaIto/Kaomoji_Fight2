@@ -34,17 +34,17 @@ public class NT_StageSelect : MonoBehaviour {
 
     public void PageUpdate()
     {
-        //自分が選ばれていなかったら
-        if (TManager_cs.SelectMode_Data != NT_TitleManager.SELECTMODE.STAGESELECT)
-        {
-            return;
-        }
-        else
-        {
-            this.transform.GetComponent<SpriteRenderer>().enabled = true;
-            Target[0].transform.parent.gameObject.SetActive(true);
-            text.SetActive(true);
-        }
+        ////自分が選ばれていなかったら
+        //if (TManager_cs.SelectMode_Data != NT_TitleManager.SELECTMODE.STAGESELECT)
+        //{
+        //    return;
+        //}
+        //else
+        //{
+        //    this.transform.GetComponent<SpriteRenderer>().enabled = true;
+        //    Target[0].transform.parent.gameObject.SetActive(true);
+        //    text.SetActive(true);
+        //}
 
         // Controllerの左スティックのAxisを取得            
         LeftStickInput = new Vector2(XCI.GetAxis(XboxAxis.LeftStickX, XboxController.First), XCI.GetAxis(XboxAxis.LeftStickY, XboxController.First));
