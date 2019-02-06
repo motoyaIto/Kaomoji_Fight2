@@ -10,7 +10,6 @@ using UnityEngine.UI;
 [RequireComponent(typeof(Rigidbody2D))]
 public class Player : RaycastController
 {
-    PhotonView view;
     //状態異常
     public struct StatesAbnormality
     {
@@ -386,56 +385,63 @@ public class Player : RaycastController
         //武器に変換
         if (XCI.GetButtonDown(XboxButton.Y, ControlerNamber))
         {
-            //if (weapon_use == false && EffectCorutine == false)
-            //{
-            //    weapon = SelectWeapon.CreateSelectWeapon(HPgageObj.transform.GetChild(3).GetComponent<TextMeshProUGUI>().text + HPgageObj.transform.GetChild(4).GetComponent<TextMeshProUGUI>().text);
+            if (weapon_use == false && EffectCorutine == false)
+            {
+                string weaponName = SelectWeapon.CreateSelectWeapon(HPgageObj.transform.GetComponent<HPberController>().AllText());
 
+                //武器化出来たら
+                if (weaponName != null)
+                {
+                    photonView_cs.RPC("CreateEffect", PhotonTargets.AllBuffered, weaponName);
 
-            //    武器化出来たら
-            //    if (weapon != null)
-            //    {
-            //        GameObject EffectObj = null;
-            //        foreach (Transform Child in this.transform)
-            //        {
-            //            if (Child.name == "Top")
-            //            {
-            //                エフェクトの発生
-            //                EffectObj = Instantiate(CreateWeapon_Effect, Child.transform) as GameObject;
-            //            }
-            //        }
-            //        StartCoroutine(this.CreateWeapn(EffectObj));
-            //    }
-            //}
+                }
+            }
         }
 
         //武器を持っているとき
         if (weapon_use == true)
         {
             //座標の調整
-            //ItemPositionControll(weapon, input);
+            ItemPositionControll(weapon, input);
 
 
-            ////武器を使う
-            //if (XCI.GetButtonDown(XboxButton.B, ControlerNamber))
-            //{
-            //    weapon_cs.Attack();
-            //}
+            //武器を使う
+            if (XCI.GetButtonDown(XboxButton.B, ControlerNamber))
+            {
+                weapon_cs.Attack();
+            }
 
-            //// 武器を捨てる
-            //else if (XCI.GetButtonDown(XboxButton.X, ControlerNamber))
-            //{
-            //    audio.PlayOneShot(delete_ac);
-            //    weapon_use = false;
-            //    PhotonNetwork.Destroy(weapon.gameObject);
-            //    weapon = null;
-            //}
+            // 武器を捨てる
+            else if (XCI.GetButtonDown(XboxButton.X, ControlerNamber))
+            {
+                audio.PlayOneShot(delete_ac);
+                weapon_use = false;
+                PhotonNetwork.Destroy(weapon.gameObject);
+                weapon = null;
+            }
         }
 
         // Ｒａｙ
         this.RayController();
     }
 
-    private IEnumerator CreateWeapn(GameObject effect)
+    [PunRPC]
+    private void CreateEffect(string name)
+    {
+        GameObject EffectObj = null;
+        foreach (Transform Child in this.transform)
+        {
+            if (Child.name == "Top")
+            {
+                //エフェクトの発生
+                EffectObj = GameObject.Instantiate(CreateWeapon_Effect, Child.transform.position, Quaternion.identity);
+                EffectObj.transform.SetParent(Child.transform);
+            }
+        }
+        StartCoroutine(this.CreateWeapn(EffectObj, name));
+    }
+
+    private IEnumerator CreateWeapn(GameObject effect, string weaponName)
     {
         audio.PlayOneShot(create_ac);
         EffectCorutine = true;
@@ -443,23 +449,27 @@ public class Player : RaycastController
         EffectCorutine = false;
         Destroy(effect);
         //武器を生成
-        weapon = Object.Instantiate(weapon, this.transform.position, Quaternion.identity);
-
-        weapon.transform.parent = this.transform;
-
-        weapon_cs = weapon.transform.GetComponent<Weapon>();
-        weapon_cs.Owner_csData = this.transform.GetComponent<Player>();
-
-        weapon_use = true;
-
-        //持っている文字を破棄
-        if (HaveMozi == true)
+        // 自分以外の操作を受け付けない
+        if (photonView_cs.isMine == true)
         {
-            this.ChangeMozi_Data = false;
-            Destroy(MoziObj);
-            HaveMozi = false;
+            weapon = PhotonNetwork.Instantiate("prefab/Weapon/" + weaponName, this.transform.position, Quaternion.identity, 0);
+            weapon.transform.parent = this.transform;
+
+            weapon_cs = weapon.transform.GetComponent<Weapon>();
+            weapon_cs.Owner_csData = this.transform.GetComponent<Player>();
+
+            weapon_use = true;
+
+            //持っている文字を破棄
+            if (HaveMozi == true)
+            {
+                this.ChangeMozi_Data = false;
+                PhotonNetwork.Destroy(MoziObj);
+                HaveMozi = false;
+            }
+
+            HPgageObj.transform.GetComponent<HPberController>().AllDestroy();
         }
-        //HPgageObj.transform.GetChild(4).GetComponent<GetMoziController>().AllDestroy();
     }
 
     public struct CollisionInfo

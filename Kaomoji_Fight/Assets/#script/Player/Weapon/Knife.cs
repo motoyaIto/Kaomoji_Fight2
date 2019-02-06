@@ -177,7 +177,7 @@ public class Knife : Weapon {
                 EffectOccurrence(new Vector3(this.transform.position.x, this.transform.position.y, 0), Vector3.zero);
             }
 
-            PSManager_cs.Player_Damage(collision.gameObject, this.gameObject, collision.GetComponent<Player>().PlayerNumber_data, InstantDeath);
+            PManager_cs.WeaponAttack(collision.gameObject, this.gameObject);
         }
     }
 }

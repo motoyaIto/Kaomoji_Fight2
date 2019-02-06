@@ -28,9 +28,9 @@ public class Bomb : Weapon {
 
         //爆破エフェクトに値を渡す
         BombEffect bombEffect_cs = Effect.GetComponent<BombEffect>();
-        bombEffect_cs.PSManager_csData = PSManager_cs;
-        bombEffect_cs.Weapon_Data = this.gameObject;
-        bombEffect_cs.OwnerName_Data = owner_cs.PlayerName_Data;
+        //bombEffect_cs.PSManager_csData = PSManager_cs;
+        //bombEffect_cs.Weapon_Data = this.gameObject;
+        //bombEffect_cs.OwnerName_Data = owner_cs.PlayerName_Data;
 
         AudioSource[] audioSources = GetComponents<AudioSource>();
         sound01 = audioSources[0];

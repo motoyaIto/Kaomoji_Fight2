@@ -93,7 +93,7 @@ public class Yari : Weapon {
     {
         if(collision.tag == "Player" && collision.name != owner_cs.PlayerName_Data)
         {
-            PSManager_cs.Player_Damage(collision.gameObject, this.gameObject, collision.transform.GetComponent<Player>().PlayerNumber_data);
+            PManager_cs.WeaponAttack(collision.gameObject, this.gameObject);
 
             if(SRenderer.flipX == false)
             {
