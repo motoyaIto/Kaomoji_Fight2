@@ -28,6 +28,20 @@ public class NT_Confirmation : MonoBehaviour {
     private Color color;
     private string stage = "";
 
+    private new AudioSource audio;
+    private new AudioSource audio2;
+    private AudioClip decision_ac;
+    private AudioClip cancel_ac;
+
+    private void Awake()
+    {
+        audio = this.GetComponent<AudioSource>();
+        audio2 = this.GetComponent<AudioSource>();
+        decision_ac = (AudioClip)Resources.Load("Sound/SE/Select/Decision/decision");      //決定音
+        cancel_ac = (AudioClip)Resources.Load("Sound/SE/Select/Cancel/cancel");
+
+    }
+
     void Start()
     {
         //各csの取得
@@ -57,6 +71,8 @@ public class NT_Confirmation : MonoBehaviour {
         //ステージ選択に戻る
         if ((XCI.GetButtonDown(XboxButton.A, XboxController.First) || Input.GetKeyDown(KeyCode.Backspace)))
         {
+
+            audio.PlayOneShot(cancel_ac);
             TManager_cs.ChangePage(false);
 
             //非表示設定
@@ -69,6 +85,7 @@ public class NT_Confirmation : MonoBehaviour {
         //決定する
         if ((XCI.GetButtonDown(XboxButton.Start, XboxController.First) || Input.GetKeyDown(KeyCode.Space)))
         {
+            audio.PlayOneShot(decision_ac);
             playerdata = new NT_PlayerData(name, Face, color, stage);
             SceneManagerController.ChangeScene();
         }

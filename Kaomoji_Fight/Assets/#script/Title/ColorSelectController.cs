@@ -48,7 +48,23 @@ public class ColorSelectController : MonoBehaviour {
     private bool LeftStickflag = false;             //スティックが入力されていない(false)された(true)
     private Vector2 LeftStickInput = Vector2.zero;  //Controllerの左スティックのAxisを取得
 
-    
+    private new AudioSource audio;
+    private new AudioSource audio2;
+    private AudioClip cursor_ac;    //カーソル移動音
+    private AudioClip decision_ac;
+    private AudioClip cancel_ac;
+
+
+    private void Awake()
+    {
+        audio = this.GetComponent<AudioSource>();
+        audio2 = this.GetComponent<AudioSource>();
+        cursor_ac = (AudioClip)Resources.Load("Sound/SE/Select/Decision/cursor");      //カーソル移動音
+        decision_ac = (AudioClip)Resources.Load("Sound/SE/Select/Decision/decision");      //決定音
+        cancel_ac = (AudioClip)Resources.Load("Sound/SE/Select/Cancel/cancel");
+
+    }
+
     private void Start()
     {
         //各csの取得
@@ -84,6 +100,7 @@ public class ColorSelectController : MonoBehaviour {
         //上入力
         if (Input.GetKeyDown(KeyCode.UpArrow) || XCI.GetDPadDown(XboxDPad.Up, XboxController.First) || (LeftStickInput.y > 0.9f && LeftStickflag == false))
         {
+            audio.PlayOneShot(cursor_ac);
             sliderMode--;
             if(sliderMode < SliderMode.Red)
             {
@@ -94,6 +111,7 @@ public class ColorSelectController : MonoBehaviour {
         //下入力
         else if (Input.GetKeyDown(KeyCode.DownArrow) || XCI.GetDPadDown(XboxDPad.Down, XboxController.First) || (LeftStickInput.y < -0.9f && LeftStickflag == false))
         {
+            audio.PlayOneShot(cursor_ac);
             sliderMode++;
             if (sliderMode > SliderMode.Enter)
             {
@@ -105,7 +123,8 @@ public class ColorSelectController : MonoBehaviour {
         //右入力
         else if (slider != null && (Input.GetKey(KeyCode.RightArrow) || XCI.GetDPad(XboxDPad.Right, XboxController.First) || (LeftStickInput.x > 0.9f && LeftStickflag == false)))
         {
-            if(slider.value < slider.maxValue)
+            audio.PlayOneShot(cursor_ac);
+            if (slider.value < slider.maxValue)
             {
                 slider.value += SliderMoveValue;
             }
@@ -113,6 +132,7 @@ public class ColorSelectController : MonoBehaviour {
         //左入力
         else if (slider != null && (Input.GetKey(KeyCode.LeftArrow) || XCI.GetDPad(XboxDPad.Left, XboxController.First) || (LeftStickInput.x < -0.9f && LeftStickflag == false)))
         {
+            audio.PlayOneShot(cursor_ac);
             if (slider.value > slider.minValue)
             {
                 slider.value -= SliderMoveValue;
@@ -142,6 +162,7 @@ public class ColorSelectController : MonoBehaviour {
         //キャラクター選択に戻る
         if ((XCI.GetButtonDown(XboxButton.A, XboxController.First) || Input.GetKeyDown(KeyCode.Backspace)))
         {
+            audio.PlayOneShot(cancel_ac);
             TManager_cs.ChangePage(false);
 
             //非表示設定
@@ -155,6 +176,7 @@ public class ColorSelectController : MonoBehaviour {
         //決定する
         if ((XCI.GetButtonDown(XboxButton.Start, XboxController.First) || (slider == null && ((XCI.GetButtonDown(XboxButton.B, XboxController.First) || Input.GetKeyDown(KeyCode.Space))))))
         {
+            audio.PlayOneShot(decision_ac);
             Cursor.SetActive(false);
             Player_obj.SetActive(false);
             Name = "";

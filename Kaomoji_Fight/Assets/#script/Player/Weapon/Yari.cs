@@ -60,8 +60,6 @@ public class Yari : Weapon {
         count = 0.0f;
         collider.enabled = true;
 
-        //SE再生
-        sound01.PlayOneShot(sound01.clip);
         //武器を右か左に寄せる
         if (this.transform.localPosition.x > 0)
         {
