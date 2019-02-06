@@ -41,6 +41,8 @@ public class PhotonManager : Photon.MonoBehaviour {
 
     private PlayerData[] playerdata = null;
 
+    private List<string> stageList = new List<string>();
+
     //カメラ//////////////////////////////////////////////////////////
     private CinemachineTargetGroup TargetGroup;
     private bool newPlayerFlag = false;
@@ -70,8 +72,8 @@ public class PhotonManager : Photon.MonoBehaviour {
         "ぁ", "ぃ", "ぅ", "ぇ", "ぉ",
         "ゃ", "ゅ", "ょ", "っ", "ー",
     };
-    [SerializeField]
-    private string StageName;
+
+    private string StageName = "";
     private string StageText;
     private GameObject StageBlock;  //ステージ
     private Material Mozi_mate;   //文字material
@@ -92,6 +94,16 @@ public class PhotonManager : Photon.MonoBehaviour {
     {
         // Photon接続
         PhotonNetwork.ConnectUsingSettings(null);
+
+        //ステージの追加
+        for(int i = 1; i < 8; i++)
+        {
+            stageList.Add("stage" + i);
+        }
+
+        //ランダムにステージを決定
+        int rand = UnityEngine.Random.Range(0, 8);
+        StageName = stageList[rand];
     }
 
     private void Start()
@@ -146,31 +158,14 @@ public class PhotonManager : Photon.MonoBehaviour {
     // ロビー接続と同時に呼び出し
     void OnReceivedRoomListUpdate()
     {
-        //ルーム一覧を取る
-        RoomInfo[] rooms = PhotonNetwork.GetRoomList();
-        if (rooms.Length == 0)
-        {
-            Debug.Log("ルームが一つもありません");
-        }
-        else
-        {
-            //ルームが1件以上ある時ループでRoomInfo情報をログ出力
-            for (int i = 0; i < rooms.Length; i++)
-            {
-                //Debug.Log("RoomName:" + rooms[i].Name);
-                //Debug.Log("userName:" + rooms[i].CustomProperties["userName"]);
-                //Debug.Log("userId:" + rooms[i].CustomProperties["userId"]);
-                //Debug.Log("PlayerCount:" + PhotonNetwork.room.PlayerCount);
-                //GameObject.Find("StatusText").GetComponent<Text>().text = rooms[i].Name;
-            }
-        }
+
     }
 
     // ルーム接続時の呼び出し
     void OnJoinedRoom()
     {
-        Debug.Log("ルーム入室");
-        Debug.Log(PhotonNetwork.room.Name);
+        //Debug.Log("ルーム入室");
+        //Debug.Log(PhotonNetwork.room.Name);
 
         if (PhotonNetwork.room.PlayerCount < PhotonNetwork.room.MaxPlayers)
         {
@@ -208,7 +203,6 @@ public class PhotonManager : Photon.MonoBehaviour {
     {
         newPlayerFlag = true;
 
-        Debug.Log("new Player");
         //ステージの同期(マスターのみ)
         if (PhotonNetwork.isMasterClient == true)
         {
@@ -277,33 +271,6 @@ public class PhotonManager : Photon.MonoBehaviour {
 
         if (player_obj != null)
         {
-            //if (XCI.GetButtonDown(XboxButton.Start, XboxController.First))
-            //{
-            //    int rand = (int)UnityEngine.Random.Range(.0f, (float)PhotonNetwork.room.PlayerCount) + 1;
-
-            //    // 選ばれたのは「綾鷹」でした
-            //    string selectStage = GameObject.Find("P" + rand + "StageSelect").GetComponent<TextMeshProUGUI>().text;
-            //    if (selectStage == "ランダム")
-            //    {
-            //        int srand = (int)UnityEngine.Random.Range(1.0f, 8.0f);
-            //        selectStage = "stage" + srand;
-            //    }
-
-            //    //プレイヤーデータを渡す
-            //    CreatePlayer_data();
-            //    if (PhotonNetwork.room.PlayerCount > 2)
-            //    {
-            //        // シーンロード
-            //        SceneManagerController.LoadScene();
-            //        SceneManagerController.ChangeScene();
-            //    }
-            //    else
-            //    {
-            //        Debug.Log("２人以上ではないのでプレイすることが出来ません(´・ω・｀)");
-            //    }
-
-            //}
-
             //ステージ外に出たら
             if (player_obj.transform.position.y + 10 < DownPos)
             {
@@ -375,8 +342,8 @@ public class PhotonManager : Photon.MonoBehaviour {
     /// <param name="weapon">ダメージを与えた武器</param>
     public void MoziAttack(GameObject damagePlayer, GameObject weapon)
     {
-        Debug.Log(weapon.name);
-        Debug.Log(damagePlayer.name);
+        //Debug.Log(weapon.name);
+        //Debug.Log(damagePlayer.name);
         float DamageValue = weapon.GetComponent<NT_MoziBlocController>().DamageValue_Data;
 
         // ダメージ音
@@ -513,17 +480,6 @@ public class PhotonManager : Photon.MonoBehaviour {
     public void CreatedPlayer()
     {
         CreatedNowPlayernum++;
-    }
-
-    public void CreatePlayer_data()
-    {
-        playerdata = new PlayerData[CreatedNowPlayernum];
-
-        for (int i = 0; i < CreatedNowPlayernum; i++)
-        {
-            Debug.Log(i + " / " + CreatedNowPlayernum);
-            //playerdata[i] = new PlayerData(NT_PlayerData.Instance.name[i], NT_PlayerData.Instance.color[i], NT_PlayerData.Instance.Face[i], new Vector3(10 * (i + 1), 30, 0), XboxController.First, 100);
-        }
     }
 }
 
