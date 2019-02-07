@@ -78,6 +78,8 @@ public class NT_MoziBlocController : MonoBehaviour
                 if (PhotonNetwork.playerList[i].ID == ownerId && this.transform.GetComponent<PhotonView>().owner.NickName == PhotonNetwork.playerList[i].NickName)
                 {
                     this.transform.SetParent(GameObject.Find(this.transform.GetComponent<PhotonView>().owner.NickName).transform);
+
+                    this.transform.GetChild(0).GetComponent<TextMeshPro>().enabled = true;
                 }
             }
 
