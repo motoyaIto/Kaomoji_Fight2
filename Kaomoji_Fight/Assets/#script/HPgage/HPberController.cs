@@ -25,66 +25,9 @@ public class HPberController : MonoBehaviour
     // Use this for initialization
     void Start()
     {
-
-        // 持ち主でないのなら持ち主にデータを要請する
-        if (!GetComponent<PhotonView>().isMine)
-        {
-            this.PleaseMyData();
-            return;
-        }
-
-        GameObject canves = GameObject.Find("Wait_UI").transform.GetChild(0).gameObject;
-        this.transform.SetParent(canves.transform);
-
-        rectTrans = this.transform.GetComponent<RectTransform>();
-        rectTrans.localPosition = new Vector3(rectTrans.rect.width * (PhotonNetwork.playerList.Length - 1), 0, 0);
-
         this.name = NT_PlayerData.Instance.name + "_HPber";
         this.transform.GetChild(2).GetComponent<TextMeshProUGUI>().text = NT_PlayerData.Instance.name;
         this.transform.GetChild(2).GetComponent<TextMeshProUGUI>().color = NT_PlayerData.Instance.color;
-
-
-    }
-
-    private void PleaseMyData()
-    {
-        PhotonView photonView = this.GetComponent<PhotonView>();
-
-        photonView.RPC("PushHPData", PhotonTargets.OthersBuffered, photonView.ownerId, texts[0].text, texts[1].text, texts[2].text, texts[3].text, texts[4].text);
-    }
-
-    [PunRPC]
-    private void PushHPData(int id, string text1, string text2, string text3, string text4, string text5)
-    {
-        if (id == this.transform.GetComponent<PhotonView>().ownerId)
-        {
-            PhotonView photonView = this.GetComponent<PhotonView>();
-            photonView.RPC("CatchHPData", PhotonTargets.OthersBuffered, this.transform.GetComponent<PhotonView>().ownerId, NT_PlayerData.Instance.name, NT_PlayerData.Instance.color.r, NT_PlayerData.Instance.color.g, NT_PlayerData.Instance.color.b, NT_PlayerData.Instance.color.a, this.transform.GetComponent<Slider>().value);
-
-            texts[0].text = text1;
-            texts[1].text = text2;
-            texts[2].text = text3;
-            texts[3].text = text4;
-            texts[4].text = text5;
-        }
-    }
-
-    [PunRPC]
-    private void CatchHPData(int id, string name, float r, float g, float b, float a, float value)
-    {
-        if (id == this.transform.GetComponent<PhotonView>().ownerId)
-        {
-            GameObject canves = GameObject.Find("Wait_UI").transform.GetChild(0).gameObject;
-            this.transform.SetParent(canves.transform);
-
-            this.transform.GetComponent<RectTransform>().localPosition = new Vector3(this.transform.GetComponent<RectTransform>().rect.width * (id - 1), 0, 0);
-
-            this.name = name + "_HPber";
-            this.transform.GetChild(2).GetComponent<TextMeshProUGUI>().text = name;
-            this.transform.GetChild(2).GetComponent<TextMeshProUGUI>().color = new Color(r, g, b, a);
-
-            this.transform.GetComponent<Slider>().value = value;
-        }
     }
 
     /// <summary>
@@ -114,8 +57,6 @@ public class HPberController : MonoBehaviour
             }
 
             texts[textnamber].color = Color.red;
-
-            this.PushTextData(mozi, textnamber - 1, textnamber);
             return;
         }
         //テキストに空きがなかったら
@@ -127,27 +68,6 @@ public class HPberController : MonoBehaviour
         texts[texts.Length - 1].text = mozi;
 
         texts[texts.Length - 1].color = Color.red;
-        this.PushTextData(mozi, -1, texts.Length - 1);
-    }
-
-    private void PushTextData(string text, int colorBlack, int colorRed)
-    {
-        PhotonView photonView = this.GetComponent<PhotonView>();
-        photonView.RPC("ChathTextData", PhotonTargets.OthersBuffered, photonView.ownerId, text, colorBlack, colorRed);
-    }
-
-    [PunRPC]
-    public void ChathTextData(int ownerID, string text, int black, int red)
-    {
-        if (ownerID == this.transform.GetComponent<PhotonView>().ownerId)
-        {
-            texts[red].text = text;
-            texts[red].color = Color.red;
-            if (black > -1)
-            {
-                texts[black].color = Color.black;
-            }
-        }
     }
 
     /// <summary>
@@ -189,21 +109,9 @@ public class HPberController : MonoBehaviour
                         texts[count].text = ChangeMozi[i][0];
                     }
 
-                    PhotonView photonView = this.GetComponent<PhotonView>();
-                    photonView.RPC("Semi_voicedPointData", PhotonTargets.OthersBuffered, photonView.ownerId, count, texts[count].text);
-
                     return;
                 }
             }
-        }
-    }
-
-    [PunRPC]
-    public void Semi_voicedPointData(int ownerID, int textnamber, string text)
-    {
-        if (ownerID == this.transform.GetComponent<PhotonView>().ownerId)
-        {
-            texts[textnamber].text = text;
         }
     }
 
@@ -231,20 +139,7 @@ public class HPberController : MonoBehaviour
 
         //指定の文字を消す
         texts[count - 1].text = "";
-
-        PhotonView photonView = this.GetComponent<PhotonView>();
-        photonView.RPC("BackSpaceData", PhotonTargets.OthersBuffered, photonView.ownerId, count - 1);
     }
-
-    [PunRPC]
-    public void BackSpaceData(int ownerID, int textnamber)
-    {
-        if (ownerID == this.transform.GetComponent<PhotonView>().ownerId)
-        {
-            texts[textnamber].text = "";
-        }
-    }
-
 
     /// <summary>
     /// 文字をすべて消す
@@ -254,21 +149,6 @@ public class HPberController : MonoBehaviour
         for (int i = 0; i < texts.Length; i++)
         {
             texts[i].text = "";
-        }
-
-        PhotonView photonView = this.GetComponent<PhotonView>();
-        photonView.RPC("DestroyData", PhotonTargets.OthersBuffered, photonView.ownerId);
-    }
-
-    [PunRPC]
-    public void DestroyData(int ownerID)
-    {
-        if (ownerID == this.transform.GetComponent<PhotonView>().ownerId)
-        {
-            for (int i = 0; i < texts.Length; i++)
-            {
-                texts[i].text = "";
-            }
         }
     }
 

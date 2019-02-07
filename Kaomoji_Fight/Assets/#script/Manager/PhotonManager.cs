@@ -102,7 +102,7 @@ public class PhotonManager : Photon.MonoBehaviour {
         }
 
         //ランダムにステージを決定
-        int rand = UnityEngine.Random.Range(0, 8);
+        int rand = UnityEngine.Random.Range(0, 7);
         StageName = stageList[rand];
     }
 
@@ -124,6 +124,9 @@ public class PhotonManager : Photon.MonoBehaviour {
         //文字を表示するボックスをResourcesから読み込む
         StageBlock = (GameObject)Resources.Load("prefab/Stage/StageBlock");
         Mozi_mate = Resources.Load<Material>("Material/StageBlock_Mozi");
+
+        //プレイヤー名をphotonに登録
+        PhotonNetwork.playerName = NT_PlayerData.Instance.name;
     }
 
     void OnDestory()
@@ -193,9 +196,8 @@ public class PhotonManager : Photon.MonoBehaviour {
                     }
                 }
             }));
+            CreateHPber();
         }
-
-        CreateHPber();
     }
 
 
@@ -229,8 +231,6 @@ public class PhotonManager : Photon.MonoBehaviour {
 
         player_obj = PhotonNetwork.Instantiate(player_prefab, new Vector3(20, 30, 0), Quaternion.identity, 0);
 
-        //プレイヤー名をphotonに登録
-        PhotonNetwork.playerName = NT_PlayerData.Instance.name;
         //カメラに自分を設定
         this.CameraSet(player_obj.transform);       
     }
@@ -276,9 +276,6 @@ public class PhotonManager : Photon.MonoBehaviour {
             {
                 player_obj.transform.position = new Vector3(RightPos / 2, 30);
                 HPber.transform.GetComponent<Slider>().value -= HPber.transform.GetComponent<Slider>().maxValue / 10;
-
-                PhotonView photonView = this.GetComponent<PhotonView>();
-                photonView.RPC("StageOverData", PhotonTargets.OthersBuffered, HPber.transform.GetComponent<PhotonView>().ownerId, HPber.transform.GetComponent<Slider>().maxValue / 10);
             }
 
             ////プレイヤーが死んだら回復させて上からリスポンさせる
@@ -310,29 +307,9 @@ public class PhotonManager : Photon.MonoBehaviour {
     }
 
     [PunRPC]
-    public void StageOverData(int ownerid, float damage)
-    {
-        for (int i = 0; i < HPbers.transform.childCount; i++)
-        {
-            GameObject hpber = HPbers.transform.GetChild(i).gameObject;
-            if (hpber.transform.GetComponent<PhotonView>().ownerId == ownerid)
-            {
-                hpber.transform.GetComponent<Slider>().value -= damage;
-            }
-        }
-    }
-
-    [PunRPC]
     public void ResuscitationData(int ownerid)
     {
-        for (int i = 0; i < HPbers.transform.childCount; i++)
-        {
-            GameObject hpber = HPbers.transform.GetChild(i).gameObject;
-            if (hpber.transform.GetComponent<PhotonView>().ownerId == ownerid)
-            {
-                hpber.transform.GetComponent<Slider>().value = 100;
-            }
-        }
+        HPber.transform.GetComponent<Slider>().value = 100;
     }
 
     /// <summary>
@@ -348,44 +325,22 @@ public class PhotonManager : Photon.MonoBehaviour {
         //audio.volume = .3f;
         //audio.PlayOneShot(audioClip_hit);
 
-        //ダメージを受けたプレイヤーのHPバーを減らす
-        for (int i = 0; i < HPbers.transform.childCount; i++)
-        {
-            GameObject hpber = HPbers.transform.GetChild(i).gameObject;
-
-            if (hpber.transform.GetComponent<PhotonView>().ownerId == damagePlayer.GetComponent<PhotonView>().ownerId)
-            {
-                hpber.transform.GetComponent<Slider>().value -= weapon.transform.GetComponent<NT_MoziBlocController>().DamageValue_Data;
-
-                PhotonView photonView = this.GetComponent<PhotonView>();
-                photonView.RPC("AttackData", PhotonTargets.All, hpber.transform.GetComponent<PhotonView>().ownerId, DamageValue);
-            }
-        }
+        PhotonView photonView = this.GetComponent<PhotonView>();
+        photonView.RPC("AttackData", PhotonTargets.All, damagePlayer.GetComponent<PhotonView>().ownerId, DamageValue);
     }
 
     public void WeaponAttack(GameObject damagePlayer, GameObject weapon)
     {
         float DamageValue = weapon.GetComponent<Weapon>().DamageValue_Data;
 
-        //ダメージを受けたプレイヤーのHPバーを減らす
-        for (int i = 0; i < HPbers.transform.childCount; i++)
-        {
-            GameObject hpber = HPbers.transform.GetChild(i).gameObject;
-
-            if (hpber.transform.GetComponent<PhotonView>().ownerId == damagePlayer.GetComponent<PhotonView>().ownerId)
-            {
-                hpber.transform.GetComponent<Slider>().value -= weapon.transform.GetComponent<Weapon>().DamageValue_Data;
-
-                PhotonView photonView = this.GetComponent<PhotonView>();
-                photonView.RPC("AttackData", PhotonTargets.All, hpber.transform.GetComponent<PhotonView>().ownerId, DamageValue);
-            }
-        }
+        PhotonView photonView = this.GetComponent<PhotonView>();
+        photonView.RPC("AttackData", PhotonTargets.All, damagePlayer.GetComponent<PhotonView>().ownerId, DamageValue);
     }
 
     [PunRPC]
     private void AttackData(int ownerId, float damageValue)
     {
-        if (HPber.transform.GetComponent<PhotonView>().ownerId == ownerId)
+        if (player_obj.transform.GetComponent<PhotonView>().ownerId == ownerId)
         {
             HPber.transform.GetComponent<Slider>().value -= damageValue;
         }
@@ -490,7 +445,9 @@ public class PhotonManager : Photon.MonoBehaviour {
     //HPバー/////////////////////////////////////////////////////////////////////
     public void CreateHPber()
     {
-        HPber = PhotonNetwork.Instantiate("prefab/UI/HPgage2", new Vector3(0, 0, 0), Quaternion.identity, 0);
+        GameObject canves = GameObject.Find("Wait_UI").transform.GetChild(0).gameObject;
+
+        HPber = GameObject.Instantiate(Resources.Load<GameObject>("prefab/UI/HPgage2"), canves.transform);
         player_obj.transform.GetComponent<Player>().HPber_Data = HPber;
     }
 

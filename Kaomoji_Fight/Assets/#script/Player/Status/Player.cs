@@ -171,26 +171,26 @@ public class Player : RaycastController
     public void PleaseMyData()
     {
         PhotonView photonView = this.GetComponent<PhotonView>();
-        photonView.RPC("PushPlayerData", PhotonTargets.Others, photonView.ownerId);
+        photonView.RPC("PushPlayerData", PhotonTargets.Others, PhotonNetwork.player.ID, PhotonNetwork.playerName);
     }
 
-    public void PushPlayerData()
-    {
-        PhotonView photonView = this.GetComponent<PhotonView>();
-        photonView.RPC("MethodRPC", PhotonTargets.OthersBuffered, photonView_cs.ownerId, NT_PlayerData.Instance.name, NT_PlayerData.Instance.Face.name, new Vector3(NT_PlayerData.Instance.color.r, NT_PlayerData.Instance.color.g, NT_PlayerData.Instance.color.b));
-    }
+    //public void PushPlayerData()
+    //{
+    //    PhotonView photonView = this.GetComponent<PhotonView>();
+    //    photonView.RPC("MethodRPC", PhotonTargets.OthersBuffered, photonView_cs.ownerId, NT_PlayerData.Instance.name, NT_PlayerData.Instance.Face.name, new Vector3(NT_PlayerData.Instance.color.r, NT_PlayerData.Instance.color.g, NT_PlayerData.Instance.color.b));
+    //}
 
     /// <summary>
     /// データを送信する
     /// </summary>
     /// <param name="ownerID">おーなーID</param>
     [PunRPC]
-    public void PushPlayerData(int ownerID)
+    public void PushPlayerData(int PlayerID, string name)
     {
-        if (ownerID == this.transform.GetComponent<PhotonView>().ownerId)
+        if (this.transform.GetComponent<PhotonView>().isMine)
         {
             PhotonView photonView = this.GetComponent<PhotonView>();
-            photonView.RPC("MethodRPC", PhotonTargets.OthersBuffered, photonView_cs.ownerId, NT_PlayerData.Instance.name, NT_PlayerData.Instance.Face.name, new Vector3(NT_PlayerData.Instance.color.r, NT_PlayerData.Instance.color.g, NT_PlayerData.Instance.color.b));
+            photonView.RPC("MethodRPC", PhotonTargets.Others, name, PlayerID, NT_PlayerData.Instance.name, NT_PlayerData.Instance.Face.name, new Vector3(NT_PlayerData.Instance.color.r, NT_PlayerData.Instance.color.g, NT_PlayerData.Instance.color.b));
         }
     }
 
@@ -202,9 +202,9 @@ public class Player : RaycastController
     /// <param name="face">キャラクター</param>
     /// <param name="color">色</param>
     [PunRPC]
-    public void MethodRPC(int id, string name, string face, Vector3 color)
+    public void MethodRPC(string playername, int ownerid, string name, string face, Vector3 color)
     {
-        if (id == this.transform.GetComponent<PhotonView>().ownerId)
+        if (playername == PhotonNetwork.playerName && PhotonNetwork.player.ID == ownerid)
         {
             this.name = name;
             this.transform.GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("textures/use/Player/" + face);
@@ -559,6 +559,7 @@ public class Player : RaycastController
             MoziObj = PhotonNetwork.Instantiate("prefab/Stage/MoziBlock", this.transform.position, Quaternion.identity, 0);
             MoziObj.transform.SetParent(this.transform);
             MoziObj.name = "MoziBlock(" + block.transform.GetChild(0).GetComponent<TextMeshPro>().text + ")";
+            MoziObj.transform.GetChild(0).GetComponent<TextMeshPro>().enabled = true;
             MoziObj.transform.GetChild(0).GetComponent<TextMeshPro>().text = block.transform.GetChild(0).GetComponent<TextMeshPro>().text;
 
             //オーナー登録
