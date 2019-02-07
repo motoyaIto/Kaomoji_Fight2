@@ -15,7 +15,7 @@ public class SelectWeapon
     {
 
         //WeaponList["かいふく"] = Resources.Load<GameObject>("prefab/Weapon/Portion");
-        //WeaponList["けん"] = Resources.Load<GameObject>("prefab/Weapon/Sword");
+        WeaponList["けん"] = "Sword";
 
         //WeaponList["じゅう"] = Resources.Load<GameObject>("prefab/Weapon/Gan");
         //WeaponList["すないぱー"] = Resources.Load<GameObject>("prefab/Weapon/Doragunohu");
@@ -42,11 +42,11 @@ public class SelectWeapon
         //    name = "かいふく";
         //}
 
-        ////剣
-        //if(name == "そーど" || name == "つるぎ" || name == "かたな" || name == "しみたー" || name == "ぶれいど")
-        //{
-        //    name = "けん";
-        //}
+        //剣
+        if (name == "そーど" || name == "つるぎ" || name == "かたな" || name == "しみたー" || name == "ぶれいど")
+        {
+            name = "けん";
+        }
 
         ////銃
         //if(name == "がん" || name == "ぴすとる" || name == "ちゃか" || name == "こると" || name == "てっぽう")
